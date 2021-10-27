@@ -63,6 +63,7 @@ namespace ft
 			Element access
 		*/
 		//reference 		operator[]( size_t pos );
+			//return this->start() + pos;
 		//const_reference	operator[]( size_t pos ) const;
 		//reference			at( size_type pos );
 		//const_reference	at( size_type pos ) const;
