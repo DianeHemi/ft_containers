@@ -4,6 +4,10 @@
 # include <cstddef>
 
 //https://githubmemory.com/repo/maxime-42/ft_containers
+//https://www.fluentcpp.com/2018/05/08/std-iterator-deprecated/
+//https://www.cplusplus.com/reference/iterator/RandomAccessIterator/
+//https://www.cplusplus.com/reference/iterator/iterator_traits/
+
 
 namespace ft
 {
