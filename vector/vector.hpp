@@ -24,8 +24,8 @@ namespace ft
 			typedef size_t				size_type;
 			typedef std::ptrdiff_t		difference_type;
 
-			//typedef typename ft::iterator								iterator
-			//typedef typename ft::const_iterator						const_iterator
+			typedef typename ft::iterator								iterator
+			typedef typename ft::const_iterator							const_iterator
 			//typedef typename ft::reverse_iterator<ft::iterator>		reverse_iterator
 			//typedef typename ft::reverse_iterator<ft::const_iterator>	const_reverse_iterator
 
@@ -50,10 +50,11 @@ namespace ft
 		/*
 			Iterators
 		*/
-		//iterator					begin();
-		//const_iterator			begin() const;
-		//iterator					end();
-		//const_iterator			end() cont;
+		iterator					begin() { return iterator(&_data[0]); };
+		//const_iterator				begin() const { return const_iterator(&_it[0]); };
+		iterator					end() { return iterator(&_data[_size]); };
+		//const_iterator			end() const { return const_iterator(&_ptr[_size]); };
+		
 		//reverse_iterator			rbegin();
 		//const_reverse_iterator	rbegin() const;
 		//reverse_iterator			rend();
@@ -119,6 +120,8 @@ namespace ft
 		private:
 			unsigned long	_size;
 			unsigned long	_capacity;
+
+			T*	_data;
 
 	};
 
