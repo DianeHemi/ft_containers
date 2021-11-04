@@ -24,8 +24,8 @@ namespace ft
 			typedef size_t				size_type;
 			typedef std::ptrdiff_t		difference_type;
 
-			typedef typename ft::iterator								iterator
-			typedef typename ft::const_iterator							const_iterator
+			typedef typename ft::iterator_vector								iterator
+			typedef typename ft::const_iterator_vector							const_iterator
 			//typedef typename ft::reverse_iterator<ft::iterator>		reverse_iterator
 			//typedef typename ft::reverse_iterator<ft::const_iterator>	const_reverse_iterator
 
