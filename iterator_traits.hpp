@@ -54,6 +54,21 @@ namespace ft
 		typedef ft::random_access_iterator_tag 	iterator_category;
 	};
 
+	template<
+		class Category,                     //Category of the iterator
+		class T,                            //Type of valuesthat can be obtained by dereferencing the iterator
+		class Distance = std::ptrdiff_t,    //A type that can be used to identify distance between iterators
+		class Pointer = T*,                 //Defines a pointer to the type iterated over (T)
+		class Reference = T&                //Defines a reference to the type iterated over (T)
+	> struct iterator
+	{
+		public:
+			typedef Category	iterator_category;
+			typedef T			value_type;
+			typedef Distance	difference_type;
+			typedef Pointer		pointer;
+			typedef Reference	reference;
+	};
 
 } //ft
 
