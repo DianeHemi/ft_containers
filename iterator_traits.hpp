@@ -54,6 +54,9 @@ namespace ft
 		typedef ft::random_access_iterator_tag 	iterator_category;
 	};
 
+	/*
+		Iterator base class
+	*/
 	template<
 		class Category,                     //Category of the iterator
 		class T,                            //Type of valuesthat can be obtained by dereferencing the iterator
@@ -69,6 +72,8 @@ namespace ft
 			typedef Pointer		pointer;
 			typedef Reference	reference;
 	};
+
+	
 
 } //ft
 

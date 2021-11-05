@@ -12,23 +12,28 @@
 
 namespace ft
 {
-
 	/*
 		Iterator
 	*/
-	template<typename T>
+	template<class T>
 	class iterator_vector : public ft::iterator< ft::random_access_iterator_tag, T, std::ptrdiff_t, T*, T& >
 	{
 		public:
+			typedef T								value_type;
+			typedef	T&								reference;
+			typedef	T*								pointer;
+			typedef std::ptrdiff_t					difference_type;
+			typedef ft::random_access_iterator_tag	iterator_category;
+
 			iterator_vector( ) : _ptr(NULL) { };
 			iterator_vector( pointer src ) : _ptr(src) { };
 			iterator_vector( const iterator_vector & src ) { *this = src; };
 			~iterator_vector() { };
-			iterator_vector & operator=( const iterator_vector & rhs )
+			iterator_vector& operator=( const iterator_vector & rhs )
 			{
-				//A faire 
-				//if !=, this->_ptr = rhs._ptr
-				//return *this
+				if (this != &rhs)
+					this->_ptr = rhs._ptr;
+				return *this;
 			}
 			
 			bool		operator==( const iterator_vector & rhs ) const { return (_ptr == rhs._ptr); };
@@ -38,13 +43,13 @@ namespace ft
 			bool		operator>( const iterator_vector & rhs ) const { return (_ptr > rhs._ptr); };
 			bool		operator>=( const iterator_vector & rhs ) const { return (_ptr >= rhs._ptr ); };
 
-			iterator_vector&	operator++() { ++_ptr; return *this: };
+			iterator_vector&	operator++() { ++_ptr; return *this; };
 			iterator_vector 	operator++(int) { iterator_vector tmp(*this); ++_ptr; return tmp; }; //_ptr++; return (iterator_vector(_ptr - 1);)
 			iterator_vector&	operator--() { --_ptr; return *this; };
 			iterator_vector		operator--(int) { iterator_vector tmp(*this); --_ptr; return tmp; }; //_ptr++; return (iterator_vector(_ptr + 1);)
 			
-			//iterator_vector&	operator+=( difference_type rhs ) { _ptr += rhs; return *this; };	//int ?
-			//iterator_vector&	operator-=( difference_type rhs ) { _ptr -= rhs; return *this; };
+			iterator_vector&	operator+=( difference_type rhs ) { _ptr += rhs; return *this; };	//int ?
+			iterator_vector&	operator-=( difference_type rhs ) { _ptr -= rhs; return *this; };
 
 			iterator_vector	operator+(difference_type rhs) const { return iterator_vector(_ptr + rhs); }; //rhs.getPtr()
 			iterator_vector	operator-(difference_type rhs) const { return iterator_vector(_ptr - rhs); };
@@ -55,13 +60,19 @@ namespace ft
 			pointer		operator->() const { return _ptr; };
 			reference	operator[]( difference_type rhs ) const { return _ptr[rhs]; };
 
-			pointer		getPtr() const { return (this->_ptr); };
+			//pointer		getPtr() const { return (this->_ptr); };
 			
 		private:
 			pointer	_ptr;
 	};
 
-//+ meme chose avec const !
+	/*
+		Const iterator
+	*/
+	//A faire
+
+
+
 
 } //ft
 

@@ -3,6 +3,10 @@
 
 # include <memory>
 # include <cstddef>
+# include <stdexcept>
+# include "iterator_vector.hpp"
+# include <limits>
+# include <iostream>
 
 namespace ft
 {
@@ -19,11 +23,11 @@ namespace ft
 
 			typedef typename Allocator::pointer 			pointer;
 			typedef typename Allocator::const_pointer		const_pointer;
-			typedef typename Allocator::reference          reference;
-      		typedef typename Allocator::const_reference    const_reference;
+			typedef typename Allocator::reference			reference;
+      		typedef typename Allocator::const_reference		const_reference;
 
-			typedef typename ft::iterator_vector						iterator
-			typedef typename ft::const_iterator_vector					const_iterator
+			typedef typename ft::iterator_vector<T>			iterator;
+			//typedef typename ft::const_iterator_vector					const_iterator;
 			//typedef typename ft::reverse_iterator<ft::iterator>		reverse_iterator
 			//typedef typename ft::reverse_iterator<ft::const_iterator>	const_reverse_iterator
 
@@ -31,19 +35,20 @@ namespace ft
 		/*
 			Constructors
 		*/
-		vector( )
-			: _size(0), _capacity(0), _alloc(Allocator()), _data(0) { };
-		vector( const Allocator& alloc = Allocator() )
+		//Default constructor
+		//vector( )
+		//	: _size(0), _capacity(0), _alloc(Allocator()), _data(0) { };
+		explicit vector( const Allocator& alloc = Allocator() )
 			: _size(0), _capacity(0), _alloc(alloc), _data(0) { };
 
-		/* Copy constructor //explicit ?
-		vector( vector & src ) : 
+		//Copy constructor
+		vector( const vector & src ) : 
 			_size(0), _capacity(0), _alloc(Allocator()), _data(0)
-		{ *this = src; }
-		*/
+		{ *this = src; }	//A changer ?
+
 
 		/* Fill constructor with count copies of T
-		vector( size_type count, const T& value = T(), const Allocator& alloc = Allocator() ) 
+		explicit vector( size_type count, const T& value = T(), const Allocator& alloc = Allocator() ) 
 			: _size(0), _capacity(count), _alloc(alloc), _data(0)
 		{
 			//Ou reserve memoire ?
@@ -72,10 +77,8 @@ namespace ft
 
 		virtual ~vector()
 		{
-			/*
-			_alloc.destroy() ou clear ?
-			_alloc.deallocate() si != 0
-			*/
+			_alloc.destroy(_data); //ou clear ?
+			_alloc.deallocate(_data, _capacity); //si != 0 ?
 		}
 
 
@@ -88,10 +91,10 @@ namespace ft
 		/*
 			Iterators
 		*/
-		iterator					begin() { return iterator(_data); };
-		const_iterator				begin() const { return const_iterator(_data); };
-		iterator					end() { return iterator(_data + _size); };
-		const_iterator				end() const { return const_iterator(_ptr + _size); };
+		iterator					begin() { return iterator(_data); }; //&_data[0] ?
+		//const_iterator				begin() const { return const_iterator(_data); };
+		iterator					end() { return iterator(_data + _size); }; //&_data[_size]
+		//const_iterator				end() const { return const_iterator(_ptr + _size); };
 		
 		//reverse_iterator			rbegin();
 		//const_reverse_iterator	rbegin() const;
@@ -101,8 +104,7 @@ namespace ft
 		/*
 			Element access
 		*/
-		//reference 		operator[]( size_t pos );
-			//return this->start() + pos;
+		reference 		operator[]( size_t pos ) { return _data[pos]; }; //_data[pos];  ++ check invalid index ?
 		//const_reference	operator[]( size_t pos ) const;
 		//reference			at( size_type pos );
 		//const_reference	at( size_type pos ) const;
@@ -114,27 +116,45 @@ namespace ft
 		/*
 			Capacity
 		*/
-		//bool		empty() const;
-		//size_type	size() const;
-		//size_type	max_size() const;
-		//size_type	capacity() const;
+		bool		empty() const { return (_size == 0); };
+		size_type	size() const { return _size; };
+		size_type	max_size() const { return (std::numeric_limits<difference_type>::max()); };
+		size_type	capacity() const { return _capacity; };
 		//void		resize( size_type count );
 		//void		resize( size_type count, T value = T() );
-		//void		reserve( size_type n );
+		void		reserve( size_type n )
+		{
+			if (_capacity >= n)
+				return ;
+			if (n > max_size()) 
+				throw std::length_error("vector::_M_fill_insert");
+
+			ft::vector<T> tmp;
+			tmp._data = tmp._alloc.allocate(n);
+			tmp._capacity = n;
+
+			for(size_type i = 0; i < _size; i++)
+			{
+				tmp._alloc.construct(tmp._data + i, _data[i]);
+			}
+			tmp._size = _size;
+			tmp.swap(*this); 
+			//OU delete [] _data -> _data = newVector
+		};
 
 		/*
 			Modifiers
 		*/
-
-		//void		push_back( const T& value )
-		/*{
+		void		push_back( const value_type& val )
+		{
 			if (_size == _capacity)
-				//Reallocate to allow larger capacity
-			if (_size < _capacity)
-				//Add element at the end
-				//Copy new element at end of array ->insert
-				//_size++
-		}*/
+			{
+				reserve((_capacity * 2) + 1); //Reallocate to allow larger capacity
+			}
+			//_alloc.construct(_data, val);
+			_data[_size] = val; //Add element at the end. Copy new element at end of array ->insert ?
+			_size++;
+		}
 
 		//void		pop_back();
 		//iterator	insert( iterator pos, const T& value );
@@ -144,7 +164,20 @@ namespace ft
 		//void		clear();
 		//iterator	erase( iterator pos );
 		//iterator	erase( iterator first, iterator last );
-		//void		swap( vector& other );
+		void		swap( vector& other )
+		{
+			pointer tmp_data = _data;
+			size_type tmp_size = _size;
+			size_type tmp_capacity = _capacity;
+
+			_data = other._data;
+			_capacity = other._capacity;
+			_size = other._size;
+
+			other._data = tmp_data;
+			other._size = tmp_size;
+			other._capacity = tmp_capacity;
+		};
 
 
 		/*
