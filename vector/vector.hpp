@@ -4,9 +4,10 @@
 # include <memory>
 # include <cstddef>
 # include <stdexcept>
-# include "iterator_vector.hpp"
 # include <limits>
 # include <iostream>
+# include "iterator_vector.hpp"
+# include "../lexicographical_compare.hpp"
 
 namespace ft
 {
@@ -32,9 +33,9 @@ namespace ft
 			//typedef typename ft::reverse_iterator<ft::const_iterator>	const_reverse_iterator
 
 
-		/*
+		/****
 			Constructors
-		*/
+		****/
 		//Default constructor
 		//vector( )
 		//	: _size(0), _capacity(0), _alloc(Allocator()), _data(0) { };
@@ -85,15 +86,15 @@ namespace ft
 		//template < class InputIt > 
 			//void assign( InputIt first, InputIt last );
 		//void assign( size_t count, const T& value );
-		//Allocator get_allocator() const;
+		Allocator get_allocator() const { return _alloc; };
 
 
-		/*
+		/****
 			Iterators
-		*/
-		iterator					begin() { return iterator(_data); }; //&_data[0] ?
+		****/
+		iterator					begin() { return iterator(_data); };
 		//const_iterator				begin() const { return const_iterator(_data); };
-		iterator					end() { return iterator(_data + _size); }; //&_data[_size]
+		iterator					end() { return iterator(_data + _size); };
 		//const_iterator				end() const { return const_iterator(_ptr + _size); };
 		
 		//reverse_iterator			rbegin();
@@ -101,21 +102,33 @@ namespace ft
 		//reverse_iterator			rend();
 		//const_reverse_iterator	rend() const;
 
-		/*
-			Element access
-		*/
-		reference 		operator[]( size_t pos ) { return _data[pos]; }; //_data[pos];  ++ check invalid index ?
-		//const_reference	operator[]( size_t pos ) const;
-		//reference			at( size_type pos );
-		//const_reference	at( size_type pos ) const;
-		//reference			front();
-		//const_reference	front() const;
-		//reference			back();
-		//const_reference	back() const;
 
-		/*
+		/*********************
+			Element access
+		*********************/
+		reference 		operator[]( size_t pos ) { return _data[pos]; }; // ++ check invalid index ?
+		const_reference	operator[]( size_t pos ) const { return _data[pos]; };
+		reference		front() { return _data[0]; };
+		const_reference	front() const { return _data[0]; };
+		reference		back() { return _data[_size - 1]; };
+		const_reference	back() const { return _data[_size - 1]; };
+		reference		at( size_type pos ) 
+		{
+			if (!(pos < size()))
+				throw std::out_of_range("vector::_M_range_check");
+			return _data[pos];
+		};
+		const_reference	at( size_type pos ) const
+		{
+			if (!(pos < size()))
+				throw std::out_of_range("vector::_M_range_check");
+			return _data[pos];
+		};
+
+
+		/***************
 			Capacity
-		*/
+		***************/
 		bool		empty() const { return (_size == 0); };
 		size_type	size() const { return _size; };
 		size_type	max_size() const { return (std::numeric_limits<difference_type>::max()); };
@@ -142,21 +155,24 @@ namespace ft
 			//OU delete [] _data -> _data = newVector
 		};
 
-		/*
+		/****
 			Modifiers
-		*/
+		****/
 		void		push_back( const value_type& val )
 		{
-			if (_size == _capacity)
+			if (_size == 0)
+				reserve(1);
+			else if (_size == _capacity)
 			{
-				reserve((_capacity * 2) + 1); //Reallocate to allow larger capacity
+				reserve((_capacity * 2)); //Reallocate to allow larger capacity
+				//Change this to avoid the use of 1 ?
 			}
 			//_alloc.construct(_data, val);
 			_data[_size] = val; //Add element at the end. Copy new element at end of array ->insert ?
 			_size++;
 		}
 
-		//void		pop_back();
+		//void		pop_back() { //Destroy removed element. Reduce size by one };
 		//iterator	insert( iterator pos, const T& value );
 		//iterator	insert( iterator pos, size_type count, const T& value );
 		//template< class InputIt >
@@ -180,9 +196,9 @@ namespace ft
 		};
 
 
-		/*
+		/****
 			Overload operators
-		*/
+		****/
 
 
 
@@ -197,20 +213,54 @@ namespace ft
 	};
 
 
+	/*
+	template <class T, class Alloc>
+	bool operator==(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		if (lhs.size() != rhs.size())
+			return false;
+		//Use equal
+		return equal(lhs.begin(), lhs.end(), rhs.begin());
+	}
 
-	/*	template <class T, class Alloc>
-		bool operator==(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
-		{
+	template <class T, class Alloc>
+  	bool operator!=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		if (lhs.size() != rhs.size())
+			return true;
+		//Use equal
+		return !(equal(lhs.begin(), lhs.end(), rhs.begin()));
+	}
 
-		}
+	template <class T, class Alloc>
+	bool operator<(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		//Use lexicographical_compare
+	}
 
-		Faire tous les operateurs
+	template <class T, class Alloc>
+	bool operator<=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		//Use lexicographical_compare
+	}
+
+	template <class T, class Alloc>
+	bool operator>(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		//Use lexicographical_compare
+	}
+
+	template <class T, class Alloc>
+	bool operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		//Use lexicographical_compare
+	}
+
 	*/
 
 
 	template<class T, class Allocator>
-	void swap(vector<T, Allocator>& x, vector<T, Allocator>& y)
-	{ x.swap(y); }
+	void swap(vector<T, Allocator>& x, vector<T, Allocator>& y) { x.swap(y); }
 
 }
 
