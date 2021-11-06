@@ -24,6 +24,13 @@ namespace ft
 			typedef	T*								pointer;
 			typedef std::ptrdiff_t					difference_type;
 			typedef ft::random_access_iterator_tag	iterator_category;
+		
+		//Test avec ça et en faisant ft::iterator< ft::random_access_iterator_tag, T >
+		//typedef typename ft::iterator<ft::random_access_iterator_tag, T, std::ptrdiff_t, T*, T&>::value_type	value_type;
+		//typedef typename ft::iterator<ft::random_access_iterator_tag, T, std::ptrdiff_t, T*, T&>::difference_type	difference_type;
+		//typedef typename ft::iterator<ft::random_access_iterator_tag, T, std::ptrdiff_t, T*, T&>::iterator_category	iterator_category;
+		//typedef	T&	reference;
+		//typedef	T*	pointer;
 
 			iterator_vector( ) : _ptr(NULL) { };
 			iterator_vector( pointer src ) : _ptr(src) { };
