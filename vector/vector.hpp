@@ -185,14 +185,17 @@ namespace ft
 			pointer tmp_data = _data;
 			size_type tmp_size = _size;
 			size_type tmp_capacity = _capacity;
+			Allocator tmp_alloc = _alloc;
 
 			_data = other._data;
 			_capacity = other._capacity;
 			_size = other._size;
+			_alloc = other._alloc;
 
 			other._data = tmp_data;
 			other._size = tmp_size;
 			other._capacity = tmp_capacity;
+			other._alloc = tmp_alloc;
 		};
 
 
@@ -220,7 +223,7 @@ namespace ft
 		if (lhs.size() != rhs.size())
 			return false;
 		//Use equal
-		return equal(lhs.begin(), lhs.end(), rhs.begin());
+		return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
 	}
 
 	template <class T, class Alloc>
