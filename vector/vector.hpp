@@ -133,8 +133,28 @@ namespace ft
 		size_type	size() const { return _size; };
 		size_type	max_size() const { return (std::numeric_limits<difference_type>::max()); };
 		size_type	capacity() const { return _capacity; };
-		//void		resize( size_type count );
-		//void		resize( size_type count, T value = T() );
+		void		resize( size_type n, value_type val = value_type() )
+		{
+			if(n == _size)
+				return ;
+			if (n < _size)
+			{
+				iterator it = _data + n;
+				for ( ; it != _data + _size; it++)
+					_alloc.destroy(&it);
+				_size = n;
+			}
+			else
+			{
+				if (n > _capacity)
+					reserve(n);
+				while (_size < n)
+				{
+					_data[_size] = val;
+					_size++;
+				}
+			}
+		};
 		void		reserve( size_type n )
 		{
 			if (_capacity >= n)
@@ -152,7 +172,6 @@ namespace ft
 			}
 			tmp._size = _size;
 			tmp.swap(*this); 
-			//OU delete [] _data -> _data = newVector
 		};
 
 		/****
@@ -164,22 +183,62 @@ namespace ft
 				reserve(1);
 			else if (_size == _capacity)
 			{
-				reserve((_capacity * 2)); //Reallocate to allow larger capacity
+				reserve((_capacity * 2));
 				//Change this to avoid the use of 1 ?
 			}
-			//_alloc.construct(_data, val);
-			_data[_size] = val; //Add element at the end. Copy new element at end of array ->insert ?
+			_data[_size] = val;
 			_size++;
 		}
-
-		//void		pop_back() { //Destroy removed element. Reduce size by one };
+		void		pop_back()
+		{
+			iterator ite = end();
+			_alloc.destroy(&ite);
+			_size--;
+		};
 		//iterator	insert( iterator pos, const T& value );
 		//iterator	insert( iterator pos, size_type count, const T& value );
 		//template< class InputIt >
 			//void insert( iterator pos, InputIt first, InputIt last );
-		//void		clear();
-		//iterator	erase( iterator pos );
-		//iterator	erase( iterator first, iterator last );
+		void		clear()
+		{
+			for (size_type i = 0; i < _size; i++)
+				_alloc.destroy(&_data[i]);
+			_size = 0;
+		};
+		iterator	erase( iterator pos )
+		{
+			iterator storage_it = pos;
+			iterator return_it = pos;
+
+			while (pos != (end() -1))
+				*storage_it++ = *++pos;
+			_alloc.destroy(&pos);
+			_size--;
+			return return_it;
+		};
+		iterator	erase( iterator first, iterator last )
+		{
+			//Remove a range of elements
+			iterator storage_it = first;
+			iterator return_it = last;
+			iterator diff_it = last;
+
+			while(last != (end() - 1))
+			{
+				std::cout << "S : " << *storage_it << std::endl;
+				std::cout << "L : " << *last << std::endl;
+				*storage_it++ = *++last;
+			}
+
+			while (first != diff_it)
+			{
+				_alloc.destroy(&first);
+				*first++;
+				_size--;
+			}
+		
+			return return_it;
+		};
 		void		swap( vector& other )
 		{
 			pointer tmp_data = _data;
@@ -210,8 +269,8 @@ namespace ft
 		private:
 			size_type	_size;		//size filled
 			size_type	_capacity;	//size allocated
-			Allocator	_alloc;
-			T*			_data;
+			Allocator	_alloc;		//allocator
+			T*			_data;		//content
 
 	};
 
