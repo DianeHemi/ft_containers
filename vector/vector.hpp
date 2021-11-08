@@ -171,7 +171,7 @@ namespace ft
 				tmp._alloc.construct(tmp._data + i, _data[i]);
 			}
 			tmp._size = _size;
-			tmp.swap(*this); 
+			tmp.swap(*this);	//No need to destroy. tmp destructor called on return
 		};
 
 		/****
@@ -207,28 +207,25 @@ namespace ft
 		};
 		iterator	erase( iterator pos )
 		{
-			iterator storage_it = pos;
-			iterator return_it = pos;
-
-			while (pos != (end() -1))
-				*storage_it++ = *++pos;
+			if (pos == (end() - 1))
+			{
+				pop_back();
+				return pos;
+			}
+			for (++pos; pos != end(); ++pos)
+				pos[-1] = *pos;
 			_alloc.destroy(&pos);
 			_size--;
-			return return_it;
+			return pos;
 		};
 		iterator	erase( iterator first, iterator last )
 		{
-			//Remove a range of elements
 			iterator storage_it = first;
 			iterator return_it = last;
 			iterator diff_it = last;
 
-			while(last != (end() - 1))
-			{
-				std::cout << "S : " << *storage_it << std::endl;
-				std::cout << "L : " << *last << std::endl;
-				*storage_it++ = *++last;
-			}
+			for ( ; last != end(); ++last, ++storage_it)
+				*storage_it = *last;
 
 			while (first != diff_it)
 			{
@@ -236,7 +233,6 @@ namespace ft
 				*first++;
 				_size--;
 			}
-		
 			return return_it;
 		};
 		void		swap( vector& other )

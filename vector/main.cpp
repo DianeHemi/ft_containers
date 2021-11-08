@@ -2,14 +2,14 @@
 #include <vector>
 #include <iostream>
 
-/*void test_iterator()
+void test_iterator()
 {
     ft::vector<int> v1;
     v1.push_back(12);
     v1.push_back(13);
     v1.push_back(14);
     v1.push_back(15);
-    ft::vector<int>::iterator_vector it = v1.begin();
+    ft::vector<int>::iterator it = v1.begin();
 
     std::cout << "\n\n" << *it << std::endl;
     it++;
@@ -35,7 +35,7 @@
         std::cout << "It bigger" << std::endl;
     if (it != ite)
         std::cout << "It's are differents" << std::endl;
-}*/
+}
 
 void test_erase()
 {
@@ -56,13 +56,14 @@ void test_erase()
     vi1.erase(it);
     std::cout << "Ajout de 5 et 6 a la fin, et erase sur le 5" << std::endl;
     std::cout << "New size : " << vi1.size() << " Front/Back : " << vi1.front() << " / " << vi1.back() << std::endl;
-    
+
     std::cout << "\nTest d'un erase() avec range (2 - 8)" << std::endl;
     it = vi1.begin() + 1;
-    ft::vector<int>::iterator ite = vi1.end() - 4;
+    ft::vector<int>::iterator ite = vi1.end() - 3;
     vi1.erase(it, ite);
     std::cout << "New size : " << vi1.size() << " Front/Back : " << vi1.front() << " / " << vi1.back() << std::endl;
 }
+
 
 int main()
 {
@@ -107,8 +108,10 @@ int main()
     std::cout << "Test d'un pop_back()" << std::endl;
     std::cout << "New size : " << vi1.size() << " Front/Back : " << vi1.front() << " / " << vi1.back() << std::endl;
 
-    test_erase();
-
 //test_iterator();
+//test_erase();
+
+
+
     return 0;
 }
