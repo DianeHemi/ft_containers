@@ -36,9 +36,6 @@ namespace ft
 		/****
 			Constructors
 		****/
-		//Default constructor
-		//vector( )
-		//	: _size(0), _capacity(0), _alloc(Allocator()), _data(0) { };
 		explicit vector( const Allocator& alloc = Allocator() )
 			: _size(0), _capacity(0), _alloc(alloc), _data(0) { };
 
@@ -74,7 +71,10 @@ namespace ft
 		}
 		*/
 
-		//vector& operator=( const vector& src ) { A faire };
+		/*vector& operator=( const vector& src )
+		{ 
+			A faire 
+		};*/
 
 		virtual ~vector()
 		{
@@ -83,10 +83,18 @@ namespace ft
 		}
 
 
-		//template < class InputIt > 
-			//void assign( InputIt first, InputIt last );
-		//void assign( size_t count, const T& value );
-		Allocator get_allocator() const { return _alloc; };
+		/*template < class InputIt > 
+		  void assign( InputIt first, InputIt last )
+		{
+			erase(begin(), end());
+			insert(begin(), first, last);
+		};
+		void assign( size_t count, const T& value )
+		{
+			erase(begin(), end());
+			insert(begin(), count, value);
+		};*/
+		allocator_type get_allocator() const { return _alloc; };
 
 
 		/****
@@ -106,8 +114,8 @@ namespace ft
 		/*********************
 			Element access
 		*********************/
-		reference 		operator[]( size_t pos ) { return _data[pos]; }; // ++ check invalid index ?
-		const_reference	operator[]( size_t pos ) const { return _data[pos]; };
+		reference 		operator[]( size_type pos ) { return _data[pos]; }; // ++ check invalid index ?
+		const_reference	operator[]( size_type pos ) const { return _data[pos]; };
 		reference		front() { return _data[0]; };
 		const_reference	front() const { return _data[0]; };
 		reference		back() { return _data[_size - 1]; };
@@ -139,6 +147,7 @@ namespace ft
 				return ;
 			if (n < _size)
 			{
+				//erase(begin() + n, end());
 				iterator it = _data + n;
 				for ( ; it != _data + _size; it++)
 					_alloc.destroy(&it);
@@ -146,6 +155,7 @@ namespace ft
 			}
 			else
 			{
+				//insert(end(), n - size(), val);
 				if (n > _capacity)
 					reserve(n);
 				while (_size < n)
@@ -154,6 +164,12 @@ namespace ft
 					_size++;
 				}
 			}
+			/*if (n > _size)
+				insert(end(), n - size(), val);
+			else if (n < _size)
+				erase(begin() + n, end());
+			else
+				return ;*/
 		};
 		void		reserve( size_type n )
 		{
@@ -183,7 +199,7 @@ namespace ft
 				reserve(1);
 			else if (_size == _capacity)
 			{
-				reserve((_capacity * 2));
+				reserve(_capacity * 2);
 				//Change this to avoid the use of 1 ?
 			}
 			_data[_size] = val;
@@ -195,10 +211,67 @@ namespace ft
 			_alloc.destroy(&ite);
 			_size--;
 		};
-		//iterator	insert( iterator pos, const T& value );
-		//iterator	insert( iterator pos, size_type count, const T& value );
+
+
+
+
+
+		iterator	insert( iterator pos, const T& value )
+		{
+			size_type index = *pos - *_data;
+
+			/*if (index < 0 || index > _size)
+				return ; //undefined behavior*/
+			if (_size == 0)
+				reserve(1);
+			if (_size == _capacity)
+				reserve(_capacity * 2);
+
+			for( size_t i = _size - 1; i >= index; --i)
+			{
+				//i + 1 = 0;
+				_data[i + 1] = _data[i];
+			}
+			_data[index] = value;
+			_size++;
+
+			return pos - 1;
+		};
+		iterator	insert( iterator pos, size_type count, const T& value )
+		{
+			size_type index = *pos - *_data;
+			size_t difference = 0;
+
+			if (_size == 0)
+				reserve(1);
+			while ((_size + count) >= _capacity)
+				reserve(_capacity * 2);
+
+			//Copy count value before pos
+
+			for (size_t i = _size - 1; i >= index; i--)
+			{
+				_data[i + count] = _data[i];
+				difference = i + count;
+			}
+			difference--;
+			for (size_t i = difference; i >= index; i--)
+				_data[i] = value;
+			_size += count;
+
+			return pos;
+
+			
+		};
 		//template< class InputIt >
 			//void insert( iterator pos, InputIt first, InputIt last );
+
+
+
+
+
+
+
 		void		clear()
 		{
 			for (size_type i = 0; i < _size; i++)
@@ -271,45 +344,43 @@ namespace ft
 	};
 
 
-	/*
-	template <class T, class Alloc>
-	bool operator==(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	
+	template <class T, class Allocator>
+	bool operator==(const vector<T,Allocator>& lhs, const vector<T,Allocator>& rhs)
 	{
 		if (lhs.size() != rhs.size())
 			return false;
-		//Use equal
 		return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
 	}
 
-	template <class T, class Alloc>
-  	bool operator!=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	template <class T, class Allocator>
+  	bool operator!=(const vector<T,Allocator>& lhs, const vector<T,Allocator>& rhs)
 	{
 		if (lhs.size() != rhs.size())
 			return true;
-		//Use equal
-		return !(equal(lhs.begin(), lhs.end(), rhs.begin()));
+		return !(ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
 	}
-
-	template <class T, class Alloc>
-	bool operator<(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+/*
+	template <class T, class Allocator>
+	bool operator<(const vector<T, Allocator>& lhs, const vector<T, Allocator>& rhs)
 	{
 		//Use lexicographical_compare
 	}
 
-	template <class T, class Alloc>
-	bool operator<=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	template <class T, class Allocator>
+	bool operator<=(const vector<T, Allocator>& lhs, const vector<T, Allocator>& rhs)
 	{
 		//Use lexicographical_compare
 	}
 
-	template <class T, class Alloc>
-	bool operator>(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	template <class T, class Allocator>
+	bool operator>(const vector<T, Allocator>& lhs, const vector<T, Allocator>& rhs)
 	{
 		//Use lexicographical_compare
 	}
 
-	template <class T, class Alloc>
-	bool operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	template <class T, class Allocator>
+	bool operator>=(const vector<T, Allocator>& lhs, const vector<T, Allocator>& rhs)
 	{
 		//Use lexicographical_compare
 	}
