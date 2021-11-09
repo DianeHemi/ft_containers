@@ -126,19 +126,20 @@ int main()
     v.push_back(1);
     v.push_back(2);
     v.push_back(3);
-    ft::vector<int>::iterator i2 = v.begin();   // + 1 working
+    ft::vector<int>::iterator i2 = v.begin() + 1;   // + 1 working
     v.insert(i2, 4);
-    std::cout << "\nInsertion d'un 4 en deuxieme position d'un vecteur :" << std::endl;
+    std::cout << "\n\nInsertion d'un 4 en deuxieme position du vecteur :" << std::endl;
     for(size_t i = 0; i < v.size(); i++)
         std::cout << v[i] << " ";
     std::cout << std::endl;
+
     v.erase(i2);
-    /*std::cout << "\nSuppression du 4 et ajout de trois 6 avant le 2 :" << std::endl;
-    i2 = v.begin();
-    v.insert(i2, 1, 6);
+    std::cout << "Suppression du 4 et ajout de trois 6 avant le 2 :" << std::endl;
+    i2 = v.end() - 2;
+    v.insert(i2, 13, 6);
     for(size_t i = 0; i < v.size(); i++)
         std::cout << v[i] << " ";
-    std::cout << std::endl;*/
+    std::cout << std::endl;
 
     return 0;
 }

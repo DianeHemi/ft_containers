@@ -16,10 +16,10 @@ namespace ft
 		Iterator
 	*/
 	template<class T>
-	class iterator_vector : public ft::iterator< ft::random_access_iterator_tag, T, std::ptrdiff_t, T*, T& >
+	class iterator_vector : public ft::iterator< ft::random_access_iterator_tag, T >
 	{
 		public:
-			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::value_type	value_type;
+			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::value_type		value_type;
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type	difference_type;
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category	iterator_category;
 			typedef	T&	reference;
@@ -35,6 +35,10 @@ namespace ft
 					this->_ptr = rhs._ptr;
 				return *this;
 			}
+
+			reference	operator*() const { return *_ptr; };
+			pointer		operator->() const { return _ptr; };
+			reference	operator[]( difference_type rhs ) const { return (*(_ptr + rhs)); };
 			
 			bool		operator==( const iterator_vector & rhs ) const { return (_ptr == rhs._ptr); };
 			bool		operator!=( const iterator_vector & rhs ) const { return (_ptr != rhs._ptr); };
@@ -48,21 +52,18 @@ namespace ft
 			iterator_vector&	operator--() { --_ptr; return *this; };
 			iterator_vector		operator--(int) { iterator_vector tmp(*this); --_ptr; return tmp; };
 			
-			iterator_vector&	operator+=( difference_type rhs ) { _ptr += rhs; return *this; };	//int ?
+			iterator_vector&	operator+=( difference_type rhs ) { _ptr += rhs; return *this; };
 			iterator_vector&	operator-=( difference_type rhs ) { _ptr -= rhs; return *this; };
 
 			iterator_vector	operator+(difference_type rhs) const { return iterator_vector(_ptr + rhs); };
 			iterator_vector	operator-(difference_type rhs) const { return iterator_vector(_ptr - rhs); };
-			difference_type	operator+(const iterator_vector& rhs ) const { return iterator_vector(_ptr + rhs._ptr); };
-			difference_type	operator-(const iterator_vector& rhs ) const { return iterator_vector(_ptr - rhs._ptr); };
-			
-			reference	operator*() const { return *_ptr; };
-			pointer		operator->() const { return _ptr; };
-			reference	operator[]( difference_type rhs ) const { return _ptr[rhs]; };
+			difference_type	operator+(const iterator_vector& rhs ) const { return (_ptr + rhs._ptr); };
+			difference_type	operator-(const iterator_vector& rhs ) const { return (_ptr - rhs._ptr); };
 			
 		private:
 			pointer	_ptr;
 	};
+	
 
 	/*
 		Const iterator

@@ -22,10 +22,10 @@ namespace ft
 			typedef size_t				size_type;
 			typedef std::ptrdiff_t		difference_type;
 
-			typedef typename Allocator::pointer 			pointer;
-			typedef typename Allocator::const_pointer		const_pointer;
-			typedef typename Allocator::reference			reference;
-      		typedef typename Allocator::const_reference		const_reference;
+			typedef typename allocator_type::pointer 			pointer;
+			typedef typename allocator_type::const_pointer		const_pointer;
+			typedef typename allocator_type::reference			reference;
+      		typedef typename allocator_type::const_reference	const_reference;
 
 			typedef typename ft::iterator_vector<T>			iterator;
 			//typedef typename ft::const_iterator_vector					const_iterator;
@@ -218,49 +218,58 @@ namespace ft
 
 		iterator	insert( iterator pos, const T& value )
 		{
-			size_type index = *pos - *_data;
+			size_type	offset = pos - _data;
 
-			/*if (index < 0 || index > _size)
-				return ; //undefined behavior*/
 			if (_size == 0)
 				reserve(1);
 			if (_size == _capacity)
 				reserve(_capacity * 2);
 
-			for( size_t i = _size - 1; i >= index; --i)
+			for (size_type i = _size ; i > offset; i--)
 			{
-				//i + 1 = 0;
-				_data[i + 1] = _data[i];
+				_alloc.construct(_data + i, _data[i - 1]);
+				_alloc.destroy(_data + i - 1);
 			}
-			_data[index] = value;
+			_data[offset] = value;
 			_size++;
-
-			return pos - 1;
+			return (begin() + offset);
 		};
-		iterator	insert( iterator pos, size_type count, const T& value )
+		void	insert( iterator pos, size_type count, const T& value )
 		{
-			size_type index = *pos - *_data;
-			size_t difference = 0;
+			size_type offset = (pos - _data);
 
 			if (_size == 0)
 				reserve(1);
 			while ((_size + count) >= _capacity)
 				reserve(_capacity * 2);
 
-			//Copy count value before pos
+			size_type src = _size;
+			size_type dest = src + count;
 
-			for (size_t i = _size - 1; i >= index; i--)
+			for( ; src > offset; dest--, src--) 
 			{
-				_data[i + count] = _data[i];
-				difference = i + count;
+				_alloc.construct(_data + dest, _data[src]);
+				_alloc.destroy(_data + src);
 			}
-			difference--;
-			for (size_t i = difference; i >= index; i--)
-				_data[i] = value;
+			_alloc.construct(_data + dest, _data[src]);
+			for(size_type i = 0; i < count; i++, src++)
+				_data[src] = value;
 			_size += count;
+			
 
-			return pos;
+			/*ft::vector<T> tmp;
+			tmp._data = tmp._alloc.allocate(_capacity);
+			tmp._capacity = _capacity;
+			tmp._size += count;
 
+			iterator it = begin();
+			for ( ; it != pos; it++)
+				tmp.push_back(*it);
+			for( ; count > 0; count--)
+				tmp.push_back(value);
+			for ( ; it != end(); it++)
+				tmp.push_back(*it);
+			tmp.swap(*this);*/
 			
 		};
 		//template< class InputIt >
@@ -280,16 +289,31 @@ namespace ft
 		};
 		iterator	erase( iterator pos )
 		{
-			if (pos == (end() - 1))
-			{
-				pop_back();
-				return pos;
-			}
+			if (pos == end())
+				return end();
+
 			for (++pos; pos != end(); ++pos)
+			{
 				pos[-1] = *pos;
-			_alloc.destroy(&pos);
+				_alloc.destroy(&pos);
+			}
+				
 			_size--;
 			return pos;
+
+		/*
+			tmpcount = 0;
+			pointer tmp = allocate _capacity
+			for(iterator it = begin(); it != pos; it++, tmpcount++)
+				construct(tmp+tmpcount, *it)
+			iterator ret =tmp+1;
+			for(; pos != end; pos++, tmpcounter++)
+				construct(tmp + tmpcounter, *pos)
+			clear();
+			_size = tmpcounter;
+			_data = tmp;
+			return(ret);
+		*/
 		};
 		iterator	erase( iterator first, iterator last )
 		{
@@ -339,7 +363,7 @@ namespace ft
 			size_type	_size;		//size filled
 			size_type	_capacity;	//size allocated
 			Allocator	_alloc;		//allocator
-			T*			_data;		//content
+			pointer		_data;		//content
 
 	};
 
