@@ -122,6 +122,8 @@ int main()
     std::cout << "New size : " << vi2.size() << " Front/Back : " << vi2.front() << " / " << vi2.back() << std::endl;
 */
 
+    //Test insert
+    /*
     ft::vector<int> v;
     v.push_back(1);
     v.push_back(2);
@@ -134,22 +136,54 @@ int main()
     std::cout << std::endl;
 
     v.erase(i2);
-    //std::cout << "Suppression du 4 et ajout de trois 6 avant le 2 :" << std::endl;
-    /*i2 = v.end() - 2;
+    std::cout << "Suppression du 4 et ajout de treize 6 avant le 2 :" << std::endl;
+    i2 = v.end() - 2;
     v.insert(i2, 13, 6);
     for(size_t i = 0; i < v.size(); i++)
         std::cout << v[i] << " ";
-    std::cout << std::endl;*/
+    std::cout << std::endl;
 
-    std::cout << "Suppression du 4 et ajout,avant le 2, de 0 a 7 :" << std::endl;
-    i2 = v.end() - 2;
+    std::cout << "Suppression du 4 et ajout, avant le 2, de 0 a 7 :" << std::endl;
     ft::vector<int> v2;
+    ft::vector<int> v3;
+    for(int i = 1; i < 4; i++)
+        v3.push_back(i);
+    i2 = v3.end() - 2;
     for(int i = 0; i < 8; i++)
         v2.push_back(i);
-    v.insert(i2, v2.begin(), v2.end());
-    for(size_t i = 0; i < v.size(); i++)
-        std::cout << v[i] << " ";
+    v3.insert(i2, v2.begin(), v2.end());
+    for(size_t i = 0; i < v3.size(); i++)
+        std::cout << v3[i] << " ";
     std::cout << std::endl;
+
+    std::cout << "Test de resize a 8 :" << std::endl;
+    std::cout << "Old size : " << v3.size() << " Front/Back : " << v3.front() << " / " << v3.back() << std::endl;
+    v3.resize(8);
+    std::cout << "New size : " << v3.size() << " Front/Back : " << v3.front() << " / " << v3.back() << std::endl;
+*/
+
+    //Test assign
+    /*
+    ft::vector<int> vc(vi1);
+    for(size_t i = 0; i < vc.size(); i++)
+        std::cout << vc[i] << " ";
+    std::cout << std::endl;
+    vc.assign(3, 12);
+    for(size_t i = 0; i < vc.size(); i++)
+        std::cout << vc[i] << " ";
+    std::cout << std::endl;
+    vc.assign(vi1.begin(), vi1.end());
+    for(size_t i = 0; i < vc.size(); i++)
+        std::cout << vc[i] << " ";
+    std::cout << std::endl;
+    */
+
+   /*std::cout << "\nTest : " << std::endl;
+   ft::vector<int> v3(5, 12);
+    for(size_t i = 0; i < v3.size(); i++)
+        std::cout << v3[i] << " ";
+    std::cout << std::endl;*/
+
 
     return 0;
 }
