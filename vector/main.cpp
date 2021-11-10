@@ -117,8 +117,8 @@ int main()
     ft::vector<int>::iterator ite = vi1.end();
     for (size_t i = 0; i < 5; i++)
         vi2.push_back(i);
-    vi2.assign(it, ite);
     std::cout << "Old size : " << vi2.size() << " Front/Back : " << vi2.front() << " / " << vi2.back() << std::endl;
+    vi2.assign(it, ite);
     std::cout << "New size : " << vi2.size() << " Front/Back : " << vi2.front() << " / " << vi2.back() << std::endl;
 */
 
@@ -183,7 +183,6 @@ int main()
     for(size_t i = 0; i < v3.size(); i++)
         std::cout << v3[i] << " ";
     std::cout << std::endl;*/
-
 
     return 0;
 }

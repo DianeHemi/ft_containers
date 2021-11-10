@@ -3,6 +3,7 @@
 
 # include "pair.hpp"
 # include <memory>
+# include <limits>
 
 namespace ft
 {
@@ -19,7 +20,7 @@ namespace ft
 			typedef size_t				size_type;
 			typedef std::ptrdiff_t		difference_type;
 			typedef Compare             key_compare;
-			typedef Allocator			allocator_type;
+			typedef Alloc				allocator_type;
 
 			typedef typename ft::pair<const Key, T> value_type;
 
