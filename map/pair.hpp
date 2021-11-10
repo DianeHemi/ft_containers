@@ -15,7 +15,7 @@ namespace ft
 
 		public:
 			pair() { };
-			pair( const T1& x, const T2& y ) : _fist(x), _second(y) { };
+			pair( const T1& x, const T2& y ) : _first(x), _second(y) { };
 			template<class U1, class U2> pair( const pair<U1, U2>& p ) : _first(p._first), _second(p._second)  { };
 			~pair() { };
 
@@ -60,7 +60,17 @@ namespace ft
 	template<class T1, class T2>
     ft::pair<T1, T2> make_pair( T1 x, T2 y );
 	//{ return (pair<T1,T2>(x,y)); }
-	
+
+
+	/*
+		Less
+	*/
+	template<class T>
+	struct less
+	{
+		bool operator() (const T& x, const T& y) const { return x < y; };
+	};
+
 }
 
 #endif
