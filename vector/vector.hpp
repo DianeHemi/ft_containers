@@ -8,6 +8,7 @@
 # include <iostream>
 # include "iterator_vector.hpp"
 # include "../lexicographical_compare.hpp"
+# include "../enable_if.hpp"
 
 namespace ft
 {
@@ -236,7 +237,7 @@ namespace ft
 		};
 		void	insert( iterator pos, size_type count, const T& value )
 		{
-			size_type offset = (pos - _data);
+			/*size_type offset = (pos - _data);
 
 			if (_size == 0)
 				reserve(1);
@@ -254,13 +255,12 @@ namespace ft
 			_alloc.construct(_data + dest, _data[src]);
 			for(size_type i = 0; i < count; i++, src++)
 				_data[src] = value;
-			_size += count;
+			_size += count;*/
 			
 
-			/*ft::vector<T> tmp;
+			ft::vector<T> tmp;
 			tmp._data = tmp._alloc.allocate(_capacity);
 			tmp._capacity = _capacity;
-			tmp._size += count;
 
 			iterator it = begin();
 			for ( ; it != pos; it++)
@@ -269,11 +269,26 @@ namespace ft
 				tmp.push_back(value);
 			for ( ; it != end(); it++)
 				tmp.push_back(*it);
-			tmp.swap(*this);*/
+			tmp.swap(*this);
 			
 		};
-		//template< class InputIt >
-			//void insert( iterator pos, InputIt first, InputIt last );
+		template< class InputIt >
+		 void insert( iterator pos, InputIt first, InputIt last, 
+		 typename ft::enable_if<!is_integral<InputIt>::value, InputIt>::type = NULL )
+		{
+			ft::vector<T> tmp;
+			tmp._data = tmp._alloc.allocate(_capacity);
+			tmp._capacity = _capacity;
+
+			iterator it = begin();
+			for( ; it != pos; it++)
+				tmp.push_back(*it);
+			for(size_type i = 0 ; first != last; first++, i++)
+				tmp.push_back(*first);
+			for (; it != end(); it++)
+				tmp.push_back(*it);
+			tmp.swap(*this);
+		};
 
 
 

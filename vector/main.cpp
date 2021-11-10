@@ -134,9 +134,19 @@ int main()
     std::cout << std::endl;
 
     v.erase(i2);
-    std::cout << "Suppression du 4 et ajout de trois 6 avant le 2 :" << std::endl;
-    i2 = v.end() - 2;
+    //std::cout << "Suppression du 4 et ajout de trois 6 avant le 2 :" << std::endl;
+    /*i2 = v.end() - 2;
     v.insert(i2, 13, 6);
+    for(size_t i = 0; i < v.size(); i++)
+        std::cout << v[i] << " ";
+    std::cout << std::endl;*/
+
+    std::cout << "Suppression du 4 et ajout,avant le 2, de 0 a 7 :" << std::endl;
+    i2 = v.end() - 2;
+    ft::vector<int> v2;
+    for(int i = 0; i < 8; i++)
+        v2.push_back(i);
+    v.insert(i2, v2.begin(), v2.end());
     for(size_t i = 0; i < v.size(); i++)
         std::cout << v[i] << " ";
     std::cout << std::endl;
