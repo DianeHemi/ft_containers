@@ -28,6 +28,7 @@ namespace ft
 			typedef const value_type&   const_reference;
 			typedef typename allocator_type::pointer 		pointer;
 			typedef typename allocator_type::const_pointer	const_pointer;
+			//typedef pour bst ?
 
 			//typedef typename ft::iterator_map<T>			    iterator;        //legacy bidirectionnal iterator to value_type
 			//typedef typename ft::const_iterator_map<T>	    const_iterator;  //legacy bidirectionnal iterator to const value_type
@@ -37,7 +38,7 @@ namespace ft
 		/****
 			Constructors
 		****/
-			//Default constructor
+		//Default constructor
 		/*explicit map( const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type() )
 			: 
 		{
@@ -141,7 +142,15 @@ namespace ft
 			key_type		_key;
 
 
+		//Elements relatifs a l'arbre binaire
+		//creation des nodes, free des nodes, suppression node,  
+		//insertion node, recherche d'une node, clear arbre, copy tree ?
+
 	};
+
+
+
+
 
 	/*template< class Key, class T, class Compare, class Alloc >
 	bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs )
