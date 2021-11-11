@@ -28,10 +28,10 @@ namespace ft
 			typedef typename allocator_type::reference			reference;
       		typedef typename allocator_type::const_reference	const_reference;
 
-			typedef typename ft::iterator_vector<T>			iterator;
-			typedef typename ft::const_iterator_vector<T>	const_iterator;
-			typedef typename ft::reverse_iterator<T>		reverse_iterator;
-			//typedef typename ft::const_reverse_iterator<T>	const_reverse_iterator
+			typedef typename ft::iterator_vector<T>					iterator;
+			typedef typename ft::const_iterator_vector<T>			const_iterator;
+			typedef typename ft::reverse_iterator<iterator>			reverse_iterator;
+			typedef typename ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 		/****
 			Constructors
@@ -56,10 +56,11 @@ namespace ft
 			_size = count;
 		}
 
-		//Range constructor - enable_if = Vérifie si on a un itérateur. Si ce n'est pas le cas on appelle pas ce constructeur
+		//Range constructor 
+		//enable_if = Vérifie si on a un itérateur. Si ce n'est pas le cas on appelle pas ce constructeur
 		template< class InputIt > 
 			vector( InputIt first, InputIt last, const Allocator& alloc = Allocator(),
-				typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type = NULL ) //type* ?
+				typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type = NULL )
 			: _size(0), _capacity(0), _alloc(alloc), _data(0)
 		{
 			for (iterator iter = first; iter != last; iter++)
@@ -81,7 +82,7 @@ namespace ft
 
 		virtual ~vector()
 		{
-			_alloc.destroy(_data); //ou clear ?
+			_alloc.destroy(_data);
 			_alloc.deallocate(_data, _capacity);
 		}
 
@@ -110,9 +111,9 @@ namespace ft
 		const_iterator				end() const { return const_iterator(_data + _size); };
 		
 		reverse_iterator			rbegin() { return reverse_iterator(_data + _size); };
-		//const_reverse_iterator	rbegin() const;
+		const_reverse_iterator		rbegin() const;
 		reverse_iterator			rend() { return reverse_iterator(_data - 1); };
-		//const_reverse_iterator	rend() const;
+		const_reverse_iterator		rend() const;
 
 
 		/*********************
