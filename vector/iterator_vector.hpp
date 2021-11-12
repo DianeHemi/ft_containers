@@ -39,7 +39,8 @@ namespace ft
 			reference	operator*() const { return *_ptr; };
 			pointer		operator->() const { return _ptr; };
 			reference	operator[]( difference_type rhs ) const { return (*(_ptr + rhs)); };
-			
+
+//Friend + enlever const + ajouter lhs ?
 			bool		operator==( const iterator_vector & rhs ) const { return (_ptr == rhs._ptr); }; //friend ?
 			bool		operator!=( const iterator_vector & rhs ) const { return (_ptr != rhs._ptr); };
 			bool		operator<( const iterator_vector & rhs ) const { return (_ptr < rhs._ptr); };
