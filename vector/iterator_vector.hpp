@@ -60,7 +60,7 @@ namespace ft
 			difference_type	operator+(const iterator_vector& rhs ) const { return (_ptr + rhs._ptr); };
 			difference_type	operator-(const iterator_vector& rhs ) const { return (_ptr - rhs._ptr); };
 			
-		private:
+		//private:
 			pointer	_ptr;
 	};
 	
@@ -86,7 +86,7 @@ namespace ft
 			const_iterator_vector& operator=( const const_iterator_vector & rhs )
 			{
 				if (this != &rhs)
-					this->_ptr = rhs._ptr;
+					_ptr = rhs._ptr;
 				return *this;
 			}
 
@@ -114,8 +114,8 @@ namespace ft
 			difference_type	operator+(const const_iterator_vector& rhs ) const { return (_ptr + rhs._ptr); };
 			difference_type	operator-(const const_iterator_vector& rhs ) const { return (_ptr - rhs._ptr); };
 			
-		private:
-			pointer const	_ptr;
+		//private:
+			pointer	_ptr;
 	};
 
 

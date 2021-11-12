@@ -3,7 +3,6 @@
 
 # include "pair.hpp"
 # include <memory>
-# include <limits>
 
 namespace ft
 {
@@ -94,7 +93,7 @@ namespace ft
 		****/
 		bool        empty() const { return _size == 0; };
 		size_type   size() const { return _size; };
-		size_type   max_size() const { return (std::numeric_limits<difference_type>::max()); };
+		size_type   max_size() const { return _alloc.max_size(); };
 		
 		/****
 			Element access

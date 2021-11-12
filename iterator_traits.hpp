@@ -131,44 +131,44 @@ namespace ft
 
 
 
-	template< class Iterator >
-	bool	operator==( const reverse_iterator<Iterator> & rhs,
-						const reverse_iterator<Iterator> & lhs ) 
+	template< class Iterator1, class Iterator2 >
+	bool	operator==( const reverse_iterator<Iterator1> & rhs,
+						const reverse_iterator<Iterator2> & lhs ) 
 	{ 
 		return (lhs.base() == rhs.base()); 
 	};
 
-	template< class Iterator >
-	bool	operator!=( const reverse_iterator<Iterator> & rhs,
-						const reverse_iterator<Iterator> & lhs )
+	template< class Iterator1, class Iterator2 >
+	bool	operator!=( const reverse_iterator<Iterator1> & rhs,
+						const reverse_iterator<Iterator2> & lhs )
 	{ 
 		return (lhs.base() != rhs.base()); 
 	};
 
-	template< class Iterator >
-	bool	operator<( const reverse_iterator<Iterator> & rhs,
-						const reverse_iterator<Iterator> & lhs )
+	template< class Iterator1, class Iterator2 >
+	bool	operator<( const reverse_iterator<Iterator1> & rhs,
+						const reverse_iterator<Iterator2> & lhs )
 	{ 
 		return (lhs.base() > rhs.base()); 
 	};
 
-	template< class Iterator >
-	bool	operator<=( const reverse_iterator<Iterator> & rhs,
-						const reverse_iterator<Iterator> & lhs ) 
+	template< class Iterator1, class Iterator2 >
+	bool	operator<=( const reverse_iterator<Iterator1> & rhs,
+						const reverse_iterator<Iterator2> & lhs ) 
 	{ 
 		return (lhs.base() >= rhs.base());
 	};
 
-	template< class Iterator >
-	bool	operator>( const reverse_iterator<Iterator> & rhs,
-						const reverse_iterator<Iterator> & lhs ) 
+	template< class Iterator1, class Iterator2 >
+	bool	operator>( const reverse_iterator<Iterator1> & rhs,
+						const reverse_iterator<Iterator2> & lhs ) 
 	{ 
 		return (lhs.base() < rhs.base());
 	};
 
-	template< class Iterator >
-	bool	operator>=( const reverse_iterator<Iterator> & rhs,
-						const reverse_iterator<Iterator> & lhs ) 
+	template< class Iterator1, class Iterator2 >
+	bool	operator>=( const reverse_iterator<Iterator1> & rhs,
+						const reverse_iterator<Iterator2> & lhs ) 
 	{ 
 		return (lhs.base() <= rhs.base());
 	};

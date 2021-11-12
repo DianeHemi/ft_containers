@@ -4,15 +4,16 @@
 # include <memory>
 # include <cstddef>
 # include <stdexcept>
-# include <limits>
 # include <iostream>
 # include "iterator_vector.hpp"
 # include "../lexicographical_compare.hpp"
 # include "../enable_if.hpp"
 
+//./one srcs/vector/assign.cpp > ft && ./one srcs/vector/assign.cpp > std ; diff -y ft std
+
 namespace ft
 {
-	template <class T, class Allocator=std::allocator<T>>
+	template <class T, class Allocator=std::allocator<T> >
 	class vector {
 		public:
 		/*
@@ -144,7 +145,7 @@ namespace ft
 		***************/
 		bool		empty() const { return (_size == 0); };
 		size_type	size() const { return _size; };
-		size_type	max_size() const { return (std::numeric_limits<difference_type>::max()); };
+		size_type	max_size() const { return _alloc.max_size(); };
 		size_type	capacity() const { return _capacity; };
 		void		resize( size_type n, value_type val = value_type() )
 		{
@@ -190,6 +191,19 @@ namespace ft
 		};
 		iterator	insert( iterator pos, const T& value )
 		{
+			/*ft::vector<T> tmp;
+			tmp._data = tmp._alloc.allocate(_capacity);
+			tmp._capacity = _capacity;
+			size_type	offset = pos - _data;
+
+			iterator it = begin();
+			for ( ; it != pos; it++)
+				tmp.push_back(*it);
+			tmp.push_back(value);
+			for ( ; it != end(); it++)
+				tmp.push_back(*it);
+			tmp.swap(*this);
+			return (begin() + offset);*/
 			size_type	offset = pos - _data;
 
 			if (_size == _capacity)
@@ -206,26 +220,6 @@ namespace ft
 		};
 		void	insert( iterator pos, size_type count, const T& value )
 		{
-			/*size_type offset = (pos - _data);
-
-			if (_size == 0)
-				reserve(1);
-			while ((_size + count) >= _capacity)
-				reserve(_capacity * 2);
-
-			size_type src = _size;
-			size_type dest = src + count;
-
-			for( ; src > offset; dest--, src--) 
-			{
-				_alloc.construct(_data + dest, _data[src]);
-				_alloc.destroy(_data + src);
-			}
-			_alloc.construct(_data + dest, _data[src]);
-			for(size_type i = 0; i < count; i++, src++)
-				_data[src] = value;
-			_size += count;*/
-
 			ft::vector<T> tmp;
 			tmp._data = tmp._alloc.allocate(_capacity);
 			tmp._capacity = _capacity;
@@ -268,13 +262,19 @@ namespace ft
 			if (pos == end())
 				return end();
 
-			for (++pos; pos != end(); ++pos)
+			iterator tmp = pos;
+
+			/*for ( ; pos != end(); pos++)
 			{
 				pos[-1] = *pos;
-				_alloc.destroy(&pos);
-			}	
+				_alloc.destroy(&(*pos));
+			}*/
+
+			//Call second erase with pos
+			
+
 			_size--;
-			return pos;
+			return tmp;
 		};
 		iterator	erase( iterator first, iterator last )
 		{
@@ -282,16 +282,31 @@ namespace ft
 			iterator return_it = last;
 			iterator diff_it = last;
 
+			/*
+			ft::vector<T> tmp;
+			while (first != diff_it)
+			{
+				_alloc.destroy(&(*first));
+				*first++;
+				_size--;
+			}
+			tmp._data = tmp._alloc.allocate(_size);
+			for ( ; last != end(); ++last, ++storage_it)
+				*storage_it = *last;
+			tmp.swap(*this);
+			*/
+
 			for ( ; last != end(); ++last, ++storage_it)
 				*storage_it = *last;
 
 			while (first != diff_it)
 			{
-				_alloc.destroy(&first);
+				_alloc.destroy(&(*first));
 				*first++;
 				_size--;
 			}
-			return return_it;
+
+			return diff_it;
 		};
 		void		swap( vector& other )
 		{
@@ -319,7 +334,7 @@ namespace ft
 	};
 	
 	template <class T, class Allocator>
-	bool operator==(const vector<T,Allocator>& lhs, const vector<T,Allocator>& rhs)
+	bool operator==(const vector<T, Allocator>& lhs, const vector<T, Allocator>& rhs)
 	{
 		if (lhs.size() != rhs.size())
 			return false;
@@ -327,7 +342,7 @@ namespace ft
 	}
 
 	template <class T, class Allocator>
-  	bool operator!=(const vector<T,Allocator>& lhs, const vector<T,Allocator>& rhs)
+  	bool operator!=(const vector<T, Allocator>& lhs, const vector<T, Allocator>& rhs)
 	{
 		if (lhs.size() != rhs.size())
 			return true;

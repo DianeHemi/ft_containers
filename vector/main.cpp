@@ -1,6 +1,7 @@
 #include "vector.hpp"
 #include <vector>
 #include <iostream>
+#include <string>
 
 void test_iterator()
 {
@@ -183,6 +184,7 @@ int main()
     for(size_t i = 0; i < v3.size(); i++)
         std::cout << v3[i] << " ";
     std::cout << std::endl;*/
+
 
     return 0;
 }
