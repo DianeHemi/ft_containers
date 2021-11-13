@@ -38,20 +38,20 @@ namespace ft
 			Constructors
 		****/
 		explicit vector( const Allocator& alloc = Allocator() )
-			: _size(0), _capacity(0), _alloc(alloc), _data(0) { };
+			: _size(0), _capacity(0), _alloc(alloc), _data(NULL) { };
 
 		//Copy constructor
 		vector( const vector & src ) : 
-			_size(0), _capacity(0), _alloc(Allocator()), _data(0)
+			_size(0), _capacity(0), _alloc(Allocator()), _data(NULL)
 		{
 			*this = src;
 		}	
 
 		// Fill constructor with count copies of T
 		explicit vector( size_type count, const T& value = T(), const Allocator& alloc = Allocator() ) 
-			: _size(0), _capacity(0), _alloc(alloc), _data(0)
+			: _size(0), _capacity(count), _alloc(alloc), _data(NULL)
 		{
-			reserve(count);
+			_data = _alloc.allocate(count);
 			for (size_type i = 0; i < count; i++)
 				_alloc.construct(_data + i, value);
 			_size = count;
@@ -60,9 +60,10 @@ namespace ft
 		//Range constructor 
 		//enable_if = Vérifie si on a un itérateur. Si ce n'est pas le cas on appelle pas ce constructeur
 		template< class InputIt > 
-			vector( InputIt first, InputIt last, const Allocator& alloc = Allocator(),
-				typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type = NULL )
-			: _size(0), _capacity(0), _alloc(alloc), _data(0)
+			vector( InputIt first, 
+			typename ft::enable_if<!is_integral<InputIt>::value, InputIt>::type last, 
+			const Allocator& alloc = Allocator() )
+			: _size(0), _capacity(0), _alloc(alloc), _data(NULL)
 		{
 			for (iterator iter = first; iter != last; iter++)
 				push_back(*iter);
@@ -71,9 +72,9 @@ namespace ft
 		//Overload de l'operateur =
 		vector& operator=( const vector& src )
 		{
-			clear();
 			if (this != &src)
 			{
+				clear();
 				insert(begin(), src.begin(), src.end());
 				_size = src._size;
 				_capacity = src._capacity;
@@ -83,14 +84,15 @@ namespace ft
 
 		virtual ~vector()
 		{
-			_alloc.destroy(_data);
+			clear();
 			_alloc.deallocate(_data, _capacity);
+			_capacity = 0;
 		}
 
 
 		template < class InputIt > 
-		  void assign( InputIt first, InputIt last, 
-		  typename ft::enable_if<!is_integral<InputIt>::value, InputIt>::type = NULL)
+		  void assign( InputIt first, 
+		  typename ft::enable_if<!is_integral<InputIt>::value, InputIt>::type last )
 		{
 			erase(begin(), end());
 			insert(begin(), first, last);
@@ -178,15 +180,11 @@ namespace ft
 		****/
 		void		push_back( const value_type& val )
 		{
-			if (_size == _capacity)
-				reserve(_size == 0 ? 1 : _capacity * 2);
-			_data[_size] = val;
-			_size++;
-		}
+			insert(end(), val);
+		};
 		void		pop_back()
 		{
-			iterator ite = end();
-			_alloc.destroy(&ite);
+			_alloc.destroy(_data + _size - 1);
 			_size--;
 		};
 		iterator	insert( iterator pos, const T& value )
@@ -235,8 +233,8 @@ namespace ft
 			
 		};
 		template< class InputIt >
-		 void insert( iterator pos, InputIt first, InputIt last, 
-		 typename ft::enable_if<!is_integral<InputIt>::value, InputIt>::type = NULL )
+		 void insert( iterator pos, InputIt first, 
+		 typename ft::enable_if<!is_integral<InputIt>::value, InputIt>::type last )
 		{
 			ft::vector<T> tmp;
 			tmp._data = tmp._alloc.allocate(_capacity);
@@ -262,51 +260,24 @@ namespace ft
 			if (pos == end())
 				return end();
 
-			iterator tmp = pos;
-
-			/*for ( ; pos != end(); pos++)
-			{
-				pos[-1] = *pos;
-				_alloc.destroy(&(*pos));
-			}*/
-
-			//Call second erase with pos
-			
-
-			_size--;
-			return tmp;
+			return (erase(pos, pos + 1));
 		};
 		iterator	erase( iterator first, iterator last )
 		{
-			iterator storage_it = first;
-			iterator return_it = last;
-			iterator diff_it = last;
+			size_type offset = last - first;
+			size_type i = (first - begin()) + offset;
+			iterator tmp = first;
 
-			/*
-			ft::vector<T> tmp;
-			while (first != diff_it)
+			for( ; tmp != last; tmp++)
+				_alloc.destroy(&(*tmp));
+
+			for( ; i < _size; i++)
 			{
-				_alloc.destroy(&(*first));
-				*first++;
-				_size--;
+				_alloc.construct(_data + (i - offset), _data[i]);
+				_alloc.destroy(_data + i);
 			}
-			tmp._data = tmp._alloc.allocate(_size);
-			for ( ; last != end(); ++last, ++storage_it)
-				*storage_it = *last;
-			tmp.swap(*this);
-			*/
-
-			for ( ; last != end(); ++last, ++storage_it)
-				*storage_it = *last;
-
-			while (first != diff_it)
-			{
-				_alloc.destroy(&(*first));
-				*first++;
-				_size--;
-			}
-
-			return diff_it;
+			_size -= offset;
+			return first;
 		};
 		void		swap( vector& other )
 		{

@@ -40,13 +40,19 @@ namespace ft
 			pointer		operator->() const { return _ptr; };
 			reference	operator[]( difference_type rhs ) const { return (*(_ptr + rhs)); };
 
-//Friend + enlever const + ajouter lhs ?
-			bool		operator==( const iterator_vector & rhs ) const { return (_ptr == rhs._ptr); }; //friend ?
-			bool		operator!=( const iterator_vector & rhs ) const { return (_ptr != rhs._ptr); };
-			bool		operator<( const iterator_vector & rhs ) const { return (_ptr < rhs._ptr); };
-			bool		operator<=( const iterator_vector & rhs ) const { return (_ptr <= rhs._ptr); };
-			bool		operator>( const iterator_vector & rhs ) const { return (_ptr > rhs._ptr); };
-			bool		operator>=( const iterator_vector & rhs ) const { return (_ptr >= rhs._ptr ); };
+
+			friend bool	operator==( const iterator_vector & lhs, const iterator_vector & rhs )
+			{ return (lhs._ptr == rhs._ptr); };
+			friend bool	operator!=( const iterator_vector & lhs, const iterator_vector & rhs )
+			{ return (lhs._ptr != rhs._ptr); };
+			friend bool	operator<( const iterator_vector & lhs, const iterator_vector & rhs )
+			{ return (lhs._ptr < rhs._ptr); };
+			friend bool	operator<=( const iterator_vector & lhs, const iterator_vector & rhs )
+			{ return (lhs._ptr <= rhs._ptr); };
+			friend bool	operator>( const iterator_vector & lhs, const iterator_vector & rhs )
+			{ return (lhs._ptr > rhs._ptr); };
+			friend bool	operator>=( const iterator_vector & lhs, const iterator_vector & rhs )
+			{ return (lhs._ptr >= rhs._ptr ); };
 
 			iterator_vector&	operator++() { ++_ptr; return *this; };
 			iterator_vector 	operator++(int) { iterator_vector tmp(*this); ++_ptr; return tmp; };
@@ -58,13 +64,16 @@ namespace ft
 
 			iterator_vector	operator+(difference_type rhs) const { return iterator_vector(_ptr + rhs); };
 			iterator_vector	operator-(difference_type rhs) const { return iterator_vector(_ptr - rhs); };
-			difference_type	operator+(const iterator_vector& rhs ) const { return (_ptr + rhs._ptr); };
-			difference_type	operator-(const iterator_vector& rhs ) const { return (_ptr - rhs._ptr); };
+			friend iterator_vector operator+( difference_type diff, const iterator_vector& rhs ) 
+			{ return rhs._ptr + diff; };
+			friend difference_type operator-( const iterator_vector& lhs, const iterator_vector& rhs ) 
+			{ return lhs._ptr - rhs._ptr; };
+	
 			
-		//private:
 			pointer	_ptr;
 	};
 	
+
 
 	/*
 		Const iterator
@@ -76,8 +85,8 @@ namespace ft
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::value_type		value_type;
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type	difference_type;
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category	iterator_category;
-			typedef	T&	reference;
-			typedef	T*	pointer;
+			typedef	const T&	reference;
+			typedef	const T*	pointer;
 
 			const_iterator_vector( ) : _ptr(NULL) { };
 			const_iterator_vector( pointer src ) : _ptr(src) { };
@@ -94,13 +103,19 @@ namespace ft
 			reference	operator*() const { return *_ptr; };
 			pointer		operator->() const { return _ptr; };
 			reference	operator[]( difference_type rhs ) const { return (*(_ptr + rhs)); };
-			
-			bool		operator==( const const_iterator_vector & rhs ) const { return (_ptr == rhs._ptr); };
-			bool		operator!=( const const_iterator_vector & rhs ) const { return (_ptr != rhs._ptr); };
-			bool		operator<( const const_iterator_vector & rhs ) const { return (_ptr < rhs._ptr); };
-			bool		operator<=( const const_iterator_vector & rhs ) const { return (_ptr <= rhs._ptr); };
-			bool		operator>( const const_iterator_vector & rhs ) const { return (_ptr > rhs._ptr); };
-			bool		operator>=( const const_iterator_vector & rhs ) const { return (_ptr >= rhs._ptr ); };
+
+			friend bool	operator==( const const_iterator_vector & lhs, const const_iterator_vector & rhs )
+			{ return (lhs._ptr == rhs._ptr); }; //friend ?
+			friend bool	operator!=( const const_iterator_vector & lhs, const const_iterator_vector & rhs )
+			{ return (lhs._ptr != rhs._ptr); };
+			friend bool	operator<( const const_iterator_vector & lhs, const const_iterator_vector & rhs )
+			{ return (lhs._ptr < rhs._ptr); };
+			friend bool	operator<=( const const_iterator_vector & lhs, const const_iterator_vector & rhs )
+			{ return (lhs._ptr <= rhs._ptr); };
+			friend bool	operator>( const const_iterator_vector & lhs, const const_iterator_vector & rhs )
+			{ return (lhs._ptr > rhs._ptr); };
+			friend bool	operator>=( const const_iterator_vector & lhs, const const_iterator_vector & rhs )
+			{ return (lhs._ptr >= rhs._ptr ); };
 
 			const_iterator_vector&	operator++() { ++_ptr; return *this; };
 			const_iterator_vector 	operator++(int) { const_iterator_vector tmp(*this); ++_ptr; return tmp; };
@@ -112,13 +127,14 @@ namespace ft
 
 			const_iterator_vector	operator+(difference_type rhs) const { return const_iterator_vector(_ptr + rhs); };
 			const_iterator_vector	operator-(difference_type rhs) const { return const_iterator_vector(_ptr - rhs); };
-			difference_type	operator+(const const_iterator_vector& rhs ) const { return (_ptr + rhs._ptr); };
-			difference_type	operator-(const const_iterator_vector& rhs ) const { return (_ptr - rhs._ptr); };
-			
-		//private:
+			friend const_iterator_vector operator+( difference_type diff, const const_iterator_vector& rhs ) 
+			{ return rhs._ptr + diff; };
+			friend difference_type operator-( const const_iterator_vector& lhs, const const_iterator_vector& rhs )
+			{ return lhs._ptr - rhs._ptr; };
+
+
 			pointer	_ptr;
 	};
-
 
 
 } //ft
