@@ -243,7 +243,7 @@ class RedBlackTree
 	*/
 	void insertFix( NodePtr k )
 	{
-		NodePtr u;
+		/*NodePtr u;
 
 		while(k->parent->color == RED)
 		{
@@ -292,6 +292,67 @@ class RedBlackTree
 			}
 			if (k == _root)
 				break ;
+		}
+		_root->color = BLACK;*/
+
+		while(k->parent->color == RED) 
+		{
+			NodePtr grandparent = k->parent->parent;
+			NodePtr uncle = getRoot();
+			if(k->parent == grandparent->left) 
+			{
+				if (grandparent->right)
+					uncle = grandparent->right;
+				if (uncle->color == RED)
+				{
+					k->parent->color = BLACK;
+					uncle->color = BLACK;
+					grandparent->color = RED;
+					if (grandparent->data != _root->data)
+						k = grandparent;
+					else 
+						break;
+				}
+					else if (k == grandparent->left->right) {
+					   leftRotate(k->parent);
+				}
+				else 
+				{
+					k->parent->color = BLACK;
+					grandparent->color = RED;
+					rightRotate(grandparent);
+					if (grandparent->data != _root->data)
+						k = grandparent;
+					else { break; }
+				}
+			}
+			else 
+			{
+				if (grandparent->left)
+					uncle = grandparent->left;
+				if (uncle->color == RED)
+				{
+					k->parent->color = BLACK;
+					uncle->color = BLACK;
+					grandparent->color = RED;
+					if (grandparent->data != _root->data)
+						k = grandparent;
+					else 
+						break;
+				}
+				else if (k == grandparent->right->left)
+					rightRotate(k->parent);
+				else 
+				{
+					k->parent->color = BLACK;
+					grandparent->color = RED;
+					leftRotate(grandparent);
+					if (grandparent->data != _root->data)
+						k = grandparent;
+					else
+						break;
+				}
+			}
 		}
 		_root->color = BLACK;
 	}
@@ -346,6 +407,19 @@ class RedBlackTree
 		NodePtr searchTree(int k) 
 		{
 			return searchTreeHelper(this->_root, k);
+			/*NodePtr tmp = getRoot();
+			if (tmp == NULL)
+				return NULL;
+			while(tmp)
+			{
+				if (k == tmp->data)
+					return tmp;
+				else if ( k < tmp->data)
+					tmp = tmp->left;
+				else
+					tmp = tmp->right;
+			}
+			return NULL;*/
 		}
 
 		NodePtr minimum( NodePtr node )
@@ -478,21 +552,25 @@ class RedBlackTree
 };
 
 int main() {
-  RedBlackTree bst;
-  bst.insert(55);
-  bst.insert(40);
-  bst.insert(65);
-  bst.insert(60);
-  bst.insert(75);
-  bst.insert(57);
-  bst.insert(20);
-  bst.insert(62);
+	RedBlackTree bst;
+	bst.insert(55);
+	bst.insert(40);
+	bst.insert(65);
+	bst.insert(60);
+	bst.insert(75);
+	bst.insert(57);
+	bst.insert(20);
+	bst.insert(62);
 
-  bst.printTree();
-  std::cout << std::endl
-     << "After deleting" << std::endl;
-  bst.deleteNode(40);
-  bst.deleteNode(60);
+	bst.printTree();
+	std::cout << std::endl
+		<< "After deleting" << std::endl;
+	bst.deleteNode(40);
+	bst.deleteNode(60);
   
-  bst.printTree();
+	/*for (int i = 0; i < 1000000; i++)
+		bst.insert(i);*/
+
+	bst.printTree();
+	//std::cout << bst.searchTree(62)->data <<std::endl;
 }

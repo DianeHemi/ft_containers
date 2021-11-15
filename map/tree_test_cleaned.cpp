@@ -261,7 +261,19 @@ class RedBlackTree
 
 		NodePtr searchTree(int k) 
 		{
-			return searchTreeHelper(this->_root, k);
+			//return searchTreeHelper(this->_root, k);
+			NodePtr tmp = getRoot();
+			if (tmp == NULL)
+				return NULL;
+			while(tmp)
+			{
+				if (k == tmp->data)
+					return tmp;
+				else if ( k < tmp->data)
+					tmp = tmp->left;
+				else
+					tmp = tmp->right;
+			}
 		}
 
 		NodePtr minimum( NodePtr node ) //Node at the utter left
