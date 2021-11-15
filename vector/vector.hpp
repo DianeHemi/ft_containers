@@ -189,19 +189,6 @@ namespace ft
 		};
 		iterator	insert( iterator pos, const T& value )
 		{
-			/*ft::vector<T> tmp;
-			tmp._data = tmp._alloc.allocate(_capacity);
-			tmp._capacity = _capacity;
-			size_type	offset = pos - _data;
-
-			iterator it = begin();
-			for ( ; it != pos; it++)
-				tmp.push_back(*it);
-			tmp.push_back(value);
-			for ( ; it != end(); it++)
-				tmp.push_back(*it);
-			tmp.swap(*this);
-			return (begin() + offset);*/
 			size_type	offset = pos - _data;
 
 			if (_size == _capacity)
