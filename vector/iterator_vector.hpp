@@ -105,7 +105,7 @@ namespace ft
 			reference	operator[]( difference_type rhs ) const { return (*(_ptr + rhs)); };
 
 			friend bool	operator==( const const_iterator_vector & lhs, const const_iterator_vector & rhs )
-			{ return (lhs._ptr == rhs._ptr); }; //friend ?
+			{ return (lhs._ptr == rhs._ptr); };
 			friend bool	operator!=( const const_iterator_vector & lhs, const const_iterator_vector & rhs )
 			{ return (lhs._ptr != rhs._ptr); };
 			friend bool	operator<( const const_iterator_vector & lhs, const const_iterator_vector & rhs )

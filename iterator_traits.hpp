@@ -109,7 +109,7 @@ namespace ft
 			 * Member functions
 			****/
 			iterator_type	base() const { return _current; };
-			reference	operator*() const { Iter tmp = _current; return *tmp--; };
+			reference	operator*() const { Iter tmp = _current; return *--tmp; };
 			pointer		operator->() const { return &(operator*()); };
 			reference	operator[]( difference_type n ) const { return (base()[-n-1]); };
 
@@ -132,43 +132,43 @@ namespace ft
 
 
 	template< class Iter1, class Iter2 >
-	bool	operator==( const reverse_iterator<Iter1> & rhs,
-						const reverse_iterator<Iter2> & lhs ) 
+	bool	operator==( const reverse_iterator<Iter1> & lhs,
+						const reverse_iterator<Iter2> & rhs ) 
 	{ 
 		return (lhs.base() == rhs.base()); 
 	};
 
 	template< class Iter1, class Iter2 >
-	bool	operator!=( const reverse_iterator<Iter1> & rhs,
-						const reverse_iterator<Iter2> & lhs )
+	bool	operator!=( const reverse_iterator<Iter1> & lhs,
+						const reverse_iterator<Iter2> & rhs )
 	{ 
 		return (lhs.base() != rhs.base()); 
 	};
 
 	template< class Iter1, class Iter2 >
-	bool	operator<( const reverse_iterator<Iter1> & rhs,
-						const reverse_iterator<Iter2> & lhs )
+	bool	operator<( const reverse_iterator<Iter1> & lhs,
+						const reverse_iterator<Iter2> & rhs )
 	{ 
 		return (lhs.base() > rhs.base()); 
 	};
 
 	template< class Iter1, class Iter2 >
-	bool	operator<=( const reverse_iterator<Iter1> & rhs,
-						const reverse_iterator<Iter2> & lhs ) 
+	bool	operator<=( const reverse_iterator<Iter1> & lhs,
+						const reverse_iterator<Iter2> & rhs ) 
 	{ 
 		return (lhs.base() >= rhs.base());
 	};
 
 	template< class Iter1, class Iter2 >
-	bool	operator>( const reverse_iterator<Iter1> & rhs,
-						const reverse_iterator<Iter2> & lhs ) 
+	bool	operator>( const reverse_iterator<Iter1> & lhs,
+						const reverse_iterator<Iter2> & rhs ) 
 	{ 
 		return (lhs.base() < rhs.base());
 	};
 
 	template< class Iter1, class Iter2 >
-	bool	operator>=( const reverse_iterator<Iter1> & rhs,
-						const reverse_iterator<Iter2> & lhs ) 
+	bool	operator>=( const reverse_iterator<Iter1> & lhs,
+						const reverse_iterator<Iter2> & rhs ) 
 	{ 
 		return (lhs.base() <= rhs.base());
 	};
@@ -193,16 +193,3 @@ namespace ft
 } //ft
 
 #endif
-
-
-
-
-
-
-
-//Bidirectional : map & set
-	// ++, -- sauf si const. Avec *. ->, ==, !=
-//Random-access iterator : vector
-	// ++, +=, --, -= sauf si const. Avec * ou []. ->, ==, !=, <, <=, >, >=
-
-//iterateur pesonnalise pour vector + iterateur personnalise pour map. Sont differents
