@@ -198,55 +198,64 @@ class RedBlackTree
 	****/
 		void insertFix( NodePtr k )
 		{
-			NodePtr u;
-
-			while(k->parent->color == RED)
+			while(k->parent->color == RED) 
 			{
-				if (k->parent == k->parent->right)
+				NodePtr grandparent = k->parent->parent;
+				NodePtr uncle = getRoot();
+				if(k->parent == grandparent->left) 
 				{
-					u = k->parent->parent->left;
-					if (u->color == RED)
+					if (grandparent->right)
+						uncle = grandparent->right;
+					if (uncle->color == RED)
 					{
-						u->color = BLACK;
 						k->parent->color = BLACK;
-						k->parent->parent->color = RED;
-						k = k->parent->parent;
+						uncle->color = BLACK;
+						grandparent->color = RED;
+						if (grandparent->data != _root->data)
+							k = grandparent;
+						else 
+							break;
 					}
-					else
+						else if (k == grandparent->left->right) {
+						leftRotate(k->parent);
+					}
+					else 
 					{
-						if (k == k->parent->left)
-						{
-							k = k->parent;
-							rightRotate(k);
-						}
-					k->parent->color = BLACK;
-					k->parent->parent->color = RED;
-					leftRotate(k->parent->parent);
+						k->parent->color = BLACK;
+						grandparent->color = RED;
+						rightRotate(grandparent);
+						if (grandparent->data != _root->data)
+							k = grandparent;
+						else { break; }
 					}
 				}
-				else
+				else 
 				{
-					u = k->parent->parent->right;
-					if (u->color == RED)
+					if (grandparent->left)
+						uncle = grandparent->left;
+					if (uncle->color == RED)
 					{
-						u->color = BLACK;
 						k->parent->color = BLACK;
-						k->parent->parent->color = RED;
-						k = k->parent->parent;
+						uncle->color = BLACK;
+						grandparent->color = RED;
+						if (grandparent->data != _root->data)
+							k = grandparent;
+						else 
+							break;
 					}
-					else{
-						if (k == k->parent->right)
-						{
-							k = k->parent;
-							leftRotate(k);
-						}
-						k->parent->color= BLACK;
-						k->parent->parent->color = RED;
-						rightRotate(k->parent->parent);
+					else if (k == grandparent->right->left)
+						rightRotate(k->parent);
+					else 
+					{
+						k->parent->color = BLACK;
+						grandparent->color = RED;
+						leftRotate(grandparent);
+						if (grandparent->data != _root->data)
+							k = grandparent;
+						else
+							break;
 					}
 				}
-				if (k == _root)
-					break ;
 			}
 			_root->color = BLACK;
 		}
