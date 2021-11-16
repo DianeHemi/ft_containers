@@ -61,12 +61,19 @@ namespace ft
 		//enable_if = Vérifie si on a un itérateur. Si ce n'est pas le cas on appelle pas ce constructeur
 		template< class InputIt > 
 			vector( InputIt first, 
-			typename ft::enable_if<!is_integral<InputIt>::value, InputIt>::type last, 
-			const Allocator& alloc = Allocator() )
+				typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type last, 
+				const Allocator& alloc = Allocator() )
 			: _size(0), _capacity(0), _alloc(alloc), _data(NULL)
 		{
-			for (iterator iter = first; iter != last; iter++)
-				push_back(*iter);
+			difference_type dist = ft::it_distance(first, last);
+    		this->_data = this->_alloc.allocate(dist);
+			this->_capacity = dist;
+
+			for (size_type i = 0; first != last; first++, i++) 
+			{
+				this->_alloc.construct(_data + i, *first);
+				this->_size++;
+			}
 		}
 
 		//Overload de l'operateur =

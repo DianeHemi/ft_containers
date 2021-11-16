@@ -4,12 +4,6 @@
 # include <cstddef>
 # include "../iterator_traits.hpp"
 
-//https://githubmemory.com/repo/maxime-42/ft_containers
-//https://www.fluentcpp.com/2018/05/08/std-iterator-deprecated/
-//https://www.cplusplus.com/reference/iterator/RandomAccessIterator/
-//https://www.cplusplus.com/reference/iterator/iterator_traits/
-
-
 namespace ft
 {
 	/*
@@ -27,7 +21,7 @@ namespace ft
 
 			iterator_vector( ) : _ptr(NULL) { };
 			iterator_vector( pointer src ) : _ptr(src) { };
-			iterator_vector( const iterator_vector & src ) { *this = src; };
+			iterator_vector( const iterator_vector<T> & src ) { *this = src; };
 			~iterator_vector() { };
 			iterator_vector& operator=( const iterator_vector & rhs )
 			{
@@ -68,11 +62,9 @@ namespace ft
 			{ return rhs._ptr + diff; };
 			friend difference_type operator-( const iterator_vector& lhs, const iterator_vector& rhs ) 
 			{ return lhs._ptr - rhs._ptr; };
-	
-			
+
 			pointer	_ptr;
 	};
-	
 
 
 	/*
@@ -131,7 +123,6 @@ namespace ft
 			{ return rhs._ptr + diff; };
 			friend difference_type operator-( const const_iterator_vector& lhs, const const_iterator_vector& rhs )
 			{ return lhs._ptr - rhs._ptr; };
-
 
 			pointer	_ptr;
 	};

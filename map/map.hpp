@@ -2,12 +2,14 @@
 # define MAP_HPP
 
 # include "pair.hpp"
+# include "iterator_map.hpp"
 # include <memory>
+# include <iostream>
 
 namespace ft
 {
 	template <class Key, class T, class Compare = ft::less<Key>, 
-			class Alloc = std::allocator<ft::pair<const Key, T>> >
+			class Alloc = std::allocator<ft::pair<const Key, T> > >
 	class map
 	{
 		public:
@@ -29,7 +31,7 @@ namespace ft
 			typedef typename allocator_type::const_pointer	const_pointer;
 			//typedef pour bst ?
 
-			//typedef typename ft::iterator_map<T>			    iterator;        //legacy bidirectionnal iterator to value_type
+			typedef typename ft::iterator_map<T>			    iterator;        //legacy bidirectionnal iterator to value_type
 			//typedef typename ft::const_iterator_map<T>	    const_iterator;  //legacy bidirectionnal iterator to const value_type
 			//typedef typename ft::reverse_iterator<T>		    reverse_iterator;
 			//typedef typename ft::const_reverse_iterator<T>	const_reverse_iterator
@@ -61,10 +63,10 @@ namespace ft
 		};*/
 
 		//Destructor
-		~map()
+		/*~map()
 		{
 
-		}
+		}*/
 
 		//Overload operator =
 		/*map& operator=( const & map x )
@@ -117,7 +119,23 @@ namespace ft
 			Observers
 		****/
 		//key_compare 	key_comp() const { };
-		//value_compare	value_comp() const { };
+
+		class value_compare
+		{
+			public:
+				typedef	bool		result_type;
+				typedef	value_type	first_argument_type;
+				typedef	value_type	second_argument_type;
+
+				//constructor
+				value_compare( Compare c ) : comp(c) { };
+				bool operator()( const value_type& left, const value_type& right ) const 
+				{ return (comp(left.first, right.first)); };
+
+			protected:
+				Compare comp;
+		};
+		value_compare	value_comp() const { return (value_compare(_cmp_less)); };
 
 		/****
 			Operations
@@ -136,9 +154,10 @@ namespace ft
 
 		private:
 			allocator_type  _alloc;
-			value_type      _data;
 			size_type       _size;
-			key_type		_key;
+			Compare			_cmp_less;
+
+			//brtree root
 
 
 		//Elements relatifs a l'arbre binaire

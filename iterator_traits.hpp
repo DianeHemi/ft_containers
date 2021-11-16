@@ -3,12 +3,6 @@
 
 # include <cstddef>
 
-//https://githubmemory.com/repo/maxime-42/ft_containers
-//https://www.fluentcpp.com/2018/05/08/std-iterator-deprecated/
-//https://www.cplusplus.com/reference/iterator/RandomAccessIterator/
-//https://www.cplusplus.com/reference/iterator/iterator_traits/
-
-
 namespace ft
 {
 	/*
@@ -73,6 +67,17 @@ namespace ft
 			typedef Reference	reference;
 	};
 
+	/*
+		Distance entre deux iterateurs
+	*/
+	template < class InputIt >
+	typename ft::iterator_traits<InputIt>::difference_type it_distance ( InputIt start, InputIt end )
+	{
+		typename ft::iterator_traits< InputIt >::difference_type distance = 0;
+		for ( ; start != end; start++)
+			distance++;
+		return distance;
+	};
 
 
 	/*

@@ -15,38 +15,34 @@ namespace ft
 			typedef	T&	reference;
 			typedef	T*	pointer;
 
-			iterator_map( ) : _ptr(NULL) { };
-			iterator_map( pointer src ) : _ptr(src) { };
+			iterator_map( ) : _node(NULL) { };
+			iterator_map( pointer src ) : _node(src) { };	//t_list* node -> t_list<T>
 			iterator_map( const iterator_map & src ) { *this = src; };
 			~iterator_map() { };
 			iterator_map& operator=( const iterator_map & rhs )
 			{
 				if (this != &rhs)
-					this->_ptr = rhs._ptr;
+					this->_node = rhs._node;
 				return *this;
 			}
 
 			/*
 				* Fonctions
 			*/
+			reference	operator*() const { return *(_node->data); };
+			pointer		operator->() const { return &(_node->data); };
 
-			//A implementer : | '==' | '!=' | '*' | '->' | '++' | '--' | 
-
-			reference	operator*() const { return *_ptr; };
-			pointer		operator->() const { return _ptr; };
-
-			iterator_map&	operator++() { ++_ptr; return *this; };
-			iterator_map 	operator++(int) { iterator_map tmp(*this); ++_ptr; return tmp; };
-			iterator_map&	operator--() { --_ptr; return *this; };
-			iterator_map	operator--(int) { iterator_map tmp(*this); --_ptr; return tmp; };
+			iterator_map&	operator++() { _node = _node->next; return *this; };
+			iterator_map 	operator++(int) { iterator_map tmp(*this); _node = _node->next; return tmp; };
+			iterator_map&	operator--() { _node = _node->previous; return *this; };
+			iterator_map	operator--(int) { iterator_map tmp(*this); _node = _node->previous; return tmp; };
 
 			friend bool	operator==( const iterator_map & lhs, const iterator_map & rhs )
-			{ return (lhs._ptr == rhs._ptr); };
+			{ return (lhs._node == rhs._node); };
 			friend bool	operator!=( const iterator_map & lhs, const iterator_map & rhs )
-			{ return (lhs._ptr != rhs._ptr); };
+			{ return (lhs._node != rhs._node); };
 
-
-			pointer	_ptr;
+			pointer	_node;
 	};
 }
 
