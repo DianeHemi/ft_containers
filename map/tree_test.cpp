@@ -447,7 +447,7 @@ class RedBlackTree
 		printHelper(root->left, indent, false);
 		printHelper(root->right, indent, true);
 		}
-  }
+  	}
 
 
 	public:

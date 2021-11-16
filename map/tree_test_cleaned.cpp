@@ -7,436 +7,508 @@
 #define BLACK   0
 #define RED     1
 
-struct Node
+namespace ft
 {
-	int color;
-	int data;   //Holds the key
-	Node*   parent;	//Except root node
-	Node*   left;	//left child
-	Node*   right;	//right child
-};
+	/****
+	 * Structure
+	****/
+	template <class T>
+	struct Node
+	{
+		int color;
+		T data;   //Holds the key
 
-class RedBlackTree
-{
-	public:
-		typedef Node *NodePtr;
+		Node*   parent;	//Except root node
+		Node*   left;	//left child
+		Node*   right;	//right child
+	};
+
+
+	/****
+	 * RBTree
+	****/
+	template <class T>
+	class RedBlackTree
+	{
+		public:
+			typedef Node<T> *NodePtr;
+			typedef T value_type;;
 
 		/****
 		 * Constructor
 		****/
-		RedBlackTree()
-		{
-			TNULL = new Node;
-			TNULL->color = BLACK;
-			TNULL->left = NULL;
-			TNULL->right = NULL;
-			_root = TNULL;
-		};
+			RedBlackTree()
+			{
+				_root = NULL;
+			};
 
-		~RedBlackTree() { };
+			~RedBlackTree() { };
 
 
-	/****
+		/****
 		 * Members
-	****/
-	private:
-		NodePtr	_root;
-		NodePtr	TNULL;
+		****/
+		private:
+			NodePtr	_root;
 
-
-	/****
-		 * Helpers
-	****/
-		NodePtr searchTreeHelper( NodePtr node, int key )
-		{
-			if (node == TNULL || key == node->data)
-				return node;
-			if (key < node->data)
-				return searchTreeHelper(node->left, key);
-			return searchTreeHelper(node->right, key);
-		}
-
-
-	/****
-		 * Deletion
-	****/
-		void deleteFix( NodePtr x )
-		{
-			NodePtr s;
-
-			while(x != _root && x->color == BLACK)
+		/****
+		 * Printing
+		****/
+			void printHelper(NodePtr root, std::string indent, bool last) 
 			{
-				if (x == x->parent->left)
-				{
-					s = x->parent->right;
-					if (s->color == RED)
-					{
-						s->color = BLACK;
-						x->parent->color = RED;
-						leftRotate(x->parent);
-						s = x->parent->right;
-					}
-					if (s->left->color == BLACK && s->right->color == BLACK)
-					{
-						s->color = RED;
-						x = x->parent;
-					}
-					else
-					{
-						if (s->right->color == BLACK)
-						{
-							s->left->color = BLACK;
-							s->color = RED;
-							rightRotate(s);
-							s = x->parent->right;
+				if (root) {
+				std::cout << indent;
+				if (last) {
+					std::cout << "R----";
+					indent += "   ";
+				} else {
+					std::cout << "L----";
+					indent += "|  ";
+				}
+				std::string sColor = root->color ? "RED" : "BLACK";
+				std::cout << root->data << "(" << sColor << ")" << std::endl;
+				printHelper(root->left, indent, false);
+				printHelper(root->right, indent, true);
+				}
+			}
+
+		/****
+			 * Deletion
+		****/
+			void deleteFix( NodePtr z )
+			{
+				while(z->data != _root->data && z->color == BLACK) {
+                auto sibling = getRoot();
+                if(z->parent->left == z) {
+                    if(z->parent->right){ sibling = z->parent->right; }
+                    if(sibling) {
+                        //CASE -- 1
+                        if(sibling->color == RED) {
+                            sibling->color = BLACK;
+                            z->parent->color = RED;
+                            leftRotate(z->parent);
+                            sibling = z->parent->right;
+                        }
+                         //CASE -- 2
+                        if(!sibling->left && !sibling->right) {
+                            sibling->color = RED;
+                            z = z->parent;
+                        }
+                        else if(sibling->left->color == BLACK && sibling->right->color == BLACK) {
+                            sibling->color = RED;
+                            z = z->parent;
+                        }
+                        //CASE -- 3
+                        else if(sibling->right->color == BLACK) {
+                            sibling->left->color = BLACK;
+                            sibling->color = RED;
+                            rightRotate(sibling);
+                            sibling = z->parent->right;
+                        } else {
+                            sibling->color = z->parent->color;
+                            z->parent->color = BLACK;
+                            if(sibling->right){ sibling->right->color = BLACK; }
+                            leftRotate(z->parent);
+                            z = _root;
+                        }
+                    } 
+                } else {
+                    if(z->parent->right == z){
+                        if(z->parent->left){ sibling = z->parent->left; }
+                        if(sibling) {
+                            //CASE -- 1
+                            if(sibling->color == RED){
+                                sibling->color = BLACK;
+                                z->parent->color = RED;
+                                rightRotate(z->parent);
+                                sibling = z->parent->left;
+                            }
+                            //CASE -- 2
+                             if(!sibling->left && !sibling->right) {
+                                sibling->color = RED;
+                                z = z->parent;
+                            }
+                            else if(sibling->left->color == BLACK && sibling->right->color == BLACK) {
+                                sibling->color = RED;
+                                z = z->parent;
+                            }
+                            //CASE -- 3 
+                            else if(sibling->left->color == BLACK) {
+                                sibling->right->color = BLACK;
+                                sibling->color = RED;
+                                rightRotate(sibling);
+                                sibling = z->parent->left;
+                            } else {
+                                sibling->color = z->parent->color;
+                                z->parent->color = BLACK;
+                                if(sibling->left){ sibling->left->color = BLACK; }
+                                leftRotate(z->parent);
+                                z = _root;
+                            }
+                        } 
+                    }
+
+                }
+            }
+            z->color = BLACK;
+			}
+
+			void rbTransplant( NodePtr node1, NodePtr node2 )
+			{
+				if (!node1->parent)
+					_root = node2;
+				else if ( node1 == node1->parent->left )
+					node1->parent->left = node2;
+				else
+					node1->parent->right = node2;
+				node2->parent = node1->parent;
+			}
+
+			void deleteNodeHelper( NodePtr parent, NodePtr curr, value_type stuff )
+			{
+				//Search for key
+				//Should compare to know if search go right or left ?
+
+				if(!curr) { return; }
+				if(curr->data == stuff) {
+					//CASE -- 1
+					if(!curr->left && !curr->right) {
+						if(parent->data == curr->data){ _root = NULL; }
+						else if(parent->right == curr) {
+							deleteFix(curr);
+							parent->right = NULL;
+						} 
+						else { 
+							deleteFix(curr);
+							parent->left = NULL;
 						}
-						s->color = x->parent->color;
-						x->parent->color = BLACK;
-						leftRotate(x->parent);
-						x = _root;
+					}
+					//CASE -- 2
+					else if(curr->left && !curr->right) {
+						int swap = curr->data;
+						curr->data = curr->left->data;
+						curr->left->data = swap;
+						deleteNodeHelper(curr, curr->right, stuff);
+					}
+					else if(!curr->left && curr->right) {
+						int swap = curr->data;
+						curr->data = curr->right->data;
+						curr->right->data = swap;
+						deleteNodeHelper(curr, curr->right, stuff);
+					}
+					//CASE -- 3
+					else {
+						bool flag = false;
+						NodePtr temp = curr->right;
+						while(temp->left) { flag = true; parent = temp; temp = temp->left; }
+						if(!flag) { parent = curr; }
+						int swap = curr->data;
+						curr->data = temp->data;
+						temp->data = swap;
+						deleteNodeHelper(parent, temp, swap);
 					}
 				}
-				else
+			}
+
+
+		/****
+			 * Insertion
+		****/
+			void insertFix( NodePtr node )
+			{
+				while(node->parent->color == RED) 
 				{
-					s = x->parent->left;
-					if (s->color == RED)
+					NodePtr grandparent = node->parent->parent;
+					NodePtr uncle = getRoot();
+					if(node->parent == grandparent->left) 
 					{
-						s->color = BLACK;
-						x->parent->color = RED;
-						rightRotate(x->parent);
-						s = x->parent->left;
-					}
-					if(s->right->color == BLACK && s->right->color == BLACK)
-					{
-						s->color = RED;
-						x = x->parent;
-					}
-					else
-					{
-						if (s->left->color == BLACK)
+						if (grandparent->right)
+							uncle = grandparent->right;
+						if (uncle->color == RED)
 						{
-							s->right->color = BLACK;
-							s->color = RED;
-							leftRotate(s);
-							s = x->parent->left;
+							node->parent->color = BLACK;
+							uncle->color = BLACK;
+							grandparent->color = RED;
+							if (grandparent->data != _root->data)
+								node = grandparent;
+							else 
+								break;
 						}
-						s->color = x->parent->color;
-						x->parent->color = BLACK;
-						s->left->color = BLACK;
-						rightRotate(x->parent);
-						x = _root;
-					}
-				}
-			}
-			x->color = BLACK;
-		}
-
-		void rbTransplant( NodePtr u, NodePtr v )
-		{
-			if (u->parent == NULL)
-				_root = v;
-			else if ( u == u->parent->left )
-				u->parent->left = v;
-			else
-				u->parent->right = v;
-			v->parent = u->parent;
-		}
-
-		void deleteNodeHelper( NodePtr node, int key )
-		{
-			NodePtr z = NULL;
-			NodePtr x, y;
-			while(node != TNULL)
-			{
-				if ( node->data == key)
-					z = node;
-				if (node->data <= key)
-					node = node->right;
-				else
-					node = node->left;
-			}
-			if (z == TNULL)
-				return;
-
-			y = z;
-			int y_original_color = y->color;
-			if(z->left == TNULL)
-			{
-				x = z->right;
-				rbTransplant(z, z->right);
-			}
-			else if ( z->right == TNULL)
-			{
-				x = z->left;
-				rbTransplant(z, z->left);
-			}
-			else
-			{
-				y = minimum(z->right);
-				y_original_color = y->color;
-				x = y->right;
-				if (y->parent == z)
-					x->parent = y;
-				else
-				{
-					rbTransplant(y, y->right);
-					y->right = z->right;
-					y->right->parent = y;
-				}
-				rbTransplant(z, y);
-				y->left = z->left;
-				y->left->parent = y;
-				y->color = z->color;
-			}
-			delete z;
-			if(y_original_color == 0)
-				deleteFix(x);
-		}
-
-	/****
-		 * Insertion
-	****/
-		void insertFix( NodePtr k )
-		{
-			while(k->parent->color == RED) 
-			{
-				NodePtr grandparent = k->parent->parent;
-				NodePtr uncle = getRoot();
-				if(k->parent == grandparent->left) 
-				{
-					if (grandparent->right)
-						uncle = grandparent->right;
-					if (uncle->color == RED)
-					{
-						k->parent->color = BLACK;
-						uncle->color = BLACK;
-						grandparent->color = RED;
-						if (grandparent->data != _root->data)
-							k = grandparent;
+							else if (node == grandparent->left->right) {
+							leftRotate(node->parent);
+						}
 						else 
-							break;
+						{
+							node->parent->color = BLACK;
+							grandparent->color = RED;
+							rightRotate(grandparent);
+							if (grandparent->data != _root->data)
+								node = grandparent;
+							else 
+								break;
+						}
 					}
-						else if (k == grandparent->left->right) {
-						leftRotate(k->parent);
-					}
-					else 
+					else
 					{
-						k->parent->color = BLACK;
-						grandparent->color = RED;
-						rightRotate(grandparent);
-						if (grandparent->data != _root->data)
-							k = grandparent;
-						else { break; }
+						if (grandparent->left != NULL)
+							uncle = grandparent->left;
+						if (uncle->color == RED)
+						{
+							node->parent->color = BLACK;
+							uncle->color = BLACK;
+							grandparent->color = RED;
+							if (grandparent->data != _root->data)
+								node = grandparent;
+							else 
+								break;
+						}
+						else if (node == grandparent->right->left)
+							rightRotate(node->parent);
+						else 
+						{
+							node->parent->color = BLACK;
+							grandparent->color = RED;
+							leftRotate(grandparent);
+							if (grandparent->data != _root->data)
+								node = grandparent;
+							else
+								break;
+						}
 					}
+				}
+				_root->color = BLACK;
+			}
+
+
+		public:
+			/****
+			 * Helpers - Root - Search - Min and max
+			****/
+			NodePtr getRoot() { return this->_root; }
+
+			NodePtr searchTree(value_type key) 
+			{
+				NodePtr temp = getRoot();
+				if(!temp) 
+					return NULL;
+
+				while(temp) {
+					if (key == temp->data)
+						return temp;
+					else if (key < temp->data)
+						temp = temp->left;
+					else 
+						temp = temp->right;
+				}
+				return NULL;
+			}
+
+			NodePtr minimum( NodePtr node ) //Node at the utter left
+			{
+				while(node->left)
+					node = node->left;
+				return node;
+			}
+
+			NodePtr maximum( NodePtr node ) //Node at the utter right
+			{
+				while(node->right)
+					node = node->right;
+				return node;
+			}
+
+			NodePtr successor( NodePtr node )
+			{
+				if (node->right)
+					return minimum(node->right);
+				
+				NodePtr parent = node->parent;
+				while(parent && node == parent->right)
+				{
+					node = parent;
+					parent = parent->parent;
+				}
+				return parent;
+			}
+
+			NodePtr predecessor( NodePtr node )
+			{
+				if (node->left)
+					return minimum(node->left);
+				
+				NodePtr parent = node->parent;
+				while(parent && node == parent->left)
+				{
+					node = parent;
+					parent = parent->parent;
+				}
+				return parent;
+			}
+
+		/****
+			 * Rotations
+		****/
+			void leftRotate( NodePtr node )
+			{
+				Node<T>* nw_node = new Node<T>();
+				if(node->right->left)
+					nw_node->right = node->right->left;
+				nw_node->left = node->left;
+				nw_node->data = node->data;
+				nw_node->color = node->color;
+				node->data = node->right->data;
+
+				node->left = nw_node;
+				if(nw_node->left)
+					nw_node->left->parent = nw_node;
+				if(nw_node->right)
+					nw_node->right->parent = nw_node;
+				nw_node->parent = node;
+
+				if(node->right->right)
+					node->right = node->right->right;
+				else 
+					node->right = NULL;
+
+				if(node->right)
+					node->right->parent = node;
+			}
+
+			void rightRotate( NodePtr node )
+			{
+				Node<T>* nw_node = new Node<T>();
+				if(node->left->right)
+					nw_node->left = node->left->right;
+				nw_node->right = node->right;
+				nw_node->data = node->data;
+				nw_node->color = node->color;
+
+				node->data = node->left->data;
+				node->color = node->left->color;
+
+				node->right = nw_node;
+				if(nw_node->left)
+					nw_node->left->parent = nw_node;
+				if(nw_node->right)
+					nw_node->right->parent = nw_node;
+				nw_node->parent = node;
+
+				if(node->left->left)
+					node->left = node->left->left;
+				else
+					node->left = NULL;
+
+				if(node->left)
+					node->left->parent = node;
+			}
+
+
+		/****
+			 * Insertion
+		****/
+			NodePtr createNewNode( value_type key )
+			{
+				NodePtr node = new Node<T>;
+				node->parent = NULL;
+				node->data = key;
+				node->left = NULL;
+				node->right = NULL;
+				node->color = RED;
+				return node;
+			}
+
+			void insert( value_type key )
+			{
+				if(!_root)
+				{
+					_root = new Node<T>();
+					_root->data = key;
+					_root->parent = NULL;
+					_root->left = NULL;
+					_root->right = NULL;
+					_root->color = BLACK;
 				}
 				else 
 				{
-					if (grandparent->left)
-						uncle = grandparent->left;
-					if (uncle->color == RED)
+					NodePtr linker = getRoot();
+					NodePtr newnode = new Node<T>();
+					newnode->data = key;
+					while (linker != NULL)
 					{
-						k->parent->color = BLACK;
-						uncle->color = BLACK;
-						grandparent->color = RED;
-						if (grandparent->data != _root->data)
-							k = grandparent;
+						if (linker->data > key)
+						{
+							if(linker->left == NULL)
+							{
+								linker->left = newnode;
+								newnode->color = RED;
+								newnode->parent = linker;
+								break;
+							}
+							else 
+								linker = linker->left;
+						} 
 						else 
-							break;
+						{
+							if (linker->right == NULL)
+							{
+								linker->right = newnode;
+								newnode->color = RED;
+								newnode->parent = linker;
+								break; 
+							}
+							else
+								linker = linker->right;
+						}
 					}
-					else if (k == grandparent->right->left)
-						rightRotate(k->parent);
-					else 
-					{
-						k->parent->color = BLACK;
-						grandparent->color = RED;
-						leftRotate(grandparent);
-						if (grandparent->data != _root->data)
-							k = grandparent;
-						else
-							break;
-					}
+					insertFix(newnode);
 				}
 			}
-			_root->color = BLACK;
-		}
 
-
-	public:
 		/****
-		 * Helpers - Root - Search - Min and max
+			 * Deletion
 		****/
-		NodePtr getRoot()
-		{ return this->_root; }
+			void deleteNode( value_type data )
+			{ 
+				NodePtr temp = _root;
+				NodePtr parent = temp;
+				deleteNodeHelper(parent, temp, data); }
 
-		NodePtr searchTree(int k) 
-		{
-			//return searchTreeHelper(this->_root, k);
-			NodePtr tmp = getRoot();
-			if (tmp == NULL)
-				return NULL;
-			while(tmp)
+
+		/****
+			 * Printing
+		****/
+			void printTree()
 			{
-				if (k == tmp->data)
-					return tmp;
-				else if ( k < tmp->data)
-					tmp = tmp->left;
-				else
-					tmp = tmp->right;
+				if (_root)
+					printHelper(_root, "", true);
 			}
-		}
 
-		NodePtr minimum( NodePtr node ) //Node at the utter left
-		{
-			while(node->left != TNULL)
-				node = node->left;
-			return node;
-		}
-
-		NodePtr maximum( NodePtr node ) //Node at the utter right
-		{
-			while(node->right != TNULL)
-				node = node->right;
-			return node;
-		}
-
-		/*NodePtr successor( NodePtr x )
-		{
-			if (x->right != TNULL)
-				return minimum(x->right);
-			
-			NodePtr y = x->parent;
-			while(y != TNULL && x == y->right)
-			{
-				x = y;
-				y = y->parent;
-			}
-			return y;
-		}
-
-		NodePtr predecessor( NodePtr x )
-		{
-			if (x->left != TNULL)
-				return minimum(x->left);
-			
-			NodePtr y = x->parent;
-			while(y != TNULL && x == y->left)
-			{
-				x = y;
-				y = y->parent;
-			}
-			return y;
-		}*/
-
-	/****
-		 * Rotations
-	****/
-		void leftRotate( NodePtr x )
-		{
-			NodePtr y = x->right;
-			x->right = y->left;
-			if(y->left != TNULL)
-				y->left->parent = x;
-			y->parent = x->parent;
-			if (x->parent == NULL)
-				_root = y;
-			else if(x == x->parent->left)
-				x->parent->left = y;
-			else
-				x->parent->right = y;
-			y->left = x;
-			x->parent = y;
-		}
-
-		void rightRotate( NodePtr x )
-		{
-			NodePtr y = x->left;
-			x->left = y->right;
-			if(y->right != TNULL)
-				y->right->parent = x;
-			y->parent = x->parent;
-			if (x->parent == NULL)
-				_root = y;
-			else if(x == x->parent->right)
-				x->parent->right = y;
-			else
-				x->parent->left = y;
-			y->right = x;
-			x->parent = y;
-		}
-
-
-	/****
-		 * Insertion
-	****/
-		NodePtr createNewNode( int key )
-		{
-			NodePtr node = new Node;
-			node->parent = NULL;
-			node->data = key;
-			node->left = TNULL;
-			node->right = TNULL;
-			node->color = RED;
-			return node;
-		}
-
-		void insert( int key )
-		{
-			NodePtr node = createNewNode(key);
-			NodePtr y = NULL;
-			NodePtr x = _root;
-
-			while(x != TNULL)
-			{
-				y = x;
-				if (node->data < x->data)
-					x = x->left;
-				else
-					x = x->right;
-			}
-			node->parent = y;
-
-			if (y == NULL)
-				_root = node;
-			else if (node->data < y->data)
-				y->left = node;
-			else
-				y->right = node;
-
-			if (node->parent == NULL)
-			{
-				node->color = BLACK;
-				return ;
-			}
-			if (node->parent->parent == NULL)
-				return ;
-			insertFix(node);
-		}
-
-	/****
-		 * Deletion
-	****/
-		void deleteNode( int data )
-		{ deleteNodeHelper(_root, data); }
-
-};
+	};
+}
 
 
 
 
-
-
+#include <map>
 int main() {
-  RedBlackTree bst;
-  bst.insert(55);
-  bst.insert(40);
-  bst.insert(65);
-  bst.insert(60);
-  bst.insert(75);
-  bst.insert(57);
-  bst.insert(20);
-  bst.insert(62);
+	ft::RedBlackTree<int> bst;
+	bst.insert(55);
+	bst.insert(40);
+	
+	bst.insert(65);
+	bst.insert(60);
+	bst.insert(75);
+	bst.insert(57);
+	bst.insert(20);
+	bst.insert(62);
 
-  bst.deleteNode(40);
-  bst.deleteNode(60);
+	bst.deleteNode(40);
+	bst.deleteNode(0);
+	bst.printTree();
+  	/*for (int i = 0; i < 1000000; i++)
+		bst.insert(i);
+	std::cout << "Done" <<std::endl;
 
+	for (int i = 0; i < 1000000; i++)
+		bst.deleteNode(i);*/
 }
