@@ -21,19 +21,17 @@ namespace ft
 	template <class T>
 	class RedBlackTree
 	{
-		public:
-			typedef T value_type;
-
-			struct Node
-			{
-				int			color;
-				value_type	data;
-				Node*   	parent;
-				Node*   	left;
-				Node*   	right;
-			};
-
-			typedef Node* NodePtr;
+		////////Sortir ce morceau ?
+		struct Node
+		{
+			int			color;
+			T			data;
+			Node*   	parent;
+			Node*   	left;
+			Node*   	right;
+		};
+		////////
+		typedef Node* NodePtr;
 
 		/****
 		 * Constructor
@@ -161,7 +159,7 @@ namespace ft
 				node2->parent = node1->parent;
 			}
 
-			void deleteNodeHelper( NodePtr parent, NodePtr curr, value_type stuff )
+			void deleteNodeHelper( NodePtr parent, NodePtr curr, T stuff )
 			{
 				//Search for key
 				//Should compare to know if search go right or left ?
@@ -283,7 +281,7 @@ namespace ft
 			****/
 			NodePtr getRoot() { return this->_root; }
 
-			NodePtr searchTree(value_type key) 
+			NodePtr searchTree(T key) 
 			{
 				NodePtr temp = getRoot();
 				if(!temp) 
@@ -300,26 +298,24 @@ namespace ft
 				return NULL;
 			}
 
-			NodePtr minimum() //Node at the utter left
+			/*NodePtr minimum( NodePtr root ) //Node at the utter left
 			{
-				NodePtr tmp = getRoot();
-				while (tmp->left)
-					tmp = tmp->left;
-				return tmp;
+				while (root->left)
+					root = root->left;
+				return root;
 			}
 
-			NodePtr maximum() //Node at the utter right
+			NodePtr maximum( NodePtr root ) //Node at the utter right
 			{
-				NodePtr tmp = getRoot();
-				while (tmp->right)
-					tmp = tmp->right;
-				return tmp;
+				while (root->right)
+					root = root->right;
+				return root;
 			}
 
 			NodePtr successor( NodePtr node )
 			{
 				if (node->right)
-					return minimum();
+					return minimum(node->right);
 				
 				NodePtr parent = node->parent;
 				while(parent && node == parent->right)
@@ -333,7 +329,7 @@ namespace ft
 			NodePtr predecessor( NodePtr node )
 			{
 				if (node->left)
-					return minimum();
+					return minimum(node->left);
 				
 				NodePtr parent = node->parent;
 				while(parent && node == parent->left)
@@ -342,7 +338,7 @@ namespace ft
 					parent = parent->parent;
 				}
 				return parent;
-			}
+			}*/
 
 		/****
 			 * Rotations
@@ -405,7 +401,7 @@ namespace ft
 		/****
 			 * Insertion
 		****/
-			void insert( value_type key )
+			void insert( T key )
 			{
 				if(!_root)
 				{
@@ -455,7 +451,7 @@ namespace ft
 		/****
 			 * Deletion
 		****/
-			void deleteNode( value_type data )
+			void deleteNode( T data )
 			{ 
 				NodePtr temp = _root;
 				NodePtr parent = temp;
@@ -491,6 +487,7 @@ namespace ft
 				if (_root)
 					printHelper(_root, "", true);
 			}
+
 
 	};
 }

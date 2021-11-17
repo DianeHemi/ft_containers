@@ -7,7 +7,7 @@
 # include <iostream>
 
 
-# include "tree_test_cleaned.cpp"
+//# include "tree_test_cleaned.hpp"
 
 namespace ft
 {
@@ -27,7 +27,7 @@ namespace ft
 			typedef Alloc				allocator_type;
 
 			typedef typename ft::pair<const Key, T> value_type;
-			typedef ft::RedBlackTree<value_type>	rbt; //typedef pour rbt ?
+			typedef ft::RBTree<value_type>	rbt;
 
 			typedef value_type&         					reference;
 			typedef const value_type&   					const_reference;
@@ -35,20 +35,20 @@ namespace ft
 			typedef typename allocator_type::const_pointer	const_pointer;
 			
 
-			typedef typename ft::iterator_map<value_type>			    iterator;        //legacy bidirectionnal iterator to value_type
-			//typedef typename ft::const_iterator_map<value_type>	    const_iterator;  //legacy bidirectionnal iterator to const value_type
-			//typedef typename ft::reverse_iterator<value_type>		    reverse_iterator;
-			//typedef typename ft::const_reverse_iterator<value_type>	const_reverse_iterator
-			//typedef typename alloc::template rebind<Node>::other    new_alloc;
+			typedef typename ft::iterator_map<value_type>			    	iterator;        //legacy bidirectionnal iterator to value_type
+			//typedef typename ft::const_iterator_map<value_type>	    	const_iterator;  //legacy bidirectionnal iterator to const value_type
+			//typedef typename ft::reverse_iterator<iterator>		    	reverse_iterator;
+			//typedef typename ft::const_reverse_iterator<const_iterator>	const_reverse_iterator
+			typedef typename Alloc::template rebind<rbt>::other    new_alloc;
 
 		/****
 			Constructors
 		****/
 		//Default constructor
 		explicit map( const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type() )
-			: _alloc(alloc), _size(0), _cmp(comp)
+			: _alloc(alloc), _size(0), _cmp(comp), _rbt(0)
 		{
-
+			_rbt = newNode(ft::make_pair(key_type(), mapped_type()));
 		};
 
 		//Range constructor
@@ -67,7 +67,7 @@ namespace ft
 		//Destructor
 		/*~map()
 		{
-
+			clear();
 		}*/
 
 		//Overload operator =
@@ -75,9 +75,9 @@ namespace ft
 		{
 			if (this != &rhs)
 			{
-				//clear();
-				insert(begin(), rhs.begin(), rhs.end());
-				_size = rhs._size;
+				clear();
+				if (rhs._size > 0)
+					insert(rhs.begin(), rhs.end());
 			}
 			return *this;
 		};*/
@@ -88,9 +88,9 @@ namespace ft
 		/****
 			Iterators
 		****/
-		iterator        begin() { return iterator(_rbt->minimum()->data); };
+		iterator        begin() { return iterator(minimum(_rbt)); };
 		//const_iterator  begin() { };
-		iterator        end() { return iterator(_rbt->maximum()->data); };
+		iterator        end() { return iterator(maximum(_rbt)); };
 		//const_iterator  end() { };
 
 		//reverse_iterator        rbegin() { };
@@ -129,7 +129,7 @@ namespace ft
 		/****
 			Observers
 		****/
-		//key_compare 	key_comp() const { return _cmp; };
+		key_compare 	key_comp() const { return _cmp; };
 
 		class value_compare
 		{
@@ -168,14 +168,25 @@ namespace ft
 			allocator_type  	_alloc;
 			size_type       	_size;
 			Compare				_cmp;
-		public:
 			rbt*				_rbt;
-			//Node*				_root;
+			new_alloc			_alloc_rbt;
 
 
 		//Elements relatifs a l'arbre binaire
 		//creation des nodes, free des nodes, suppression node,  
 		//insertion node, recherche d'une node, clear arbre, copy tree ?
+
+
+		private:
+			rbt* newNode( const value_type& key )
+			{
+				rbt* node = _alloc_rbt.allocate(1);
+				_alloc.construct(&node->data, key);
+				node->parent = NULL;
+				node->left = NULL;
+				node->right = NULL;
+				return node;
+			}
 
 	};
 
