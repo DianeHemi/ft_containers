@@ -6,6 +6,9 @@
 # include <memory>
 # include <iostream>
 
+
+# include "tree_test_cleaned.cpp"
+
 namespace ft
 {
 	template <class Key, class T, class Compare = ft::less<Key>, 
@@ -24,27 +27,29 @@ namespace ft
 			typedef Alloc				allocator_type;
 
 			typedef typename ft::pair<const Key, T> value_type;
+			typedef ft::RedBlackTree<value_type>	rbt; //typedef pour rbt ?
 
-			typedef value_type&         reference;
-			typedef const value_type&   const_reference;
+			typedef value_type&         					reference;
+			typedef const value_type&   					const_reference;
 			typedef typename allocator_type::pointer 		pointer;
 			typedef typename allocator_type::const_pointer	const_pointer;
-			//typedef pour bst ?
+			
 
-			typedef typename ft::iterator_map<T>			    iterator;        //legacy bidirectionnal iterator to value_type
-			//typedef typename ft::const_iterator_map<T>	    const_iterator;  //legacy bidirectionnal iterator to const value_type
-			//typedef typename ft::reverse_iterator<T>		    reverse_iterator;
-			//typedef typename ft::const_reverse_iterator<T>	const_reverse_iterator
+			typedef typename ft::iterator_map<value_type>			    iterator;        //legacy bidirectionnal iterator to value_type
+			//typedef typename ft::const_iterator_map<value_type>	    const_iterator;  //legacy bidirectionnal iterator to const value_type
+			//typedef typename ft::reverse_iterator<value_type>		    reverse_iterator;
+			//typedef typename ft::const_reverse_iterator<value_type>	const_reverse_iterator
+			//typedef typename alloc::template rebind<Node>::other    new_alloc;
 
 		/****
 			Constructors
 		****/
 		//Default constructor
-		/*explicit map( const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type() )
-			: 
+		explicit map( const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type() )
+			: _alloc(alloc), _size(0), _cmp(comp)
 		{
 
-		};*/
+		};
 
 		//Range constructor
 		/*template <class InputIterator>
@@ -57,10 +62,7 @@ namespace ft
 		};*/
 
 		//Copy constructor
-		/*map( const map& x ) : 
-		{
-
-		};*/
+		//map( const map& src ) { *this = src; };
 
 		//Destructor
 		/*~map()
@@ -69,9 +71,15 @@ namespace ft
 		}*/
 
 		//Overload operator =
-		/*map& operator=( const & map x )
+		/*map& operator=( const & map rhs )
 		{
-
+			if (this != &rhs)
+			{
+				//clear();
+				insert(begin(), rhs.begin(), rhs.end());
+				_size = rhs._size;
+			}
+			return *this;
 		};*/
 
 		allocator_type get_allocator() const { return _alloc; };
@@ -80,9 +88,9 @@ namespace ft
 		/****
 			Iterators
 		****/
-		//iterator        begin() { };
+		iterator        begin() { return iterator(_rbt->minimum()->data); };
 		//const_iterator  begin() { };
-		//iterator        end() { };
+		iterator        end() { return iterator(_rbt->maximum()->data); };
 		//const_iterator  end() { };
 
 		//reverse_iterator        rbegin() { };
@@ -112,16 +120,20 @@ namespace ft
 		//void		erase( iterator first, iterator last) { };
 		//ft::pair<iterator, bool>	insert( const value_type& val ) { };
 		//iterator	insert( iterator position, const value_type& val ) { };
-		//template <class InputIterator>
-		//void	insert( InputIterator first, InputIterator last ) { };
+		/*template <class InputIterator>
+		void	insert( InputIterator first, InputIterator last ) 
+		{
+
+		};*/
 
 		/****
 			Observers
 		****/
-		//key_compare 	key_comp() const { };
+		//key_compare 	key_comp() const { return _cmp; };
 
 		class value_compare
 		{
+			//friend class map;
 			public:
 				typedef	bool		result_type;
 				typedef	value_type	first_argument_type;
@@ -135,7 +147,7 @@ namespace ft
 			protected:
 				Compare comp;
 		};
-		value_compare	value_comp() const { return (value_compare(_cmp_less)); };
+		value_compare	value_comp() const { return (value_compare(_cmp)); };
 
 		/****
 			Operations
@@ -153,11 +165,12 @@ namespace ft
 
 
 		private:
-			allocator_type  _alloc;
-			size_type       _size;
-			Compare			_cmp_less;
-
-			//brtree root
+			allocator_type  	_alloc;
+			size_type       	_size;
+			Compare				_cmp;
+		public:
+			rbt*				_rbt;
+			//Node*				_root;
 
 
 		//Elements relatifs a l'arbre binaire

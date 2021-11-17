@@ -1,29 +1,20 @@
 //https://github.com/Bibeknam/algorithmtutorprograms/blob/master/data-structures/red-black-trees/RedBlackTree.cpp
 //https://gist.github.com/SubCoder1/70c2cedc44353ffc539c7567b1051028
 
+//https://gcc.gnu.org/onlinedocs/gcc-4.7.1/libstdc++/api/a01484_source.html
+
 #include <iostream>
 #include <string>
 
 #define BLACK   0
 #define RED     1
 
+# include <map>
+//# include "map.hpp"
+//# include "pair.hpp"
+
 namespace ft
 {
-	/****
-	 * Structure
-	****/
-	template <class T>
-	struct Node
-	{
-		int color;
-		T data;   //Holds the key
-
-		Node*   parent;	//Except root node
-		Node*   left;	//left child
-		Node*   right;	//right child
-	};
-
-
 	/****
 	 * RBTree
 	****/
@@ -31,8 +22,18 @@ namespace ft
 	class RedBlackTree
 	{
 		public:
-			typedef Node<T> *NodePtr;
-			typedef T value_type;;
+			typedef T value_type;
+
+			struct Node
+			{
+				int			color;
+				value_type	data;
+				Node*   	parent;
+				Node*   	left;
+				Node*   	right;
+			};
+
+			typedef Node* NodePtr;
 
 		/****
 		 * Constructor
@@ -51,106 +52,102 @@ namespace ft
 		private:
 			NodePtr	_root;
 
-		/****
-		 * Printing
-		****/
-			void printHelper(NodePtr root, std::string indent, bool last) 
-			{
-				if (root) {
-				std::cout << indent;
-				if (last) {
-					std::cout << "R----";
-					indent += "   ";
-				} else {
-					std::cout << "L----";
-					indent += "|  ";
-				}
-				std::string sColor = root->color ? "RED" : "BLACK";
-				std::cout << root->data << "(" << sColor << ")" << std::endl;
-				printHelper(root->left, indent, false);
-				printHelper(root->right, indent, true);
-				}
-			}
 
 		/****
 			 * Deletion
 		****/
 			void deleteFix( NodePtr z )
 			{
-				while(z->data != _root->data && z->color == BLACK) {
-                auto sibling = getRoot();
-                if(z->parent->left == z) {
-                    if(z->parent->right){ sibling = z->parent->right; }
-                    if(sibling) {
-                        //CASE -- 1
-                        if(sibling->color == RED) {
-                            sibling->color = BLACK;
-                            z->parent->color = RED;
-                            leftRotate(z->parent);
-                            sibling = z->parent->right;
-                        }
-                         //CASE -- 2
-                        if(!sibling->left && !sibling->right) {
-                            sibling->color = RED;
-                            z = z->parent;
-                        }
-                        else if(sibling->left->color == BLACK && sibling->right->color == BLACK) {
-                            sibling->color = RED;
-                            z = z->parent;
-                        }
-                        //CASE -- 3
-                        else if(sibling->right->color == BLACK) {
-                            sibling->left->color = BLACK;
-                            sibling->color = RED;
-                            rightRotate(sibling);
-                            sibling = z->parent->right;
-                        } else {
-                            sibling->color = z->parent->color;
-                            z->parent->color = BLACK;
-                            if(sibling->right){ sibling->right->color = BLACK; }
-                            leftRotate(z->parent);
-                            z = _root;
-                        }
-                    } 
-                } else {
-                    if(z->parent->right == z){
-                        if(z->parent->left){ sibling = z->parent->left; }
-                        if(sibling) {
-                            //CASE -- 1
-                            if(sibling->color == RED){
-                                sibling->color = BLACK;
-                                z->parent->color = RED;
-                                rightRotate(z->parent);
-                                sibling = z->parent->left;
-                            }
-                            //CASE -- 2
-                             if(!sibling->left && !sibling->right) {
-                                sibling->color = RED;
-                                z = z->parent;
-                            }
-                            else if(sibling->left->color == BLACK && sibling->right->color == BLACK) {
-                                sibling->color = RED;
-                                z = z->parent;
-                            }
-                            //CASE -- 3 
-                            else if(sibling->left->color == BLACK) {
-                                sibling->right->color = BLACK;
-                                sibling->color = RED;
-                                rightRotate(sibling);
-                                sibling = z->parent->left;
-                            } else {
-                                sibling->color = z->parent->color;
-                                z->parent->color = BLACK;
-                                if(sibling->left){ sibling->left->color = BLACK; }
-                                leftRotate(z->parent);
-                                z = _root;
-                            }
-                        } 
-                    }
-
-                }
-            }
-            z->color = BLACK;
+				while( z->data != _root->data && z->color == BLACK ) 
+				{
+					NodePtr sibling = getRoot();
+					if (z->parent->left == z) 
+					{
+						if (z->parent->right)
+							sibling = z->parent->right;
+						if (sibling)
+						{
+							if (sibling->color == RED) 
+							{
+								sibling->color = BLACK;
+								z->parent->color = RED;
+								leftRotate(z->parent);
+								sibling = z->parent->right;
+							}
+							if (!sibling->left && !sibling->right) 
+							{
+								sibling->color = RED;
+								z = z->parent;
+							}
+							else if (sibling->left->color == BLACK && sibling->right->color == BLACK) 
+							{
+								sibling->color = RED;
+								z = z->parent;
+							}
+							else if(sibling->right->color == BLACK) 
+							{
+								sibling->left->color = BLACK;
+								sibling->color = RED;
+								rightRotate(sibling);
+								sibling = z->parent->right;
+							} 
+							else 
+							{
+								sibling->color = z->parent->color;
+								z->parent->color = BLACK;
+								if (sibling->right)
+									sibling->right->color = BLACK;
+								leftRotate(z->parent);
+								z = _root;
+							}
+						} 
+					} 
+					else 
+					{
+						if (z->parent->right == z)
+						{
+							if (z->parent->left)
+								sibling = z->parent->left;
+							if (sibling) 
+							{
+								if (sibling->color == RED)
+								{
+									sibling->color = BLACK;
+									z->parent->color = RED;
+									rightRotate(z->parent);
+									sibling = z->parent->left;
+								}
+								if (!sibling->left && !sibling->right) 
+								{
+									sibling->color = RED;
+									z = z->parent;
+								}
+								else if (sibling->left->color == BLACK && sibling->right->color == BLACK) 
+								{
+									sibling->color = RED;
+									z = z->parent;
+								}
+								else if (sibling->left->color == BLACK) 
+								{
+									sibling->right->color = BLACK;
+									sibling->color = RED;
+									rightRotate(sibling);
+									sibling = z->parent->left;
+								} 
+								else 
+								{
+									sibling->color = z->parent->color;
+									z->parent->color = BLACK;
+									if (sibling->left)
+										sibling->left->color = BLACK;
+									leftRotate(z->parent);
+									z = _root;
+								}
+							} 
+						}
+					}
+            	}
+            	z->color = BLACK;
 			}
 
 			void rbTransplant( NodePtr node1, NodePtr node2 )
@@ -303,24 +300,26 @@ namespace ft
 				return NULL;
 			}
 
-			NodePtr minimum( NodePtr node ) //Node at the utter left
+			NodePtr minimum() //Node at the utter left
 			{
-				while(node->left)
-					node = node->left;
-				return node;
+				NodePtr tmp = getRoot();
+				while (tmp->left)
+					tmp = tmp->left;
+				return tmp;
 			}
 
-			NodePtr maximum( NodePtr node ) //Node at the utter right
+			NodePtr maximum() //Node at the utter right
 			{
-				while(node->right)
-					node = node->right;
-				return node;
+				NodePtr tmp = getRoot();
+				while (tmp->right)
+					tmp = tmp->right;
+				return tmp;
 			}
 
 			NodePtr successor( NodePtr node )
 			{
 				if (node->right)
-					return minimum(node->right);
+					return minimum();
 				
 				NodePtr parent = node->parent;
 				while(parent && node == parent->right)
@@ -334,7 +333,7 @@ namespace ft
 			NodePtr predecessor( NodePtr node )
 			{
 				if (node->left)
-					return minimum(node->left);
+					return minimum();
 				
 				NodePtr parent = node->parent;
 				while(parent && node == parent->left)
@@ -350,7 +349,7 @@ namespace ft
 		****/
 			void leftRotate( NodePtr node )
 			{
-				Node<T>* nw_node = new Node<T>();
+				Node* nw_node = new Node();
 				if(node->right->left)
 					nw_node->right = node->right->left;
 				nw_node->left = node->left;
@@ -376,7 +375,7 @@ namespace ft
 
 			void rightRotate( NodePtr node )
 			{
-				Node<T>* nw_node = new Node<T>();
+				Node* nw_node = new Node();
 				if(node->left->right)
 					nw_node->left = node->left->right;
 				nw_node->right = node->right;
@@ -406,22 +405,11 @@ namespace ft
 		/****
 			 * Insertion
 		****/
-			NodePtr createNewNode( value_type key )
-			{
-				NodePtr node = new Node<T>;
-				node->parent = NULL;
-				node->data = key;
-				node->left = NULL;
-				node->right = NULL;
-				node->color = RED;
-				return node;
-			}
-
 			void insert( value_type key )
 			{
 				if(!_root)
 				{
-					_root = new Node<T>();
+					_root = new Node();
 					_root->data = key;
 					_root->parent = NULL;
 					_root->left = NULL;
@@ -431,7 +419,7 @@ namespace ft
 				else 
 				{
 					NodePtr linker = getRoot();
-					NodePtr newnode = new Node<T>();
+					NodePtr newnode = new Node();
 					newnode->data = key;
 					while (linker != NULL)
 					{
@@ -471,12 +459,33 @@ namespace ft
 			{ 
 				NodePtr temp = _root;
 				NodePtr parent = temp;
-				deleteNodeHelper(parent, temp, data); }
+				deleteNodeHelper(parent, temp, data); 
+			}
 
 
 		/****
 			 * Printing
 		****/
+			void printHelper(NodePtr root, std::string indent, bool last) 
+			{
+				if (root) 
+				{
+					std::cout << indent;
+					if (last) 
+					{
+						std::cout << "R----";
+						indent += "   ";
+					} 
+					else {
+						std::cout << "L----";
+						indent += "|  ";
+					}
+					std::string sColor = root->color ? "RED" : "BLACK";
+					std::cout << root->data._first << " - " << root->data._second << "(" << sColor << ")" << std::endl;
+					printHelper(root->left, indent, false);
+					printHelper(root->right, indent, true);
+				}
+			}
 			void printTree()
 			{
 				if (_root)
@@ -488,27 +497,27 @@ namespace ft
 
 
 
-
-#include <map>
+/*
 int main() {
-	ft::RedBlackTree<int> bst;
-	bst.insert(55);
-	bst.insert(40);
-	
-	bst.insert(65);
-	bst.insert(60);
-	bst.insert(75);
-	bst.insert(57);
-	bst.insert(20);
-	bst.insert(62);
+	ft::map<int, int> bst;
 
-	bst.deleteNode(40);
-	bst.deleteNode(0);
-	bst.printTree();
+	bst._rbt.insert(ft::make_pair(55, 25));
+	bst._rbt.insert(ft::pair<int, int>(40, 30));
+	
+	bst._rbt.insert(ft::pair<int, int>(65, 21));
+	bst._rbt.insert(ft::pair<int, int>(60, 22));
+	bst._rbt.insert(ft::pair<int, int>(75, 23));
+	bst._rbt.insert(ft::pair<int, int>(57, 24));
+	bst._rbt.insert(ft::pair<int, int>(20, 28));
+	bst._rbt.insert(ft::pair<int, int>(62, 29));
+
+	//bst.deleteNode(40);
+	//bst.deleteNode(0);
+	bst._rbt.printTree();*/
   	/*for (int i = 0; i < 1000000; i++)
 		bst.insert(i);
 	std::cout << "Done" <<std::endl;
 
 	for (int i = 0; i < 1000000; i++)
 		bst.deleteNode(i);*/
-}
+//}
