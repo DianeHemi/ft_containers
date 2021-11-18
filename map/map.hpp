@@ -289,8 +289,6 @@ void printTree()
 						linker->left = node;
 						node->color = RED;
 						node->parent = linker;
-						//node->left = _end;
-						//_end->parent = linker;
 						_size++;
 						break;
 					}
@@ -320,32 +318,6 @@ void printTree()
 			}
 			insertFix(node);
 			return node;
-
-			/*rbt* y = NULL;
-			rbt* tmp = _rbt;
-			
-			while (tmp != NULL)
-			{
-				y = tmp;
-				if (key < tmp->data)
-					tmp = tmp->left;
-				else
-					tmp = tmp->right;
-			}
-			rbt *node = newNode(key);
-			node->parent = y;
-
-			if (y == NULL)
-				_rbt = node;
-			else if (key < y->data)
-				y->left = node;
-			else
-				y->right = node;
-			node->right = NULL;
-			node->left = NULL;
-
-			insertFix(node);
-			return node;*/
 		}
 		
 		void leftRotate( rbt* x )
@@ -354,11 +326,10 @@ void printTree()
 				return ;
 
 			rbt* y = x->right;
-
 			x->right = y->left;
-			y->parent = x->parent;
 			if (y->left != NULL)
 				y->left->parent = x;
+			y->parent = x->parent;
 
 			if (x->parent == NULL)	//Reassign root of the rbt
 				_rbt = y;
@@ -372,7 +343,7 @@ void printTree()
 
 		void rightRotate( rbt* x )
 		{
-			if (x->right == NULL || x->right == _end)
+			if (x->left == NULL || x->left == _end)
 				return ;
 
 			rbt* y = x->left;

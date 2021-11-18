@@ -12,6 +12,11 @@ int main()
 	m1.insert(ft::make_pair(17, 15));
 	m1.insert(ft::make_pair(60, 15));
 	m1.insert(ft::make_pair(15, 80));
+	m1.insert(ft::make_pair(10, 80));
+	m1.insert(ft::make_pair(1, 80));
+	m1.insert(ft::make_pair(5, 80));
+	m1.insert(ft::make_pair(3, 80));
+	m1.insert(ft::make_pair(12, 80));
 	/*m1.insert(ft::make_pair(58, 30));*/
 	/*bst._rbt->insert(ft::pair<int, int>(40, 30));
 	
