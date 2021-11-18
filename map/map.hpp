@@ -1,6 +1,9 @@
 #ifndef MAP_HPP
 # define MAP_HPP
 
+# define BLACK 0
+# define RED 1
+
 # include "pair.hpp"
 # include "iterator_map.hpp"
 # include <memory>
@@ -49,6 +52,7 @@ namespace ft
 			: _alloc(alloc), _size(0), _cmp(comp), _rbt(0)
 		{
 			_rbt = newNode(ft::make_pair(key_type(), mapped_type()));
+			_end = _rbt;
 		};
 
 		//Range constructor
@@ -118,7 +122,19 @@ namespace ft
 		//void		erase( iterator position ) { };
 		//size_type	erase( const key_type& k ) { };
 		//void		erase( iterator first, iterator last) { };
-		//ft::pair<iterator, bool>	insert( const value_type& val ) { };
+		ft::pair<iterator, bool>	insert( const value_type& val ) 
+		{
+			ft::pair<iterator, bool> ret;
+			size_type tmp = _size;
+			rbt* node = myInsert(val);
+
+			if (_size != tmp)
+				ret._second = false;
+			else
+				ret._second = true;
+			ret._first = iterator(node);
+			return ret;
+		};
 		//iterator	insert( iterator position, const value_type& val ) { };
 		/*template <class InputIterator>
 		void	insert( InputIterator first, InputIterator last ) 
@@ -164,12 +180,21 @@ namespace ft
 		
 
 
+void printTree()
+{
+	if (_rbt)
+		printHelper(_rbt, "", true);
+}
+
 		private:
 			allocator_type  	_alloc;
 			size_type       	_size;
 			Compare				_cmp;
-			rbt*				_rbt;
 			new_alloc			_alloc_rbt;
+			rbt*				_rbt;
+			rbt*				_end;
+
+			
 
 
 		//Elements relatifs a l'arbre binaire
@@ -185,8 +210,215 @@ namespace ft
 				node->parent = NULL;
 				node->left = NULL;
 				node->right = NULL;
+				node->color = RED;
 				return node;
 			}
+
+			void insertFix( rbt* z )
+			{
+				while (z != NULL && z != _end && z->parent != NULL && z->parent->color == RED)
+				{
+					if (z->parent == z->parent->parent->left) //node->parent is left child
+					{
+						rbt* y = z->parent->parent->right; //uncle of node
+						if (y && y->color == RED)
+						{
+							z->parent->color = BLACK;
+							y->color = BLACK;
+							z->parent->parent->color = RED;
+							z = z->parent->parent;
+						}
+						else
+						{
+							if (z == z->parent->right)
+							{
+								z = z->parent;
+								leftRotate(z);
+							}
+							z->parent->color = BLACK;
+							z->parent->parent->color = RED;
+							rightRotate(z->parent->parent);
+						}
+					}
+					else
+					{
+						rbt* y = z->parent->parent->left;
+						if (y && y->color == RED)
+						{
+							z->parent->color = BLACK;
+							y->color = BLACK;
+							z->parent->parent->color = RED;
+							z = z->parent->parent;
+						}
+						else
+						{
+							if (z == z->parent->left)
+							{
+								z = z->parent;
+								rightRotate(z);
+							}
+							z->parent->color = BLACK;
+							z->parent->parent->color = RED;
+							leftRotate(z->parent->parent);
+						}
+					}
+				}
+				_rbt->color = BLACK;
+			}
+
+		rbt* myInsert( const value_type& key )
+		{
+			if(!_rbt || _rbt == _end)
+			{
+				_rbt = newNode(key);
+				_rbt->right = _end;
+				_rbt->color = BLACK;
+				_end->parent = _rbt;
+				_size++;
+				return _rbt;
+			}
+
+			rbt* linker = _rbt;
+			rbt *node = newNode(key);
+			while (linker != NULL)
+			{
+				if (_cmp(key._first, linker->data._first))
+				{
+					if (linker->left == NULL)
+					{
+						linker->left = node;
+						node->color = RED;
+						node->parent = linker;
+						//node->left = _end;
+						//_end->parent = linker;
+						_size++;
+						break;
+					}
+					else 
+						linker = linker->left;
+				} 
+				else if (linker->data._first != key._first)
+				{
+					if (linker->right == _end || linker->right == NULL)
+					{
+						if (linker->right == _end)
+						{
+							node->right = _end;
+							_end->parent = linker;
+						}
+						linker->right = node;
+						node->color = RED;
+						node->parent = linker;
+						_size++;
+						break; 
+					}
+					else
+						linker = linker->right;
+				}
+				else
+					return node;
+			}
+			insertFix(node);
+			return node;
+
+			/*rbt* y = NULL;
+			rbt* tmp = _rbt;
+			
+			while (tmp != NULL)
+			{
+				y = tmp;
+				if (key < tmp->data)
+					tmp = tmp->left;
+				else
+					tmp = tmp->right;
+			}
+			rbt *node = newNode(key);
+			node->parent = y;
+
+			if (y == NULL)
+				_rbt = node;
+			else if (key < y->data)
+				y->left = node;
+			else
+				y->right = node;
+			node->right = NULL;
+			node->left = NULL;
+
+			insertFix(node);
+			return node;*/
+		}
+		
+		void leftRotate( rbt* x )
+		{
+			if (x->right == NULL || x->right == _end)
+				return ;
+
+			rbt* y = x->right;
+
+			x->right = y->left;
+			y->parent = x->parent;
+			if (y->left != NULL)
+				y->left->parent = x;
+
+			if (x->parent == NULL)	//Reassign root of the rbt
+				_rbt = y;
+			else if (x == x->parent->left)
+				x->parent->left = y;
+			else
+				x->parent->right = y;
+			y->left = x;
+			x->parent = y;
+		}
+
+		void rightRotate( rbt* x )
+		{
+			if (x->right == NULL || x->right == _end)
+				return ;
+
+			rbt* y = x->left;
+
+			x->left = y->right;
+			y->parent = x->parent;
+			if (y->right != NULL)
+				y->right->parent = x;
+
+			if (x->parent == NULL)	//Reassign root of the rbt
+				_rbt = y;
+			else if (x == x->parent->right)
+				x->parent->right = y;
+			else
+				x->parent->left = y;
+			y->right = x;
+			x->parent = y;
+		}
+
+
+
+
+
+
+void printHelper(rbt* root, std::string indent, bool last) 
+{
+	if (root) 
+	{
+		std::cout << indent;
+		if (last) 
+		{
+			std::cout << "R----";
+			indent += "   ";
+		} 
+		else 
+		{
+			std::cout << "L----";
+			indent += "|  ";
+		}
+		std::string sColor = root->color ? "RED" : "BLACK";
+		std::cout << root->data._first << " - " << root->data._second << "(" << sColor << ")" << std::endl;
+		printHelper(root->left, indent, false);
+		printHelper(root->right, indent, true);
+	}
+}
+			
 
 	};
 

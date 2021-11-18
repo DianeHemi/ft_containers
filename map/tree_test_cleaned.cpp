@@ -21,6 +21,7 @@ namespace ft
 	template <class T>
 	class RedBlackTree
 	{
+		public:
 		////////Sortir ce morceau ?
 		struct Node
 		{
@@ -477,7 +478,7 @@ namespace ft
 						indent += "|  ";
 					}
 					std::string sColor = root->color ? "RED" : "BLACK";
-					std::cout << root->data._first << " - " << root->data._second << "(" << sColor << ")" << std::endl;
+					std::cout << root->data << "(" << sColor << ")" << std::endl;
 					printHelper(root->left, indent, false);
 					printHelper(root->right, indent, true);
 				}
@@ -494,27 +495,29 @@ namespace ft
 
 
 
-/*
-int main() {
-	ft::map<int, int> bst;
 
-	bst._rbt.insert(ft::make_pair(55, 25));
-	bst._rbt.insert(ft::pair<int, int>(40, 30));
+int main() {
+	ft::RedBlackTree<int> bst;
+
+	bst.insert(55);
+	bst.insert(40);
 	
-	bst._rbt.insert(ft::pair<int, int>(65, 21));
-	bst._rbt.insert(ft::pair<int, int>(60, 22));
-	bst._rbt.insert(ft::pair<int, int>(75, 23));
-	bst._rbt.insert(ft::pair<int, int>(57, 24));
-	bst._rbt.insert(ft::pair<int, int>(20, 28));
-	bst._rbt.insert(ft::pair<int, int>(62, 29));
+	bst.insert(65);
+	bst.insert(60);
+	bst.insert(75);
+	bst.insert(57);
+	bst.insert(20);
+	bst.insert(52);
+
+	bst.insert(52);
 
 	//bst.deleteNode(40);
 	//bst.deleteNode(0);
-	bst._rbt.printTree();*/
+	bst.printTree();
   	/*for (int i = 0; i < 1000000; i++)
 		bst.insert(i);
 	std::cout << "Done" <<std::endl;
 
 	for (int i = 0; i < 1000000; i++)
 		bst.deleteNode(i);*/
-//}
+}
