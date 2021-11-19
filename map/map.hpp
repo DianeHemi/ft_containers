@@ -11,7 +11,7 @@
 # include <iostream>
 
 
-//# include "tree_test_cleaned.hpp"
+//https://metal-geography-067.notion.site/Binary-Search-Tree-30d6473427324e6fb1cc8c24d0f7938e
 
 namespace ft
 {
@@ -117,6 +117,8 @@ namespace ft
 		/****
 			Element access
 		****/
+	//Return ref to mapped value
+	//OR, if value not found -> insert new value initialized with k
 		//mapped_type& operator[]( const key_type& k ) { };
 
 		/****
