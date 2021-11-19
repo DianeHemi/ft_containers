@@ -13,6 +13,7 @@ namespace ft
 		RBTree*   	parent;
 		RBTree*   	left;
 		RBTree*   	right;
+		bool		end;
 	};
 
     template <class T>
@@ -26,7 +27,7 @@ namespace ft
     template <class T>
 	RBTree<T>* maximum( RBTree<T>* root ) //Node at the utter right
 	{
-		while (root->right)
+		while (root->right && root->right->end == false) //Must be different from _end
 			root = root->right;
 		return root;
 	}
@@ -38,7 +39,7 @@ namespace ft
 			return minimum(node->right);
 		
 		RBTree<T>* parent = node->parent;
-		while(parent && node == parent->right)
+		while (parent && node == parent->right)
 		{
 			node = parent;
 			parent = parent->parent;
@@ -50,10 +51,10 @@ namespace ft
 	RBTree<T>* predecessor( RBTree<T>* node )
 	{
 		if (node->left)
-			return minimum(node->left);
+			return maximum(node->left);
 		
 		RBTree<T>* parent = node->parent;
-		while(parent && node == parent->left)
+		while (parent && node == parent->left)
 		{
 			node = parent;
 			parent = parent->parent;

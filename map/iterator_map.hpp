@@ -35,10 +35,10 @@ namespace ft
 			reference	operator*() const { return (_node->data); };
 			pointer		operator->() const { return &(_node->data); };
 
-			iterator_map&	operator++() { _node = _node->successor(); return *this; };
-			iterator_map 	operator++(int) { iterator_map tmp(*this); _node = _node->successor(); return tmp; };
-			iterator_map&	operator--() { _node = _node->predecessor(); return *this; };
-			iterator_map	operator--(int) { iterator_map tmp(*this); _node = _node->predecessor();; return tmp; };
+			iterator_map&	operator++() { _node = successor(_node); return *this; };
+			iterator_map 	operator++(int) { iterator_map tmp(*this); _node = successor(_node); return tmp; };
+			iterator_map&	operator--() { _node = predecessor(_node); return *this; };
+			iterator_map	operator--(int) { iterator_map tmp(*this); _node = predecessor(_node);; return tmp; };
 
 			friend bool	operator==( const iterator_map & lhs, const iterator_map & rhs )
 			{ return (lhs._node == rhs._node); };

@@ -53,6 +53,7 @@ namespace ft
 		{
 			_rbt = newNode(ft::make_pair(key_type(), mapped_type()));
 			_end = _rbt;
+			_end->end = true;
 		};
 
 		//Range constructor
@@ -94,7 +95,7 @@ namespace ft
 		****/
 		iterator        begin() { return iterator(minimum(_rbt)); };
 		//const_iterator  begin() { };
-		iterator        end() { return iterator(maximum(_rbt)); };
+		iterator        end() { return iterator(_end); };
 		//const_iterator  end() { };
 
 		//reverse_iterator        rbegin() { };
@@ -125,22 +126,29 @@ namespace ft
 		ft::pair<iterator, bool>	insert( const value_type& val ) 
 		{
 			ft::pair<iterator, bool> ret;
-			size_type tmp = _size;
-			rbt* node = myInsert(val);
+			size_type tmp_size = _size;
+			rbt* node = _insertSingle(val);
 
-			if (_size != tmp)
+			if (_size != tmp_size)
 				ret._second = false;
 			else
 				ret._second = true;
 			ret._first = iterator(node);
 			return ret;
 		};
-		//iterator	insert( iterator position, const value_type& val ) { };
-		/*template <class InputIterator>
+		iterator	insert( iterator position, const value_type& val ) 
+		{
+			iterator it = position;
+			rbt* node = _insertSingle(val);
+
+			return iterator(node);
+		};
+		template <class InputIterator>
 		void	insert( InputIterator first, InputIterator last ) 
 		{
-
-		};*/
+			for ( ; first != last; first++)
+				_insertSingle(*first);
+		};
 
 		/****
 			Observers
@@ -149,7 +157,7 @@ namespace ft
 
 		class value_compare
 		{
-			//friend class map;
+			friend class map;
 			public:
 				typedef	bool		result_type;
 				typedef	value_type	first_argument_type;
@@ -186,6 +194,9 @@ void printTree()
 		printHelper(_rbt, "", true);
 }
 
+/****************************************************************
+						 Private members
+*****************************************************************/
 		private:
 			allocator_type  	_alloc;
 			size_type       	_size;
@@ -197,11 +208,10 @@ void printTree()
 			
 
 
-		//Elements relatifs a l'arbre binaire
-		//creation des nodes, free des nodes, suppression node,  
-		//insertion node, recherche d'une node, clear arbre, copy tree ?
 
-
+/****************************************************************
+						Private functions
+*****************************************************************/
 		private:
 			rbt* newNode( const value_type& key )
 			{
@@ -212,6 +222,104 @@ void printTree()
 				node->right = NULL;
 				node->color = RED;
 				return node;
+			}
+
+
+			rbt* _insertSingle( const value_type& key )
+			{
+				if(!_rbt || _rbt == _end)
+				{
+					_rbt = newNode(key);
+					_rbt->right = _end;
+					_rbt->color = BLACK;
+					_end->parent = _rbt;
+					_size++;
+					return _rbt;
+				}
+
+				rbt* linker = _rbt;
+				rbt *node = newNode(key);
+				while (linker != NULL)
+				{
+					if (_cmp(key._first, linker->data._first))
+					{
+						if (linker->left == NULL)
+						{
+							linker->left = node;
+							node->color = RED;
+							node->parent = linker;
+							_size++;
+							break;
+						}
+						else 
+							linker = linker->left;
+					} 
+					else if (linker->data._first != key._first)
+					{
+						if (linker->right == _end || linker->right == NULL)
+						{
+							if (linker->right == _end)
+							{
+								node->right = _end;
+								_end->parent = node;
+							}
+							linker->right = node;
+							node->color = RED;
+							node->parent = linker;
+							_size++;
+							break; 
+						}
+						else
+							linker = linker->right;
+					}
+					else
+						return node;
+				}
+				insertFix(node);
+				return node;
+			}
+			
+			void leftRotate( rbt* x )
+			{
+				if (x->right == NULL || x->right == _end)
+					return ;
+
+				rbt* y = x->right;
+				x->right = y->left;
+				if (y->left != NULL)
+					y->left->parent = x;
+				y->parent = x->parent;
+
+				if (x->parent == NULL)	//Reassign root of the rbt
+					_rbt = y;
+				else if (x == x->parent->left)
+					x->parent->left = y;
+				else
+					x->parent->right = y;
+				y->left = x;
+				x->parent = y;
+			}
+
+			void rightRotate( rbt* x )
+			{
+				if (x->left == NULL || x->left == _end)
+					return ;
+
+				rbt* y = x->left;
+
+				x->left = y->right;
+				y->parent = x->parent;
+				if (y->right != NULL)
+					y->right->parent = x;
+
+				if (x->parent == NULL)	//Reassign root of the rbt
+					_rbt = y;
+				else if (x == x->parent->right)
+					x->parent->right = y;
+				else
+					x->parent->left = y;
+				y->right = x;
+				x->parent = y;
 			}
 
 			void insertFix( rbt* z )
@@ -266,104 +374,7 @@ void printTree()
 				_rbt->color = BLACK;
 			}
 
-		rbt* myInsert( const value_type& key )
-		{
-			if(!_rbt || _rbt == _end)
-			{
-				_rbt = newNode(key);
-				_rbt->right = _end;
-				_rbt->color = BLACK;
-				_end->parent = _rbt;
-				_size++;
-				return _rbt;
-			}
-
-			rbt* linker = _rbt;
-			rbt *node = newNode(key);
-			while (linker != NULL)
-			{
-				if (_cmp(key._first, linker->data._first))
-				{
-					if (linker->left == NULL)
-					{
-						linker->left = node;
-						node->color = RED;
-						node->parent = linker;
-						_size++;
-						break;
-					}
-					else 
-						linker = linker->left;
-				} 
-				else if (linker->data._first != key._first)
-				{
-					if (linker->right == _end || linker->right == NULL)
-					{
-						if (linker->right == _end)
-						{
-							node->right = _end;
-							_end->parent = linker;
-						}
-						linker->right = node;
-						node->color = RED;
-						node->parent = linker;
-						_size++;
-						break; 
-					}
-					else
-						linker = linker->right;
-				}
-				else
-					return node;
-			}
-			insertFix(node);
-			return node;
-		}
 		
-		void leftRotate( rbt* x )
-		{
-			if (x->right == NULL || x->right == _end)
-				return ;
-
-			rbt* y = x->right;
-			x->right = y->left;
-			if (y->left != NULL)
-				y->left->parent = x;
-			y->parent = x->parent;
-
-			if (x->parent == NULL)	//Reassign root of the rbt
-				_rbt = y;
-			else if (x == x->parent->left)
-				x->parent->left = y;
-			else
-				x->parent->right = y;
-			y->left = x;
-			x->parent = y;
-		}
-
-		void rightRotate( rbt* x )
-		{
-			if (x->left == NULL || x->left == _end)
-				return ;
-
-			rbt* y = x->left;
-
-			x->left = y->right;
-			y->parent = x->parent;
-			if (y->right != NULL)
-				y->right->parent = x;
-
-			if (x->parent == NULL)	//Reassign root of the rbt
-				_rbt = y;
-			else if (x == x->parent->right)
-				x->parent->right = y;
-			else
-				x->parent->left = y;
-			y->right = x;
-			x->parent = y;
-		}
-
-
 
 
 
