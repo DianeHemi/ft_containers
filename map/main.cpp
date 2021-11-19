@@ -15,19 +15,16 @@ int main()
 	m1.insert(ft::make_pair(1, 80));
 	m1.insert(ft::make_pair(5, 80));
 	m1.insert(ft::make_pair(3, 80));
-	/*m1.insert(ft::make_pair(12, 80));
-	m1.insert(it, ft::make_pair(21, 80));*/
+	m1.insert(ft::make_pair(12, 80));
 
-
-	/*m1.insert(ft::make_pair(58, 30));*/
-	/*bst._rbt->insert(ft::pair<int, int>(40, 30));
-	
-	bst._rbt->insert(ft::pair<int, int>(65, 21));
-	bst._rbt->insert(ft::pair<int, int>(60, 22));
-	bst._rbt->insert(ft::pair<int, int>(75, 23));
-	bst._rbt->insert(ft::pair<int, int>(57, 24));
-	bst._rbt->insert(ft::pair<int, int>(20, 28));
-	bst._rbt->insert(ft::pair<int, int>(62, 29));*/
+	/*m1.insert(ft::make_pair(58, 30));
+	m1.insert(ft::pair<int, int>(40, 30));
+	m1.insert(ft::pair<int, int>(65, 21));
+	m1.insert(ft::pair<int, int>(60, 22));
+	m1.insert(ft::pair<int, int>(75, 23));
+	m1.insert(ft::pair<int, int>(57, 24));
+	m1.insert(ft::pair<int, int>(20, 28));
+	m1.insert(ft::pair<int, int>(62, 29));*/
 	m1.printTree();
 
 
@@ -45,6 +42,17 @@ int main()
 	m2.insert(ft::make_pair(98, 25));
 	m2.insert(it, ite);
 	m2.printTree();
+
+	std::cout << "\n\nIterator constructor" << std::endl;
+	ft::map<int, int> m3(it, ite);
+	m3.printTree();
+
+	std::cout << "\n\nReverse iterator (rbegin / rend-- to avoid segfault)" << std::endl;
+	ft::map<int, int>::reverse_iterator rit = m1.rbegin();
+	ft::map<int, int>::reverse_iterator rite = m1.rend();
+	rite--;
+	std::cout << rit->_first << " - " << rite->_first << std::endl;
+
 
 
     return 0;

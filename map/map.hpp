@@ -6,6 +6,7 @@
 
 # include "pair.hpp"
 # include "iterator_map.hpp"
+# include "../lexicographical_compare.hpp"
 # include <memory>
 # include <iostream>
 
@@ -40,7 +41,7 @@ namespace ft
 
 			typedef typename ft::iterator_map<value_type>			    	iterator;        //legacy bidirectionnal iterator to value_type
 			//typedef typename ft::const_iterator_map<value_type>	    	const_iterator;  //legacy bidirectionnal iterator to const value_type
-			//typedef typename ft::reverse_iterator<iterator>		    	reverse_iterator;
+			typedef typename ft::reverse_iterator<iterator>		    		reverse_iterator;
 			//typedef typename ft::const_reverse_iterator<const_iterator>	const_reverse_iterator
 			typedef typename Alloc::template rebind<rbt>::other    new_alloc;
 
@@ -53,18 +54,21 @@ namespace ft
 		{
 			_rbt = newNode(ft::make_pair(key_type(), mapped_type()));
 			_end = _rbt;
-			_end->end = true;
+			//_end->end = true;
 		};
 
 		//Range constructor
-		/*template <class InputIterator>
+		template <class InputIterator>
 		map( InputIterator first, InputIterator last, 
-			const key_compare& cmp = key_compare,
+			const key_compare& comp = key_compare(),
 			const allocator_type& alloc = allocator_type() )
-		: 
+		: _alloc(alloc), _size(0), _cmp(comp), _rbt(0)
 		{
-
-		};*/
+			_rbt = newNode(ft::make_pair(key_type(), mapped_type()));
+			_end = _rbt;
+			//_end->end = true;
+			insert(first, last);
+		};
 
 		//Copy constructor
 		//map( const map& src ) { *this = src; };
@@ -98,9 +102,9 @@ namespace ft
 		iterator        end() { return iterator(_end); };
 		//const_iterator  end() { };
 
-		//reverse_iterator        rbegin() { };
+		reverse_iterator        rbegin() { return reverse_iterator(maximum(_rbt)); };
 		//const_reverse_iterator  rbegin() { };
-		//reverse_iterator        rend() { };
+		reverse_iterator        rend() { return reverse_iterator(minimum(_rbt)); };
 		//const_reverse_iterator  rend() { };
 
 		/****
@@ -408,7 +412,7 @@ void printHelper(rbt* root, std::string indent, bool last)
 
 
 
-	/*template< class Key, class T, class Compare, class Alloc >
+	template< class Key, class T, class Compare, class Alloc >
 	bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs )
 	{
 		if (lhs.size() != rhs.size())
@@ -446,7 +450,7 @@ void printHelper(rbt* root, std::string indent, bool last)
 		return !(lhs < rhs);
 	}
 
-	template< class Key, class T, class Compare, class Alloc >
+	/*template< class Key, class T, class Compare, class Alloc >
 	void swap( ft::map<Key,T,Compare,Alloc>& lhs, ft::map<Key,T,Compare,Alloc>& rhs )
 	{
 

@@ -13,7 +13,7 @@ namespace ft
 		RBTree*   	parent;
 		RBTree*   	left;
 		RBTree*   	right;
-		bool		end;
+		//bool		end;
 	};
 
     template <class T>
@@ -27,7 +27,7 @@ namespace ft
     template <class T>
 	RBTree<T>* maximum( RBTree<T>* root ) //Node at the utter right
 	{
-		while (root->right && root->right->end == false) //Must be different from _end
+		while (root->right) //&& root->right->end == false
 			root = root->right;
 		return root;
 	}
