@@ -53,7 +53,13 @@ int main()
 	rite--;
 	std::cout << rit->_first << " - " << rite->_first << std::endl;
 
-
+	std::cout << "\n\nTest delete from iterator" << std::endl;
+	m2.printTree();
+	ft::map<int, int>::iterator it2 = m2.begin();
+	it2++;
+	std::cout << it2->_first << std::endl;
+	m2.erase(it2);
+	m2.printTree();
 
     return 0;
 }

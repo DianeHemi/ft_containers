@@ -45,6 +45,7 @@ namespace ft
 			friend bool	operator!=( const iterator_map & lhs, const iterator_map & rhs )
 			{ return (lhs._node != rhs._node); };
 
+
 			brt*	_node;
 	};
 }

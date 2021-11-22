@@ -114,6 +114,12 @@ namespace ft
 		size_type   size() const { return _size; };
 		size_type   max_size() const { return _alloc.max_size(); };
 		
+
+//Faire at
+
+
+
+
 		/****
 			Element access
 		****/
@@ -126,9 +132,16 @@ namespace ft
 		****/
 		//void 	clear() { };
 		//void 	swap( map& x ) { };
-		//void		erase( iterator position ) { };
+		void		erase( iterator position ) 
+		{
+			rbt* node = searchTree(*position, _rbt);
+			if (node)
+				_erase(node);
+		};
 		//size_type	erase( const key_type& k ) { };
-		//void		erase( iterator first, iterator last) { };
+		//void		erase( iterator first, iterator last) { 
+			//Start from the end
+		//};
 		ft::pair<iterator, bool>	insert( const value_type& val ) 
 		{
 			ft::pair<iterator, bool> ret;
@@ -230,6 +243,11 @@ void printTree()
 				return node;
 			}
 
+			void _deleteNode( rbt* node )
+			{
+				_alloc.destroy(&node->data);
+				_alloc_rbt.deallocate(node, 1);
+			}
 
 			rbt* _insertSingle( const value_type& key )
 			{
@@ -380,7 +398,183 @@ void printTree()
 				_rbt->color = BLACK;
 			}
 
-		
+		void rbTransplant(rbt* x, rbt* y)
+		{
+			if (x->parent == NULL || x->parent == _end)
+				_rbt = y;
+			if (x == x->parent->left)
+				x->parent->left = y;
+			else
+				x->parent->right = y;
+			y->parent = x->parent;
+		}
+
+		void _erase(rbt* z)
+		{
+			/*rbt* x = NULL;
+			rbt* y = z;
+			int y_original_color = y->color;
+			if (z->left == NULL)
+			{
+				x = z->right;
+				rbTransplant(z, z->right);
+			}
+			else if (z->right == NULL)
+			{
+				x = z->left;
+				rbTransplant(z, z->left);
+			}
+			else
+			{
+				if (z->right)
+					y = minimum(z->right);
+				y_original_color = y->color;
+				x = y->right;
+				if (y->parent == z)
+					x->parent = y;
+				else
+				{
+					rbTransplant(y, y->right);
+					y->right = z->right;
+					if (y->right != NULL)
+						y->right->parent = y;
+				}
+				rbTransplant(z, y);
+				y->left = z->left;
+				if (y->left != NULL)
+					y->left->parent = y;
+				y->color = z->color;
+			}
+			if (y_original_color == BLACK)
+				_eraseFixup(x);
+			_deleteNode(z);*/
+
+			if (z && z->left == NULL && z->right == NULL)
+			{
+				if (_rbt == z)
+					_rbt = _end;
+				else if (_rbt->right == z)
+				{
+					_eraseFixup(z);
+					_rbt->right = _end;
+				}
+				else
+				{
+					_eraseFixup(z);
+					if (z->parent->left == z)
+						z->parent->left = NULL;
+					else
+						z->parent->right = NULL;
+				}
+				_deleteNode(z);
+			}
+			else if ((z && z->left != NULL && z->right == NULL) || (z && z->left != NULL && z->right == _end))
+			{
+				rbt* tmp = z;
+				z = z->left;
+				z->left = tmp;
+				z->left = NULL;
+				_deleteNode(tmp);
+			}
+			else if (z && z->left == NULL && z->right != NULL)
+			{
+				rbt* tmp = z;
+				z = z->right;
+				z->right = tmp;
+				z->right = NULL;
+				_deleteNode(tmp);
+			}
+			else
+			{
+				bool flag = false;
+				rbt* tmp = z->right;
+				while ((tmp->left))
+				{
+					flag = true;
+					z->parent = tmp;
+					tmp = tmp->left;
+				}
+				//if (!flag)
+				//	z->parent = tmp;
+				rbt* swap = z;
+				z = tmp;
+				tmp = swap;
+				_deleteNode(tmp);
+			}
+			//_eraseFixup(z);
+			_size--;
+		}
+
+		void _eraseFixup(rbt* x)
+		{
+			while (x != _rbt && x->color == BLACK)
+			{
+				if (x == x->parent->left)
+				{
+					rbt* w = x->parent->right;
+					if (w && w->color == RED)
+					{
+						w->color = BLACK;
+						x->parent->color = RED;
+						leftRotate(x->parent);
+						w = x->parent->right;
+					}
+					if ( w->left && w->right && w->left->color == BLACK && w->right->color == BLACK)
+					{
+						w->color = RED;
+						x = x->parent;
+					}
+					else
+					{
+						if (w->right && w->right->color == BLACK)
+						{
+							w->left->color = BLACK;
+							w->color = RED;
+							rightRotate(w);
+							w = x->parent->right;
+						}
+						w->color = x->parent->color;
+						x->parent->color = BLACK;
+						if (w->right)
+							w->right->color = BLACK;
+						leftRotate(x->parent);
+						x = _rbt;
+					}
+				}
+				else
+				{
+					rbt* w = x->parent->left;
+					if (w && w->color == RED)
+					{
+						w->color = BLACK;
+						x->parent->color = RED;
+						rightRotate(x->parent);
+						w = x->parent->left;
+					}
+					if (w && w->right->color == BLACK && w->left->color == BLACK)
+					{
+						w->color = RED;
+						x = x->parent;
+					}
+					else
+					{
+						if (w && w->left->color == BLACK)
+						{
+							w->right->color = BLACK;
+							w->color = RED;
+							leftRotate(w);
+							w = x->parent->left;
+						}
+						w->color = x->parent->color;
+						x->parent->color = BLACK;
+						w->left->color = BLACK;
+						rightRotate(x->parent);
+						x = _rbt;
+					}
+				}
+			}
+			x->color = BLACK;
+		}
 
 
 

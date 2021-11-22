@@ -80,8 +80,6 @@ namespace ft
 		return NULL;
 	}
 
-
-
 }
 
 # endif
