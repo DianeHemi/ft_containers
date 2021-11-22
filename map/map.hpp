@@ -486,7 +486,25 @@ void printTree()
 			}
 			else
 			{
-				bool flag = false;
+				rbt* tmp = z->right;
+				rbt* tmp2 = z->left;
+				if (z->parent->left == z)
+				{
+					z->parent->left = tmp;
+					z->parent->left->left = tmp2;
+					tmp->parent = z->parent;
+				}
+				else
+				{
+					z->parent->right = tmp;
+					z->parent->right->left = tmp2;
+					tmp->parent = z->parent;
+				}
+				_deleteNode(z);
+				_eraseFixup(tmp);
+				_size--;
+				return ;
+				/*bool flag = false;
 				rbt* tmp = z->right;
 				while ((tmp->left))
 				{
@@ -499,9 +517,10 @@ void printTree()
 				rbt* swap = z;
 				z = tmp;
 				tmp = swap;
-				_deleteNode(tmp);
+				_deleteNode(tmp);*/
+
 			}
-			//_eraseFixup(z);
+			_eraseFixup(z);
 			_size--;
 		}
 
@@ -551,14 +570,14 @@ void printTree()
 						rightRotate(x->parent);
 						w = x->parent->left;
 					}
-					if (w && w->right->color == BLACK && w->left->color == BLACK)
+					if (w && w->right && w->left && w->right->color == BLACK && w->left->color == BLACK)
 					{
 						w->color = RED;
 						x = x->parent;
 					}
 					else
 					{
-						if (w && w->left->color == BLACK)
+						if (w && w->left && w->left->color == BLACK)
 						{
 							w->right->color = BLACK;
 							w->color = RED;
@@ -567,7 +586,8 @@ void printTree()
 						}
 						w->color = x->parent->color;
 						x->parent->color = BLACK;
-						w->left->color = BLACK;
+						if (w->left)
+							w->left->color = BLACK;
 						rightRotate(x->parent);
 						x = _rbt;
 					}
