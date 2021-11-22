@@ -398,31 +398,35 @@ void printTree()
 				_rbt->color = BLACK;
 			}
 
-		void rbTransplant(rbt* x, rbt* y)
+		void _rbTransplant(rbt* x, rbt* y)
 		{
 			if (x->parent == NULL || x->parent == _end)
 				_rbt = y;
-			if (x == x->parent->left)
-				x->parent->left = y;
-			else
-				x->parent->right = y;
-			y->parent = x->parent;
+			if (x->parent)
+			{
+				if (x == x->parent->left)
+					x->parent->left = y;
+				else
+					x->parent->right = y;
+			}
+			if (y && x)
+				y->parent = x->parent;
 		}
 
 		void _erase(rbt* z)
 		{
-			/*rbt* x = NULL;
+			rbt* x = NULL;
 			rbt* y = z;
 			int y_original_color = y->color;
 			if (z->left == NULL)
 			{
 				x = z->right;
-				rbTransplant(z, z->right);
+				_rbTransplant(z, z->right);
 			}
 			else if (z->right == NULL)
 			{
 				x = z->left;
-				rbTransplant(z, z->left);
+				_rbTransplant(z, z->left);
 			}
 			else
 			{
@@ -430,101 +434,29 @@ void printTree()
 					y = minimum(z->right);
 				y_original_color = y->color;
 				x = y->right;
-				if (y->parent == z)
+				if (y->parent == z && x)
 					x->parent = y;
 				else
 				{
-					rbTransplant(y, y->right);
+					_rbTransplant(y, y->right);
 					y->right = z->right;
 					if (y->right != NULL)
 						y->right->parent = y;
 				}
-				rbTransplant(z, y);
+				_rbTransplant(z, y);
 				y->left = z->left;
 				if (y->left != NULL)
 					y->left->parent = y;
 				y->color = z->color;
 			}
-			if (y_original_color == BLACK)
-				_eraseFixup(x);
-			_deleteNode(z);*/
+			if (y_original_color == BLACK && x)
+				_eraseFix(x);
+			_deleteNode(z);
 
-			if (z && z->left == NULL && z->right == NULL)
-			{
-				if (_rbt == z)
-					_rbt = _end;
-				else if (_rbt->right == z)
-				{
-					_eraseFixup(z);
-					_rbt->right = _end;
-				}
-				else
-				{
-					_eraseFixup(z);
-					if (z->parent->left == z)
-						z->parent->left = NULL;
-					else
-						z->parent->right = NULL;
-				}
-				_deleteNode(z);
-			}
-			else if ((z && z->left != NULL && z->right == NULL) || (z && z->left != NULL && z->right == _end))
-			{
-				rbt* tmp = z;
-				z = z->left;
-				z->left = tmp;
-				z->left = NULL;
-				_deleteNode(tmp);
-			}
-			else if (z && z->left == NULL && z->right != NULL)
-			{
-				rbt* tmp = z;
-				z = z->right;
-				z->right = tmp;
-				z->right = NULL;
-				_deleteNode(tmp);
-			}
-			else
-			{
-				rbt* tmp = z->right;
-				rbt* tmp2 = z->left;
-				if (z->parent->left == z)
-				{
-					z->parent->left = tmp;
-					z->parent->left->left = tmp2;
-					tmp->parent = z->parent;
-				}
-				else
-				{
-					z->parent->right = tmp;
-					z->parent->right->left = tmp2;
-					tmp->parent = z->parent;
-				}
-				_deleteNode(z);
-				_eraseFixup(tmp);
-				_size--;
-				return ;
-				/*bool flag = false;
-				rbt* tmp = z->right;
-				while ((tmp->left))
-				{
-					flag = true;
-					z->parent = tmp;
-					tmp = tmp->left;
-				}
-				//if (!flag)
-				//	z->parent = tmp;
-				rbt* swap = z;
-				z = tmp;
-				tmp = swap;
-				_deleteNode(tmp);*/
-
-			}
-			_eraseFixup(z);
 			_size--;
 		}
 
-		void _eraseFixup(rbt* x)
+		void _eraseFix(rbt* x)
 		{
 			while (x != _rbt && x->color == BLACK)
 			{

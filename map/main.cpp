@@ -57,6 +57,7 @@ int main()
 	m2.printTree();
 	ft::map<int, int>::iterator it2 = m2.begin();
 	it2++;
+	it2++;
 	std::cout << it2->_first << std::endl;
 	m2.erase(it2);
 	m2.printTree();

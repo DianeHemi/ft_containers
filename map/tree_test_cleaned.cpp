@@ -164,11 +164,15 @@ namespace ft
 			{
 				//Search for key
 				//Should compare to know if search go right or left ?
-
-				if(!curr) { return; }
+				std::cout << "Delete" << std::endl;
+				if(!curr) { 
+					std::cout << "NULL" << std::endl;
+					return; }
 				if(curr->data == stuff) {
 					//CASE -- 1
+					std::cout << "0" << std::endl;
 					if(!curr->left && !curr->right) {
+						std::cout << "1" << std::endl;
 						if(parent->data == curr->data){ _root = NULL; }
 						else if(parent->right == curr) {
 							deleteFix(curr);
@@ -181,12 +185,14 @@ namespace ft
 					}
 					//CASE -- 2
 					else if(curr->left && !curr->right) {
+						std::cout << "2" << std::endl;
 						int swap = curr->data;
 						curr->data = curr->left->data;
 						curr->left->data = swap;
 						deleteNodeHelper(curr, curr->right, stuff);
 					}
 					else if(!curr->left && curr->right) {
+						std::cout << "3" << std::endl;
 						int swap = curr->data;
 						curr->data = curr->right->data;
 						curr->right->data = swap;
@@ -194,6 +200,7 @@ namespace ft
 					}
 					//CASE -- 3
 					else {
+						std::cout << "4" << std::endl;
 						bool flag = false;
 						NodePtr temp = curr->right;
 						while(temp->left) { flag = true; parent = temp; temp = temp->left; }
@@ -452,13 +459,138 @@ namespace ft
 		/****
 			 * Deletion
 		****/
-			void deleteNode( T data )
+			void deleteNode( T stuff )
 			{ 
-				NodePtr temp = _root;
-				NodePtr parent = temp;
-				deleteNodeHelper(parent, temp, data); 
+				auto temp = _root;
+				auto parent = temp;
+				bool flag = false;
+				if(!temp) { RemoveNode(nullptr, nullptr, stuff); }
+
+				while(temp) {
+					if(stuff == temp->data) { flag = true; RemoveNode(parent, temp, stuff); break; }
+					else if(stuff < temp->data) { parent = temp ; temp = temp->left; }
+					else { parent = temp ; temp = temp->right; }
+				}
 			}
 
+
+void RemoveNode(NodePtr parent, NodePtr curr, int stuff) {
+            if(curr == nullptr) { return; }
+            if(curr->data == stuff) {
+                //CASE -- 1
+                if(curr->left == nullptr && curr->right == nullptr) {
+                    if(parent->data == curr->data){ _root = nullptr; }
+                    else if(parent->right == curr) {
+                        RB_Delete_Fixup(curr);
+                        parent->right = nullptr;
+                    } 
+                    else { 
+                        RB_Delete_Fixup(curr);
+                        parent->left = nullptr;
+                    }
+                }
+                //CASE -- 2
+                else if(curr->left != nullptr && curr->right == nullptr) {
+                    int swap = curr->data;
+                    curr->data = curr->left->data;
+                    curr->left->data = swap;
+                    RemoveNode(curr, curr->right, stuff);
+                }
+                else if(curr->left == nullptr && curr->right != nullptr) {
+                    int swap = curr->data;
+                    curr->data = curr->right->data;
+                    curr->right->data = swap;
+                    RemoveNode(curr, curr->right, stuff);
+                }
+                //CASE -- 3
+                else {
+                    bool flag = false;
+                    NodePtr temp = curr->right;
+                    while(temp->left) { flag = true; parent = temp; temp = temp->left; }
+                    if(!flag) { parent = curr; }
+                    int swap = curr->data;
+                    curr->data = temp->data;
+                    temp->data = swap;
+                    RemoveNode(parent, temp, swap);
+                }
+            }
+        }
+void RB_Delete_Fixup(NodePtr z) { 
+            while(z->data != _root->data && z->color == BLACK) {
+                auto sibling = _root;
+                if(z->parent->left == z) {
+                    if(z->parent->right){ sibling = z->parent->right; }
+                    if(sibling) {
+                        //CASE -- 1
+                        if(sibling->color == RED) {
+                            sibling->color = BLACK;
+                            z->parent->color = RED;
+                            leftRotate(z->parent);
+                            sibling = z->parent->right;
+                        }
+                         //CASE -- 2
+                        if(sibling->left == nullptr && sibling->right == nullptr) {
+                            sibling->color = RED;
+                            z = z->parent;
+                        }
+                        else if(sibling->left->color == BLACK && sibling->right->color == BLACK) {
+                            sibling->color = RED;
+                            z = z->parent;
+                        }
+                        //CASE -- 3
+                        else if(sibling->right->color == BLACK) {
+                            sibling->left->color = BLACK;
+                            sibling->color = RED;
+                            rightRotate(sibling);
+                            sibling = z->parent->right;
+                        } else {
+                            sibling->color = z->parent->color;
+                            z->parent->color = BLACK;
+                            if(sibling->right){ sibling->right->color = BLACK; }
+                            leftRotate(z->parent);
+                            z = _root;
+                        }
+                    } 
+                } else {
+                    if(z->parent->right == z){
+                        if(z->parent->left){ sibling = z->parent->left; }
+                        if(sibling) {
+                            //CASE -- 1
+                            if(sibling->color == RED){
+                                sibling->color = BLACK;
+                                z->parent->color = RED;
+                                rightRotate(z->parent);
+                                sibling = z->parent->left;
+                            }
+                            //CASE -- 2
+                             if(sibling->left == nullptr && sibling->right == nullptr) {
+                                sibling->color = RED;
+                                z = z->parent;
+                            }
+                            else if(sibling->left->color == BLACK && sibling->right->color == BLACK) {
+                                sibling->color = RED;
+                                z = z->parent;
+                            }
+                            //CASE -- 3 
+                            else if(sibling->left->color == BLACK) {
+                                sibling->right->color = BLACK;
+                                sibling->color = RED;
+                                rightRotate(sibling);
+                                sibling = z->parent->left;
+                            } else {
+                                sibling->color = z->parent->color;
+                                z->parent->color = BLACK;
+                                if(sibling->left){ sibling->left->color = BLACK; }
+                                leftRotate(z->parent);
+                                z = _root;
+                            }
+                        } 
+                    }
+
+                }
+            }
+            z->color = BLACK;
+        }
 
 		/****
 			 * Printing
@@ -509,10 +641,10 @@ int main() {
 	bst.insert(20);
 	bst.insert(52);
 
-	bst.insert(52);
+	bst.printTree();
+	std::cout << "\n" << std::endl;
 
-	//bst.deleteNode(40);
-	//bst.deleteNode(0);
+	bst.deleteNode(40);
 	bst.printTree();
   	/*for (int i = 0; i < 1000000; i++)
 		bst.insert(i);
