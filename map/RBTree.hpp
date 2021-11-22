@@ -62,24 +62,6 @@ namespace ft
 		return parent;
 	}
 
-	template<class T>
-	RBTree<T>* searchTree(T key, RBTree<T>* root) 
-	{
-		if(!root) 
-			return NULL;
-
-		while (root) 
-		{
-			if (key == root->data)
-				return root;
-			else if (key < root->data)
-				root = root->left;
-			else 
-				root = root->right;
-		}
-		return NULL;
-	}
-
 }
 
 # endif

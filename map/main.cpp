@@ -51,14 +51,14 @@ int main()
 	ft::map<int, int>::reverse_iterator rit = m1.rbegin();
 	ft::map<int, int>::reverse_iterator rite = m1.rend();
 	rite--;
-	std::cout << rit->_first << " - " << rite->_first << std::endl;
+	std::cout << rit->first << " - " << rite->first << std::endl;
 
 	std::cout << "\n\nTest delete from iterator" << std::endl;
 	m2.printTree();
 	ft::map<int, int>::iterator it2 = m2.begin();
 	it2++;
 	it2++;
-	std::cout << it2->_first << std::endl;
+	std::cout << it2->first << std::endl;
 	m2.erase(it2);
 	m2.printTree();
 

@@ -40,7 +40,7 @@ namespace ft
 			
 
 			typedef typename ft::iterator_map<value_type>			    	iterator;        //legacy bidirectionnal iterator to value_type
-			//typedef typename ft::const_iterator_map<value_type>	    	const_iterator;  //legacy bidirectionnal iterator to const value_type
+			typedef typename ft::const_iterator_map<value_type>	    		const_iterator;  //legacy bidirectionnal iterator to const value_type
 			typedef typename ft::reverse_iterator<iterator>		    		reverse_iterator;
 			//typedef typename ft::const_reverse_iterator<const_iterator>	const_reverse_iterator
 			typedef typename Alloc::template rebind<rbt>::other    new_alloc;
@@ -98,9 +98,9 @@ namespace ft
 			Iterators
 		****/
 		iterator        begin() { return iterator(minimum(_rbt)); };
-		//const_iterator  begin() { };
+		const_iterator  begin() const { return const_iterator(minimum(_rbt)); };
 		iterator        end() { return iterator(_end); };
-		//const_iterator  end() { };
+		const_iterator  end() const { return const_iterator(_end); };
 
 		reverse_iterator        rbegin() { return reverse_iterator(maximum(_rbt)); };
 		//const_reverse_iterator  rbegin() { };
@@ -112,7 +112,7 @@ namespace ft
 		****/
 		bool        empty() const { return _size == 0; };
 		size_type   size() const { return _size; };
-		size_type   max_size() const { return _alloc.max_size(); };
+		size_type   max_size() const { return _alloc_rbt.max_size(); };
 		
 
 //Faire at
@@ -125,7 +125,14 @@ namespace ft
 		****/
 	//Return ref to mapped value
 	//OR, if value not found -> insert new value initialized with k
-		//mapped_type& operator[]( const key_type& k ) { };
+		mapped_type& operator[]( const key_type& key ) 
+		{
+			rbt* node = searchTree(key, _rbt);
+			if (node == _end || node == NULL)
+				return insert(ft::make_pair(key, T())).first->second;
+			else
+				return node->data.second;
+		};
 
 		/****
 			Modifiers
@@ -134,14 +141,25 @@ namespace ft
 		//void 	swap( map& x ) { };
 		void		erase( iterator position ) 
 		{
-			rbt* node = searchTree(*position, _rbt);
+			rbt* node = searchTree(position->first, _rbt);
 			if (node)
 				_erase(node);
 		};
-		//size_type	erase( const key_type& k ) { };
-		//void		erase( iterator first, iterator last) { 
+		/*size_type	erase( const key_type& k ) 
+		{ 
+			size_type tmp = _size;
+			rbt* node = searchTree(k, _rbt);
+			erase(node);
+			return tmp - _size;
+		};*/
+		void		erase( iterator first, iterator last) 
+		{ 
 			//Start from the end
-		//};
+			for( ; last != first; last--)
+			{
+				erase(last);
+			}
+		};
 		ft::pair<iterator, bool>	insert( const value_type& val ) 
 		{
 			ft::pair<iterator, bool> ret;
@@ -149,10 +167,10 @@ namespace ft
 			rbt* node = _insertSingle(val);
 
 			if (_size != tmp_size)
-				ret._second = false;
+				ret.second = true;
 			else
-				ret._second = true;
-			ret._first = iterator(node);
+				ret.second = false;
+			ret.first = iterator(node);
 			return ret;
 		};
 		iterator	insert( iterator position, const value_type& val ) 
@@ -168,6 +186,23 @@ namespace ft
 			for ( ; first != last; first++)
 				_insertSingle(*first);
 		};
+
+	rbt* searchTree(const key_type& key, rbt* root) 
+	{
+		if(!root) 
+			return NULL; //return root ?
+
+		while (root) 
+		{
+			if (key == root->data.first)
+				return root;
+			else if (key < root->data.first)
+				root = root->left;
+			else 
+				root = root->right;
+		}
+		return NULL;
+	}
 
 		/****
 			Observers
@@ -260,12 +295,15 @@ void printTree()
 					_size++;
 					return _rbt;
 				}
+				rbt* tmp = searchTree(key.first, _rbt);
+				if (tmp != NULL)
+					return tmp;
 
 				rbt* linker = _rbt;
 				rbt *node = newNode(key);
 				while (linker != NULL)
 				{
-					if (_cmp(key._first, linker->data._first))
+					if (_cmp(key.first, linker->data.first))
 					{
 						if (linker->left == NULL)
 						{
@@ -278,7 +316,7 @@ void printTree()
 						else 
 							linker = linker->left;
 					} 
-					else if (linker->data._first != key._first)
+					else if (linker->data.first != key.first)
 					{
 						if (linker->right == _end || linker->right == NULL)
 						{
@@ -415,6 +453,9 @@ void printTree()
 
 		void _erase(rbt* z)
 		{
+			if (_rbt == NULL || _rbt == _end)
+				return ;
+
 			rbt* x = NULL;
 			rbt* y = z;
 			int y_original_color = y->color;
@@ -554,7 +595,7 @@ void printHelper(rbt* root, std::string indent, bool last)
 			indent += "|  ";
 		}
 		std::string sColor = root->color ? "RED" : "BLACK";
-		std::cout << root->data._first << " - " << root->data._second << "(" << sColor << ")" << std::endl;
+		std::cout << root->data.first << " - " << root->data.second << "(" << sColor << ")" << std::endl;
 		printHelper(root->left, indent, false);
 		printHelper(root->right, indent, true);
 	}
