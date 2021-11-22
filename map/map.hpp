@@ -449,8 +449,13 @@ void printTree()
 					y->left->parent = y;
 				y->color = z->color;
 			}
-			if (y_original_color == BLACK && x)
-				_eraseFix(x);
+			if (y_original_color == BLACK)
+			{
+				if (!x)
+					_eraseFix(y);
+				else
+					_eraseFix(x);
+			}
 			_deleteNode(z);
 
 			_size--;
@@ -470,23 +475,24 @@ void printTree()
 						leftRotate(x->parent);
 						w = x->parent->right;
 					}
-					if ( w->left && w->right && w->left->color == BLACK && w->right->color == BLACK)
+					if ( w && w->left && w->right && w->left->color == BLACK && w->right->color == BLACK)
 					{
 						w->color = RED;
 						x = x->parent;
 					}
 					else
 					{
-						if (w->right && w->right->color == BLACK)
+						if (w && w->right && w->right->color == BLACK)
 						{
 							w->left->color = BLACK;
 							w->color = RED;
 							rightRotate(w);
 							w = x->parent->right;
 						}
-						w->color = x->parent->color;
+						if (w)
+							w->color = x->parent->color;
 						x->parent->color = BLACK;
-						if (w->right)
+						if (w && w->right)
 							w->right->color = BLACK;
 						leftRotate(x->parent);
 						x = _rbt;
@@ -516,9 +522,10 @@ void printTree()
 							leftRotate(w);
 							w = x->parent->left;
 						}
-						w->color = x->parent->color;
+						if (w)
+							w->color = x->parent->color;
 						x->parent->color = BLACK;
-						if (w->left)
+						if (w && w->left)
 							w->left->color = BLACK;
 						rightRotate(x->parent);
 						x = _rbt;
