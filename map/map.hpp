@@ -12,6 +12,7 @@
 
 
 //https://metal-geography-067.notion.site/Binary-Search-Tree-30d6473427324e6fb1cc8c24d0f7938e
+//https://gcc.gnu.org/onlinedocs/gcc-7.4.0/libstdc++/api/a15448_source.html
 
 namespace ft
 {
@@ -155,11 +156,11 @@ namespace ft
 		void		erase( iterator first, iterator last) 
 		{
 			//Start from the end
-			for(last-- ; last != first && last != _end ; last--)
+			for(last-- ; last != first ; last--)
 			{
-				std::cout << last->first << std::endl;
 				erase(last);
 			}
+			erase(last);
 		};
 		ft::pair<iterator, bool>	insert( const value_type& val ) 
 		{
@@ -506,7 +507,7 @@ void printTree()
 			}
 			_deleteNode(z);
 		}*/
-
+//https://www.geeksforgeeks.org/red-black-tree-set-3-delete-2/
 		void _erase(rbt* z)
 		{
 			_update_min_max_for_erased_node(z);
@@ -569,7 +570,6 @@ void printTree()
 				_deleteNode(y);
 				return ;
 			}
-			std::cout << "Erase : " << z->data.first << " " << z->parent->data.first << std::endl;
 			_deleteNode(y);
 			_eraseFix(x, new_x_parent);
 		}
