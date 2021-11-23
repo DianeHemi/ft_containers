@@ -1,8 +1,7 @@
 #ifndef MAP_HPP
 # define MAP_HPP
 
-# define BLACK 0
-# define RED 1
+
 
 # include "pair.hpp"
 # include "iterator_map.hpp"
@@ -155,12 +154,14 @@ namespace ft
 		};
 		void		erase( iterator first, iterator last) 
 		{
+			/*if (first == begin() && last == end())
+				clear();*/
+
 			//Start from the end
-			for(last-- ; last != first ; last--)
+			while (first != last)
 			{
-				erase(last);
+				erase(first++);
 			}
-			erase(last);
 		};
 		ft::pair<iterator, bool>	insert( const value_type& val ) 
 		{
@@ -187,7 +188,6 @@ namespace ft
 		{
 			for ( ; first != last; first++)
 			{
-				std::cout << first->first << std::endl;
 				_insertSingle(*first);
 			}
 				
@@ -242,6 +242,9 @@ void printTree()
 						 Private members
 *****************************************************************/
 		private:
+		//Compare
+		//allocator_type
+		//Tree	_rbt;
 			allocator_type  	_alloc;
 			size_type       	_size;
 			Compare				_cmp;
@@ -368,6 +371,7 @@ void printTree()
 					x->parent->right = y;
 				y->left = x;
 				x->parent = y;
+
 			}
 
 			void rightRotate( rbt* x )
@@ -482,6 +486,7 @@ void printTree()
 				if (z->right)
 					y = minimum(z->right);
 				y_original_color = y->color;
+				
 				x = y->right;
 				if (y->parent == z && x)
 					x->parent = y;
@@ -508,7 +513,7 @@ void printTree()
 			_deleteNode(z);
 		}*/
 //https://www.geeksforgeeks.org/red-black-tree-set-3-delete-2/
-		void _erase(rbt* z)
+		/*void _erase(rbt* z)
 		{
 			_update_min_max_for_erased_node(z);
 			rbt* y = z;
@@ -572,9 +577,78 @@ void printTree()
 			}
 			_deleteNode(y);
 			_eraseFix(x, new_x_parent);
+		}*/
+
+		/*void _erase(rbt* x)
+		{
+			if (x->parent != NULL) 
+			{
+				if (x->right != NULL) 
+				{
+					if (x->parent->right == x)
+						x->parent->right = x->right;
+					else
+						x->parent->left = x->right;
+					x->right->parent = x->parent;
+
+					if (x->left != NULL) 
+					{
+						rbt *tmp = x->right;
+						while (tmp->left)
+							tmp = tmp->left;
+						tmp->left = x->left;
+						x->left->parent = tmp;
+					}
+				}
+				else if (x->left != NULL) 
+				{
+					if (x->parent->right == x)
+						x->parent->right = x->left;
+					else
+						x->parent->left = x->left;
+					x->left->parent = x->parent;
+				}
+				else {
+					if (n == n->parent->right)
+						n->parent->right = NULL;
+					else
+						n->parent->left = NULL;
+				}
+			}
+			else {
+				if (x->right != NULL) 
+				{
+					_rbt = x->right;
+					x->right->parent = NULL;
+
+					if (x->left != NULL) 
+					{
+						rbt *tmp = x->right;
+						while (tmp->left)
+							tmp = tmp->left;
+						tmp->left = x->left;
+						x->left->parent = tmp;
+					}
+				}
+				else if (x->left != NULL) 
+				{
+					_rbt = x->left;
+					x->left->parent = NULL;
+				}
+				else 
+					_rbt = _end;
+			}
+			if (x->color == BLACK)
+				_eraseFix(x);
+			_deleteNode(x);
+		}*/
+
+		void _erase( rbt * z )
+		{
+			
 		}
 
-		/*void _eraseFix(rbt* x)
+		void _eraseFix(rbt* x)
 		{
 			while (x != _rbt && x->color == BLACK)
 			{
@@ -647,7 +721,7 @@ void printTree()
 				}
 			}
 			x->color = BLACK;
-		}*/
+		}
 
 		void _update_min_max_for_erased_node( rbt* z )
 		{
