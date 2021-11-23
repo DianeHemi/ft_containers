@@ -42,7 +42,7 @@ namespace ft
 			typedef typename ft::iterator_map<value_type>			    	iterator;        //legacy bidirectionnal iterator to value_type
 			typedef typename ft::const_iterator_map<value_type>	    		const_iterator;  //legacy bidirectionnal iterator to const value_type
 			typedef typename ft::reverse_iterator<iterator>		    		reverse_iterator;
-			//typedef typename ft::const_reverse_iterator<const_iterator>	const_reverse_iterator
+			typedef typename ft::reverse_iterator<const_iterator>			const_reverse_iterator;
 			typedef typename Alloc::template rebind<rbt>::other    new_alloc;
 
 		/****
@@ -103,9 +103,9 @@ namespace ft
 		const_iterator  end() const { return const_iterator(_end); };
 
 		reverse_iterator        rbegin() { return reverse_iterator(maximum(_rbt)); };
-		//const_reverse_iterator  rbegin() { };
+		const_reverse_iterator  rbegin() const { return const_reverse_iterator(maximum(_rbt)); };
 		reverse_iterator        rend() { return reverse_iterator(minimum(_rbt)); };
-		//const_reverse_iterator  rend() { };
+		const_reverse_iterator  rend() const { return const_reverse_iterator(minimum(_rbt)); };
 
 		/****
 			Capacity
@@ -145,18 +145,19 @@ namespace ft
 			if (node)
 				_erase(node);
 		};
-		/*size_type	erase( const key_type& k ) 
+		size_type	erase( const key_type& k ) 
 		{ 
 			size_type tmp = _size;
 			rbt* node = searchTree(k, _rbt);
 			erase(node);
 			return tmp - _size;
-		};*/
+		};
 		void		erase( iterator first, iterator last) 
-		{ 
+		{
 			//Start from the end
-			for( ; last != first; last--)
+			for(last-- ; last != first && last != _end ; last--)
 			{
+				std::cout << last->first << std::endl;
 				erase(last);
 			}
 		};
@@ -177,32 +178,20 @@ namespace ft
 		{
 			iterator it = position;
 			rbt* node = _insertSingle(val);
-
+	
 			return iterator(node);
 		};
 		template <class InputIterator>
 		void	insert( InputIterator first, InputIterator last ) 
 		{
 			for ( ; first != last; first++)
+			{
+				std::cout << first->first << std::endl;
 				_insertSingle(*first);
+			}
+				
 		};
 
-	rbt* searchTree(const key_type& key, rbt* root) 
-	{
-		if(!root) 
-			return NULL; //return root ?
-
-		while (root) 
-		{
-			if (key == root->data.first)
-				return root;
-			else if (key < root->data.first)
-				root = root->left;
-			else 
-				root = root->right;
-		}
-		return NULL;
-	}
 
 		/****
 			Observers
@@ -280,8 +269,26 @@ void printTree()
 
 			void _deleteNode( rbt* node )
 			{
+				_size--;
 				_alloc.destroy(&node->data);
 				_alloc_rbt.deallocate(node, 1);
+			}
+
+			rbt* searchTree(const key_type& key, rbt* root) 
+			{
+				if(!root) 
+					return NULL; //return root ?
+
+				while (root) 
+				{
+					if (key == root->data.first)
+						return root;
+					else if (key < root->data.first)
+						root = root->left;
+					else 
+						root = root->right;
+				}
+				return NULL;
 			}
 
 			rbt* _insertSingle( const value_type& key )
@@ -451,7 +458,7 @@ void printTree()
 				y->parent = x->parent;
 		}
 
-		void _erase(rbt* z)
+		/*void _erase(rbt* z)
 		{
 			if (_rbt == NULL || _rbt == _end)
 				return ;
@@ -498,11 +505,76 @@ void printTree()
 					_eraseFix(x);
 			}
 			_deleteNode(z);
+		}*/
 
-			_size--;
+		void _erase(rbt* z)
+		{
+			_update_min_max_for_erased_node(z);
+			rbt* y = z;
+			rbt* x = NULL;
+			rbt* new_x_parent = NULL;
+
+			if (y->left == NULL)
+				x = y->right;
+			else if (y->right == NULL)
+				x = y->left;
+			else
+			{
+				y = y->right;
+				while (y->left != NULL)
+					y = y->left;
+				x = y->right;
+			}
+			if (y == z)
+			{
+				new_x_parent = y->parent;
+				if (x != NULL)
+					x->parent = y->parent;
+				if (_rbt->parent == z)
+					_rbt->parent = x;
+				else if (z->parent->left == z)
+				{
+					y->left = z->parent;
+					z->parent->left = x;
+				}
+				else
+				{
+					y->left = NULL;
+					z->parent->right = x;
+				}
+			}
+			else
+			{
+				z->left->parent = y;
+				y->left = z->left;
+				if (y != z->right)
+				{
+					new_x_parent = y->parent;
+					if (x != NULL)
+						x->parent = y->parent;
+					y->parent->left = x;
+					y->right = z->right;
+					z->right->parent = y;
+				}
+				else
+					new_x_parent = y;
+				y->parent = z->parent;
+				bool tmp = y->color;
+				y->color = z->color;
+				z->color = tmp;
+				y = z;
+			}
+			if (y->color == RED)
+			{
+				_deleteNode(y);
+				return ;
+			}
+			std::cout << "Erase : " << z->data.first << " " << z->parent->data.first << std::endl;
+			_deleteNode(y);
+			_eraseFix(x, new_x_parent);
 		}
 
-		void _eraseFix(rbt* x)
+		/*void _eraseFix(rbt* x)
 		{
 			while (x != _rbt && x->color == BLACK)
 			{
@@ -558,7 +630,8 @@ void printTree()
 					{
 						if (w && w->left && w->left->color == BLACK)
 						{
-							w->right->color = BLACK;
+							if (w->right)
+								w->right->color = BLACK;
 							w->color = RED;
 							leftRotate(w);
 							w = x->parent->left;
@@ -574,6 +647,114 @@ void printTree()
 				}
 			}
 			x->color = BLACK;
+		}*/
+
+		void _update_min_max_for_erased_node( rbt* z )
+		{
+			if (_size == 1)
+			{
+				_rbt->left = _rbt;
+				_rbt->right = _rbt;
+			}
+			if (_rbt->left == z)
+			{
+				iterator it(z);
+				++it;
+				_rbt->left = it._node;
+			}
+			else if (_rbt->right == z)
+			{
+				iterator it(z);
+				--it;
+				_rbt->right = it._node;
+			}
+		}
+
+		void _eraseFix(rbt* p_x, rbt* p_new_x_parent)
+		{
+			while (p_x != _rbt->parent && p_x != _end && p_x && p_x->color == BLACK)
+			{
+				if (p_x == p_new_x_parent->left)
+				{
+					rbt* p_w = p_new_x_parent->right;
+					if (p_w->color == RED)
+					{
+						p_w->color = BLACK;
+						p_new_x_parent->color = RED;
+						leftRotate(p_new_x_parent);
+						p_w = p_new_x_parent->right;
+					}
+
+					if (p_w && p_w->left->color == BLACK && p_w->right->color == BLACK)
+					{
+						p_w->color = RED;
+						p_x = p_new_x_parent;
+						p_new_x_parent = p_new_x_parent->parent;
+					}
+					else
+					{
+						if (p_w && p_w->right->color == BLACK)
+						{
+						if (p_w->left != 0)
+						p_w->left->color = BLACK;
+
+						p_w->color = RED;
+						rightRotate(p_w);
+						p_w = p_new_x_parent->right;
+						}
+
+						p_w->color = p_new_x_parent->color;
+						p_new_x_parent->color = BLACK;
+
+						if (p_w->right != 0)
+						p_w->right->color = BLACK;
+
+						leftRotate(p_new_x_parent);
+						break;
+					}
+				}
+				else
+				{
+					rbt* p_w = p_new_x_parent->left;
+					if (p_w->color == RED)
+					{
+						p_w->color = BLACK;
+						p_new_x_parent->color = RED;
+						rightRotate(p_new_x_parent);
+						p_w = p_new_x_parent->left;
+					}
+
+					if (p_w->right->color == BLACK 
+						&& p_w->left->color == BLACK)
+					{
+						p_w->color = RED;
+						p_x = p_new_x_parent;
+						p_new_x_parent = p_new_x_parent->parent;
+					}
+					else
+					{
+						if (p_w->left->color == BLACK)
+						{
+							if (p_w->right != 0)
+								p_w->right->color = BLACK;
+
+							p_w->color = RED;
+							leftRotate(p_w);
+							p_w = p_new_x_parent->left;
+						}
+
+						p_w->color = p_new_x_parent->color;
+						p_new_x_parent->color = BLACK;
+
+						if (p_w->left != 0)
+							p_w->left->color = BLACK;
+
+						rightRotate(p_new_x_parent);
+						//this->update_to_top(p_new_x_parent, (node_update* )this);
+						break;
+					}
+				}
+			}
 		}
 
 

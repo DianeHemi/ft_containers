@@ -29,6 +29,7 @@ namespace ft
 	{
 		while (root->right) //&& root->right->end == false
 			root = root->right;
+		std::cout << "Maximum " << root->data.first << std::endl;
 		return root;
 	}
 
@@ -50,6 +51,7 @@ namespace ft
     template <class T>
 	RBTree<T>* predecessor( RBTree<T>* node )
 	{
+		std::cout << "Predecessor " << node->data.first << std::endl;
 		if (node->left)
 			return maximum(node->left);
 		
@@ -59,6 +61,7 @@ namespace ft
 			node = parent;
 			parent = parent->parent;
 		}
+		std::cout << "Return " << parent->data.first << std::endl;
 		return parent;
 	}
 

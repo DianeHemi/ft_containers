@@ -53,14 +53,25 @@ int main()
 	rite--;
 	std::cout << rit->first << " - " << rite->first << std::endl;
 
-	std::cout << "\n\nTest delete from iterator" << std::endl;
+	std::cout << "\n\nTest delete from one iterator" << std::endl;
 	m2.printTree();
 	ft::map<int, int>::iterator it2 = m2.begin();
-	it2++;
+	ft::map<int, int>::iterator ite2 = m2.end();
 	it2++;
 	std::cout << it2->first << std::endl;
 	m2.erase(it2);
 	m2.printTree();
+
+	std::cout << "\n\nTest delete from iterator range" << std::endl;
+	it2 = m2.begin();
+	it2++;
+	ite2--;
+	std::cout << it2->first << " - " << ite2->first << std::endl;
+	std::cout << "Doit rester seulement 5-80 et 98-25" << std::endl;
+	m2.erase(it2, ite2);
+	m2.printTree();
+
+
 
     return 0;
 }
