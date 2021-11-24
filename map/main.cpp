@@ -141,11 +141,15 @@ int main()
 
 	ft::map<int, int> m2;
 	m2.insert(ft::make_pair(88, 25));
-	m2.insert(ft::make_pair(18, 25));
+	m2.insert(ite, ft::make_pair(18, 25));
 	m2.insert(ft::make_pair(98, 25));
+	std::cout << it->first << " - " << ite->first << std::endl;
 	m2.insert(it, ite);
-	//m2.getTree()->printTree();
+	m2.getTree()->printTree();
 
+
+	std::cout << "\n\nDelete ?" << std::endl;
+	
 
 
     return 0;

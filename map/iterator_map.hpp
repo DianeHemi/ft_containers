@@ -40,18 +40,22 @@ namespace ft
 				/*_node = successor(_node);
 				return *this;*/
 
-				if (_node->right)	//Cas ou right == nil a gerer
+				if (_node->right != 0)	//Cas ou right == nil a gerer
 				{
-					while (_node->left)	//Pareil ?
+					_node = _node->right;
+					while (_node->left != 0)	//Pareil ?
 						_node = _node->left;
-					return _node;
 				}
-				
-				node_ptr parent = _node->parent;
-				while (parent && _node == parent->right)
+				else
 				{
-					_node = parent;
-					parent = parent->parent;
+					node_ptr y = _node->parent;
+					while (_node && _node == y->right)
+					{
+						_node = y;
+						y = y->parent;
+					}
+					if (_node->right != y)
+						_node = y;
 				}
 				return *this;
 			};
@@ -62,19 +66,22 @@ namespace ft
 				return tmp;*/
 
 				iterator_map tmp(*this);
-				if (_node->right) //Cas ou right == nil a gerer
+				if (_node->right != 0)	//Cas ou right == nil a gerer
 				{
-					std::cout << "Enter" << std::endl;
-					while (_node->left)	//Pareil ?
+					_node = _node->right;
+					while (_node->left != 0)	//Pareil ?
 						_node = _node->left;
-					return tmp;
 				}
-				
-				node_ptr parent = _node->parent;
-				while (parent && _node == parent->right)
+				else
 				{
-					_node = parent;
-					parent = parent->parent;
+					node_ptr y = _node->parent;
+					while (_node && _node == y->right)
+					{
+						_node = y;
+						y = y->parent;
+					}
+					if (_node->right != y)
+						_node = y;
 				}
 				return tmp;
 			};
@@ -84,18 +91,22 @@ namespace ft
 				/*_node = predecessor(_node); 
 				return *this;*/
 
-				if (_node->left)
+				if (_node->left != 0)	//Cas ou right == nil a gerer
 				{
-					while (_node->right)
+					_node = _node->left;
+					while (_node->right != 0)	//Pareil ?
 						_node = _node->right;
-					return *this;
 				}
-				
-				node_ptr parent = _node->parent;
-				while (parent && _node == parent->left)
+				else
 				{
-					_node = parent;
-					parent = parent->parent;
+					node_ptr y = _node->parent;
+					while (_node && _node == y->left)
+					{
+						_node = y;
+						y = y->parent;
+					}
+					if (_node->left != y)
+						_node = y;
 				}
 				return *this;
 			};
@@ -106,18 +117,22 @@ namespace ft
 				return tmp;*/
 
 				iterator_map tmp(*this);
-				if (_node->left)
+				if (_node->left != 0)	//Cas ou right == nil a gerer
 				{
-					while (_node->right)
+					_node = _node->left;
+					while (_node->right != 0)	//Pareil ?
 						_node = _node->right;
-					return tmp;
 				}
-				
-				node_ptr parent = _node->parent;
-				while (parent && _node == parent->left)
+				else
 				{
-					_node = parent;
-					parent = parent->parent;
+					node_ptr y = _node->parent;
+					while (_node && _node == y->left)
+					{
+						_node = y;
+						y = y->parent;
+					}
+					if (_node->left != y)
+						_node = y;
 				}
 				return tmp;
 			};
