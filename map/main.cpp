@@ -147,6 +147,10 @@ int main()
 	m2.insert(it, ite);
 	m2.getTree()->printTree();
 
+	/*std::cout << "\n\nIterator constructor" << std::endl;
+	ft::map<int, int> m3(it, ite);
+	m3.getTree()->printTree();*/
+
 
 	std::cout << "\n\nDelete ?" << std::endl;
 	

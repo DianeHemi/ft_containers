@@ -59,16 +59,15 @@ namespace ft
 		};
 
 		//Range constructor
-		/*template <class InputIterator>
+		template <class InputIterator>
 		map( InputIterator first, InputIterator last, 
 			const key_compare& comp = key_compare(),
 			const allocator_type& alloc = allocator_type() )
 		: _alloc(alloc), _cmp(comp), _rbt(0)
 		{
-			//_rbt = newNode(ft::make_pair(key_type(), mapped_type()));
-			//_end = _rbt;
-			//insert(first, last);
-		};*/
+			_rbt = new rbt(_cmp, _alloc);
+			insert(first, last);
+		};
 
 		//Copy constructor
 		//map( const map& src ) { *this = src; };
@@ -116,16 +115,11 @@ namespace ft
 		size_type   max_size() const { return _rbt->getRBtAlloc().max_size(); };
 		
 
-//Faire at
-
-
 
 
 		/****
 			Element access
 		****/
-	//Return ref to mapped value
-	//OR, if value not found -> insert new value initialized with k
 		mapped_type& operator[]( const key_type& key ) 
 		{
 			rbt_node_ptr node = _rbt->searchTree(key, _rbt->getRoot());
@@ -134,6 +128,14 @@ namespace ft
 			else
 				return node->data.second;
 		};
+		mapped_type& at( const key_type& key )
+		{
+			rbt_node_ptr node = _rbt->searchTree(key, _rbt->getRoot());
+			if (node == NULL || node == _rbt->getNil())
+				throw std::out_of_range("map::at");
+			else
+				return node->data.second;
+		}
 
 		/****
 			Modifiers
