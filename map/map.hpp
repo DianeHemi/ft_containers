@@ -2,8 +2,6 @@
 # define MAP_HPP
 
 
-
-# include "pair.hpp"
 # include "iterator_map.hpp"
 # include "../lexicographical_compare.hpp"
 # include <memory>
@@ -97,22 +95,22 @@ namespace ft
 		/****
 			Iterators
 		****/
-		iterator        begin() { return iterator(minimum(_rbt)); };
-		const_iterator  begin() const { return const_iterator(minimum(_rbt)); };
-		iterator        end() { return iterator(_end); };
-		const_iterator  end() const { return const_iterator(_end); };
+		iterator        begin() { return iterator(_rbt->minimum(_rbt)); };
+		const_iterator  begin() const { return const_iterator(_rbt->minimum(_rbt)); };
+		iterator        end() { return iterator(_rbt->getNil()); };
+		const_iterator  end() const { return const_iterator(_rbt->getNil()); };
 
-		reverse_iterator        rbegin() { return reverse_iterator(maximum(_rbt)); };
-		const_reverse_iterator  rbegin() const { return const_reverse_iterator(maximum(_rbt)); };
-		reverse_iterator        rend() { return reverse_iterator(minimum(_rbt)); };
-		const_reverse_iterator  rend() const { return const_reverse_iterator(minimum(_rbt)); };
+		reverse_iterator        rbegin() { return reverse_iterator(_rbt->getNil()); };
+		const_reverse_iterator  rbegin() const { return const_reverse_iterator(_rbt->getNil()); }; //Ou maximum ?
+		reverse_iterator        rend() { return reverse_iterator(_rbt->minimum(_rbt)); };
+		const_reverse_iterator  rend() const { return const_reverse_iterator(_rbt->minimum(_rbt)); };
 
 		/****
 			Capacity
 		****/
-		bool        empty() const { return _size == 0; };
-		size_type   size() const { return _size; };
-		size_type   max_size() const { return _alloc_rbt.max_size(); };
+		bool        empty() const { return _rbt.getSize() == 0; };
+		size_type   size() const { return _rbt.getSize(); };
+		size_type   max_size() const { return _rbt->getRBtAlloc().max_size(); };
 		
 
 //Faire at
@@ -125,21 +123,21 @@ namespace ft
 		****/
 	//Return ref to mapped value
 	//OR, if value not found -> insert new value initialized with k
-		mapped_type& operator[]( const key_type& key ) 
+		/*mapped_type& operator[]( const key_type& key ) 
 		{
-			rbt* node = searchTree(key, _rbt);
+			rbt* node = _rbt->searchTree(key, _rbt->getRoot());
 			if (node == _end || node == NULL)
 				return insert(ft::make_pair(key, T())).first->second;
 			else
 				return node->data.second;
-		};
+		};*/
 
 		/****
 			Modifiers
 		****/
 		//void 	clear() { };
 		//void 	swap( map& x ) { };
-		void		erase( iterator position ) 
+		/*void		erase( iterator position ) 
 		{
 			rbt* node = searchTree(position->first, _rbt);
 			if (node)
@@ -153,12 +151,12 @@ namespace ft
 			return tmp - _size;
 		};
 		void		erase( iterator first, iterator last) 
-		{
+		{*/
 			/*if (first == begin() && last == end())
 				clear();*/
 
 			//Start from the end
-			while (first != last)
+			/*while (first != last)
 			{
 				erase(first++);
 			}
@@ -191,13 +189,13 @@ namespace ft
 				_insertSingle(*first);
 			}
 				
-		};
+		};*/
 
 
 		/****
 			Observers
 		****/
-		key_compare 	key_comp() const { return _cmp; };
+		key_compare 	key_comp() const { return _rbt->getCompare(); };
 
 		class value_compare
 		{
@@ -215,7 +213,7 @@ namespace ft
 			protected:
 				Compare comp;
 		};
-		value_compare	value_comp() const { return (value_compare(_cmp)); };
+		value_compare	value_comp() const { return (value_compare(_cmp_rbt->getCompare())); };
 
 		/****
 			Operations
@@ -231,12 +229,12 @@ namespace ft
 		//ft::pair<const_iterator, const_iterator>	equal_range( const key_type& k ) const { };
 		
 
-
+/*
 void printTree()
 {
 	if (_rbt)
 		printHelper(_rbt, "", true);
-}
+}*/
 
 /****************************************************************
 						 Private members
@@ -246,11 +244,13 @@ void printTree()
 		//allocator_type
 		//Tree	_rbt;
 			allocator_type  	_alloc;
-			size_type       	_size;
+			//size_type       	_size;
 			Compare				_cmp;
 			new_alloc			_alloc_rbt;
+			//rbt*				_rbt;
+			//rbt*				_end;
+
 			rbt*				_rbt;
-			rbt*				_end;
 
 			
 
@@ -259,7 +259,7 @@ void printTree()
 /****************************************************************
 						Private functions
 *****************************************************************/
-		private:
+		/*private:
 			rbt* newNode( const value_type& key )
 			{
 				rbt* node = _alloc_rbt.allocate(1);
@@ -462,7 +462,7 @@ void printTree()
 			if (y && x)
 				y->parent = x->parent;
 		}
-
+*/
 		/*void _erase(rbt* z)
 		{
 			if (_rbt == NULL || _rbt == _end)
@@ -642,7 +642,7 @@ void printTree()
 				_eraseFix(x);
 			_deleteNode(x);
 		}*/
-
+/*
 		void _erase( rbt * z )
 		{
 			
@@ -831,9 +831,9 @@ void printTree()
 			}
 		}
 
+*/
 
-
-
+/*
 void printHelper(rbt* root, std::string indent, bool last) 
 {
 	if (root) 
@@ -854,7 +854,7 @@ void printHelper(rbt* root, std::string indent, bool last)
 		printHelper(root->left, indent, false);
 		printHelper(root->right, indent, true);
 	}
-}
+}*/
 			
 
 	};

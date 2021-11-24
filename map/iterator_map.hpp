@@ -3,7 +3,7 @@
 
 # include "../iterator_traits.hpp"
 
-# include "RBTree_old.hpp"
+# include "RBTree.hpp"
 
 namespace ft
 {
@@ -37,8 +37,18 @@ namespace ft
 
 			iterator_map&	operator++() { _node = successor(_node); return *this; };
 			iterator_map 	operator++(int) { iterator_map tmp(*this); _node = successor(_node); return tmp; };
-			iterator_map&	operator--() { _node = predecessor(_node); return *this; };
-			iterator_map	operator--(int) { iterator_map tmp(*this); _node = predecessor(_node);; return tmp; };
+			iterator_map&	operator--() 
+			{
+				//Prevoir le cas ou on est sur NIL/end -> Renvoyer max a la place ?
+				_node = predecessor(_node); 
+				return *this; 
+			};
+			iterator_map	operator--(int)
+			{ 
+				iterator_map tmp(*this); 
+				_node = predecessor(_node); 
+				return tmp; 
+			};
 
 			friend bool	operator==( const iterator_map & lhs, const iterator_map & rhs )
 			{ return (lhs._node == rhs._node); };
