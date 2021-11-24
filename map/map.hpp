@@ -141,7 +141,13 @@ namespace ft
 			Modifiers
 		****/
 		//void 	clear() { };
-		//void 	swap( map& x ) { };
+		/*void 	swap( map& x ) 
+		{
+			rbt* tmp_rbt = _rbt;
+
+			*this->_rbt = x->_rbt;
+			x->_rbt = tmp_rbt;
+		};*/
 		/*void		erase( iterator position ) 
 		{
 			rbt* node = searchTree(position->first, _rbt);
@@ -245,10 +251,17 @@ namespace ft
 		iterator		lower_bound( const key_type& key )  //First element greater or equal
 		{ return iterator((_rbt->lower_bound(key))); };
 		//const_iterator	lower_bound( const key_type& k ) const { };
-		iterator		upper_bound( const key_type& key ) 
+		iterator		upper_bound( const key_type& key )	//First element greater than
 		{ return iterator((_rbt->upper_bound(key))); };
 		//const_iterator	upper_bound( const key_type& k ) const { };
-		//ft::pair<iterator, iterator>				equal_range( const key_type& k ) { };
+		ft::pair<iterator, iterator>	equal_range( const key_type& key )	//Range : first greater or equal + 
+		{
+			ft::pair<iterator, iterator> ret;
+			
+			ret.first = iterator(_rbt->lower_bound(key));
+			ret.second = iterator(_rbt->upper_bound(key));
+			return ret;
+		};
 		//ft::pair<const_iterator, const_iterator>	equal_range( const key_type& k ) const { };
 		
 rbt*	getTree() const

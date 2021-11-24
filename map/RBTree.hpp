@@ -73,6 +73,9 @@ namespace ft
 				_nil = _root;
 			};
 
+			//Add copy constructor
+
+			//Add overload operator =
 
 			//Destructor
 			~RBTree()
@@ -400,6 +403,9 @@ namespace ft
 
 
 
+
+
+
 /****************************************************************
 						 	Affichage
 *****************************************************************/
@@ -466,8 +472,6 @@ namespace ft
 				}
 				return _nil;
 			}
-
-		
 
 
 	};

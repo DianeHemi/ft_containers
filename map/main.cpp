@@ -151,11 +151,14 @@ int main()
 	ft::map<int, int> m3(it, ite);
 	m3.getTree()->printTree();*/
 
+	/*std::cout << "Lower bound of 15 : " << (m2.lower_bound(15))->first << std::endl;
+	std::cout << "Upper bound of 18 : " << (m2.upper_bound(18))->first << std::endl;
+	std::cout << "Equal range of 18 : " << (m2.equal_range(18)).first->first << " | " << (m2.equal_range(18)).second->first << std::endl;*/
 
 	std::cout << "\n\nDelete ?" << std::endl;
 
-	std::cout << "Lower bound of 15 : " << (m2.lower_bound(15))->first << std::endl;
-	std::cout << "Upper bound of 88 : " << (m2.upper_bound(18))->first << std::endl;
+	
+
 	
 
 
