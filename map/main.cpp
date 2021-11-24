@@ -1,4 +1,4 @@
-//#include "map.hpp"
+#include "map.hpp"
 #include <map>
 #include <iostream>
 
@@ -87,12 +87,64 @@ void testDelete(ft::map<int, int> m2)
 
 int main()
 {
-	ft::RBTree<int, int> tree;
+	/*ft::RBTree<int, int> tree;
 
+	tree._insertSingle(ft::make_pair(13, 25));
+	tree._insertSingle(ft::make_pair(17, 15));
+	tree._insertSingle(ft::make_pair(60, 15));
+	tree._insertSingle(ft::make_pair(15, 80));
+	tree._insertSingle(ft::make_pair(10, 80));
+	tree._insertSingle(ft::make_pair(1, 80));
+	tree._insertSingle(ft::make_pair(5, 80));
+	tree._insertSingle(ft::make_pair(3, 80));
+	tree._insertSingle(ft::make_pair(12, 80));
+
+	tree.printTree();*/
+
+
+
+
+	std::cout << "\n" << std::endl;
+	ft::map<int, int> m1;
+
+	m1.insert(ft::make_pair(13, 25));
+	m1.insert(ft::make_pair(17, 15));
+	m1.insert(ft::make_pair(60, 15));
+	m1.insert(ft::make_pair(15, 80));
+	m1.insert(ft::make_pair(10, 80));
+	m1.insert(ft::make_pair(1, 80));
+	m1.insert(ft::make_pair(5, 80));
+	m1.insert(ft::make_pair(3, 80));
+	m1.insert(ft::make_pair(12, 80));
+	m1.getTree()->printTree();
+
+
+	//std::cout << m1.count(17) << std::endl;
+
+	/*ft::map<int, int>::iterator it = m1.find(17);
+	std::cout << it->first << std::endl;*/
+
+	//std::cout << m1.empty() << " - " << m1.size() << " - " << m1.max_size() << std::endl;
+	
+	/*std::cout << m1[17] << std::endl;
+	std::cout << m1[18] << std::endl;
+	m1.getTree()->printTree();*/
 
 	
+	std::cout << "\n\nIterator insert" << std::endl;
+	ft::map<int, int>::iterator it = m1.begin();
+	ft::map<int, int>::iterator ite = m1.end();
+	it++;
+	it++;
+	ite--;
+	ite--;
 
-	
+	ft::map<int, int> m2;
+	m2.insert(ft::make_pair(88, 25));
+	m2.insert(ft::make_pair(18, 25));
+	m2.insert(ft::make_pair(98, 25));
+	m2.insert(it, ite);
+	//m2.getTree()->printTree();
 
 
 

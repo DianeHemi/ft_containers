@@ -29,7 +29,10 @@ namespace ft
 			typedef Alloc				allocator_type;
 
 			typedef typename ft::pair<const Key, T> value_type;
-			typedef ft::RBTree<value_type>	rbt;
+			typedef ft::RBTree<key_type, mapped_type, key_compare, allocator_type>	rbt;
+			typedef ft::rbt_node<value_type>	rbt_node;
+			typedef ft::rbt_node<value_type>*	rbt_node_ptr;
+
 
 			typedef value_type&         					reference;
 			typedef const value_type&   					const_reference;
@@ -38,9 +41,9 @@ namespace ft
 			
 
 			typedef typename ft::iterator_map<value_type>			    	iterator;        //legacy bidirectionnal iterator to value_type
-			typedef typename ft::const_iterator_map<value_type>	    		const_iterator;  //legacy bidirectionnal iterator to const value_type
+			//typedef typename ft::const_iterator_map<value_type>	    		const_iterator;  //legacy bidirectionnal iterator to const value_type
 			typedef typename ft::reverse_iterator<iterator>		    		reverse_iterator;
-			typedef typename ft::reverse_iterator<const_iterator>			const_reverse_iterator;
+			//typedef typename ft::reverse_iterator<const_iterator>			const_reverse_iterator;
 			typedef typename Alloc::template rebind<rbt>::other    new_alloc;
 
 		/****
@@ -48,34 +51,34 @@ namespace ft
 		****/
 		//Default constructor
 		explicit map( const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type() )
-			: _alloc(alloc), _size(0), _cmp(comp), _rbt(0)
+			: _alloc(alloc), _cmp(comp)
 		{
-			_rbt = newNode(ft::make_pair(key_type(), mapped_type()));
-			_end = _rbt;
-			//_end->end = true;
+			_rbt = new rbt(_cmp, _alloc);
+			//_rbt = newNode(ft::make_pair(key_type(), mapped_type()));
+			//_end = _rbt;
 		};
 
 		//Range constructor
-		template <class InputIterator>
+		/*template <class InputIterator>
 		map( InputIterator first, InputIterator last, 
 			const key_compare& comp = key_compare(),
 			const allocator_type& alloc = allocator_type() )
-		: _alloc(alloc), _size(0), _cmp(comp), _rbt(0)
+		: _alloc(alloc), _cmp(comp), _rbt(0)
 		{
-			_rbt = newNode(ft::make_pair(key_type(), mapped_type()));
-			_end = _rbt;
-			//_end->end = true;
-			insert(first, last);
-		};
+			//_rbt = newNode(ft::make_pair(key_type(), mapped_type()));
+			//_end = _rbt;
+			//insert(first, last);
+		};*/
 
 		//Copy constructor
 		//map( const map& src ) { *this = src; };
 
 		//Destructor
-		/*~map()
+		~map()
 		{
-			clear();
-		}*/
+			delete _rbt;
+			//clear();
+		}
 
 		//Overload operator =
 		/*map& operator=( const & map rhs )
@@ -95,21 +98,21 @@ namespace ft
 		/****
 			Iterators
 		****/
-		iterator        begin() { return iterator(_rbt->minimum(_rbt)); };
-		const_iterator  begin() const { return const_iterator(_rbt->minimum(_rbt)); };
+		iterator        begin() { return iterator(_rbt->minimum(_rbt->getRoot())); };
+		//const_iterator  begin() const { return const_iterator(_rbt->minimum(_rbt)); };
 		iterator        end() { return iterator(_rbt->getNil()); };
-		const_iterator  end() const { return const_iterator(_rbt->getNil()); };
+		//const_iterator  end() const { return const_iterator(_rbt->getNil()); };
 
 		reverse_iterator        rbegin() { return reverse_iterator(_rbt->getNil()); };
-		const_reverse_iterator  rbegin() const { return const_reverse_iterator(_rbt->getNil()); }; //Ou maximum ?
-		reverse_iterator        rend() { return reverse_iterator(_rbt->minimum(_rbt)); };
-		const_reverse_iterator  rend() const { return const_reverse_iterator(_rbt->minimum(_rbt)); };
+		//const_reverse_iterator  rbegin() const { return const_reverse_iterator(_rbt->getNil()); }; //Ou maximum ?
+		reverse_iterator        rend() { return reverse_iterator(_rbt->minimum(_rbt->getRoot())); };
+		//const_reverse_iterator  rend() const { return const_reverse_iterator(_rbt->minimum(_rbt)); };
 
 		/****
 			Capacity
 		****/
-		bool        empty() const { return _rbt.getSize() == 0; };
-		size_type   size() const { return _rbt.getSize(); };
+		bool        empty() const { return _rbt->getSize() == 0; };
+		size_type   size() const { return _rbt->getSize(); };
 		size_type   max_size() const { return _rbt->getRBtAlloc().max_size(); };
 		
 
@@ -123,14 +126,14 @@ namespace ft
 		****/
 	//Return ref to mapped value
 	//OR, if value not found -> insert new value initialized with k
-		/*mapped_type& operator[]( const key_type& key ) 
+		mapped_type& operator[]( const key_type& key ) 
 		{
-			rbt* node = _rbt->searchTree(key, _rbt->getRoot());
-			if (node == _end || node == NULL)
+			rbt_node_ptr node = _rbt->searchTree(key, _rbt->getRoot());
+			if (node == NULL || node == _rbt->getNil())
 				return insert(ft::make_pair(key, T())).first->second;
 			else
 				return node->data.second;
-		};*/
+		};
 
 		/****
 			Modifiers
@@ -160,14 +163,15 @@ namespace ft
 			{
 				erase(first++);
 			}
-		};
+		};*/
 		ft::pair<iterator, bool>	insert( const value_type& val ) 
 		{
 			ft::pair<iterator, bool> ret;
-			size_type tmp_size = _size;
-			rbt* node = _insertSingle(val);
 
-			if (_size != tmp_size)
+			size_type tmp_size = _rbt->getSize();
+			rbt_node_ptr node = _rbt->_insertSingle(val);
+
+			if (_rbt->getSize() != tmp_size)
 				ret.second = true;
 			else
 				ret.second = false;
@@ -177,19 +181,19 @@ namespace ft
 		iterator	insert( iterator position, const value_type& val ) 
 		{
 			iterator it = position;
-			rbt* node = _insertSingle(val);
+			//rbt_node_ptr node = _rbt->_insertSingle(val);
 	
-			return iterator(node);
+			return iterator(_rbt->_insertSingle(val));
 		};
 		template <class InputIterator>
 		void	insert( InputIterator first, InputIterator last ) 
 		{
 			for ( ; first != last; first++)
 			{
-				_insertSingle(*first);
+				_rbt->_insertSingle(*first);
 			}
 				
-		};*/
+		};
 
 
 		/****
@@ -213,14 +217,30 @@ namespace ft
 			protected:
 				Compare comp;
 		};
-		value_compare	value_comp() const { return (value_compare(_cmp_rbt->getCompare())); };
+		value_compare	value_comp() const { return (value_compare(_rbt->getCompare())); };
 
 		/****
 			Operations
 		****/
-		//iterator		find( const key_type& k ) { };
-		//const_iterator	find( const key_type& k ) const { };
-		//size_type		count( const key_type& k ) const { };
+		iterator		find( const key_type& key ) 
+		{ 
+			iterator it = _rbt->searchTree(key, _rbt->getRoot());
+
+			if (it->first)
+				return it;
+			return (_rbt->getNil());
+			//return iterator(_rbt->searchTree(key, _rbt->getRoot()));
+		};
+		/*const_iterator	find( const key_type& k ) const 
+		{
+			const_iterator it = _rbt->searchTree(key, _rbt->getRoot());
+
+			if (it->first)
+				return it;
+			return (_rbt->getNil());
+		};*/
+		size_type		count( const key_type& key ) const 
+		{ return (_rbt->count(key)); };
 		//iterator		lower_bound( const key_type& k ) { };
 		//const_iterator	lower_bound( const key_type& k ) const { };
 		//iterator		upper_bound( const key_type& k ) { };
@@ -228,28 +248,17 @@ namespace ft
 		//ft::pair<iterator, iterator>				equal_range( const key_type& k ) { };
 		//ft::pair<const_iterator, const_iterator>	equal_range( const key_type& k ) const { };
 		
-
-/*
-void printTree()
+rbt*	getTree() const
 {
-	if (_rbt)
-		printHelper(_rbt, "", true);
-}*/
-
+	return _rbt;
+}
 /****************************************************************
 						 Private members
 *****************************************************************/
 		private:
-		//Compare
-		//allocator_type
-		//Tree	_rbt;
 			allocator_type  	_alloc;
-			//size_type       	_size;
 			Compare				_cmp;
-			new_alloc			_alloc_rbt;
-			//rbt*				_rbt;
-			//rbt*				_end;
-
+			//new_alloc			_alloc_rbt;
 			rbt*				_rbt;
 
 			
@@ -260,23 +269,8 @@ void printTree()
 						Private functions
 *****************************************************************/
 		/*private:
-			rbt* newNode( const value_type& key )
-			{
-				rbt* node = _alloc_rbt.allocate(1);
-				_alloc.construct(&node->data, key);
-				node->parent = NULL;
-				node->left = NULL;
-				node->right = NULL;
-				node->color = RED;
-				return node;
-			}
 
-			void _deleteNode( rbt* node )
-			{
-				_size--;
-				_alloc.destroy(&node->data);
-				_alloc_rbt.deallocate(node, 1);
-			}
+		
 
 			rbt* searchTree(const key_type& key, rbt* root) 
 			{
@@ -295,158 +289,6 @@ void printTree()
 				return NULL;
 			}
 
-			rbt* _insertSingle( const value_type& key )
-			{
-				if(!_rbt || _rbt == _end)
-				{
-					_rbt = newNode(key);
-					_rbt->right = _end;
-					_rbt->color = BLACK;
-					_end->parent = _rbt;
-					_size++;
-					return _rbt;
-				}
-				rbt* tmp = searchTree(key.first, _rbt);
-				if (tmp != NULL)
-					return tmp;
-
-				rbt* linker = _rbt;
-				rbt *node = newNode(key);
-				while (linker != NULL)
-				{
-					if (_cmp(key.first, linker->data.first))
-					{
-						if (linker->left == NULL)
-						{
-							linker->left = node;
-							node->color = RED;
-							node->parent = linker;
-							_size++;
-							break;
-						}
-						else 
-							linker = linker->left;
-					} 
-					else if (linker->data.first != key.first)
-					{
-						if (linker->right == _end || linker->right == NULL)
-						{
-							if (linker->right == _end)
-							{
-								node->right = _end;
-								_end->parent = node;
-							}
-							linker->right = node;
-							node->color = RED;
-							node->parent = linker;
-							_size++;
-							break; 
-						}
-						else
-							linker = linker->right;
-					}
-					else
-						return node;
-				}
-				insertFix(node);
-				return node;
-			}
-			
-			void leftRotate( rbt* x )
-			{
-				if (x->right == NULL || x->right == _end)
-					return ;
-
-				rbt* y = x->right;
-				x->right = y->left;
-				if (y->left != NULL)
-					y->left->parent = x;
-				y->parent = x->parent;
-
-				if (x->parent == NULL)	//Reassign root of the rbt
-					_rbt = y;
-				else if (x == x->parent->left)
-					x->parent->left = y;
-				else
-					x->parent->right = y;
-				y->left = x;
-				x->parent = y;
-
-			}
-
-			void rightRotate( rbt* x )
-			{
-				if (x->left == NULL || x->left == _end)
-					return ;
-
-				rbt* y = x->left;
-
-				x->left = y->right;
-				y->parent = x->parent;
-				if (y->right != NULL)
-					y->right->parent = x;
-
-				if (x->parent == NULL)	//Reassign root of the rbt
-					_rbt = y;
-				else if (x == x->parent->right)
-					x->parent->right = y;
-				else
-					x->parent->left = y;
-				y->right = x;
-				x->parent = y;
-			}
-
-			void insertFix( rbt* z )
-			{
-				while (z != NULL && z != _end && z->parent != NULL && z->parent->color == RED)
-				{
-					if (z->parent == z->parent->parent->left) //node->parent is left child
-					{
-						rbt* y = z->parent->parent->right; //uncle of node
-						if (y && y->color == RED)
-						{
-							z->parent->color = BLACK;
-							y->color = BLACK;
-							z->parent->parent->color = RED;
-							z = z->parent->parent;
-						}
-						else
-						{
-							if (z == z->parent->right)
-							{
-								z = z->parent;
-								leftRotate(z);
-							}
-							z->parent->color = BLACK;
-							z->parent->parent->color = RED;
-							rightRotate(z->parent->parent);
-						}
-					}
-					else
-					{
-						rbt* y = z->parent->parent->left;
-						if (y && y->color == RED)
-						{
-							z->parent->color = BLACK;
-							y->color = BLACK;
-							z->parent->parent->color = RED;
-							z = z->parent->parent;
-						}
-						else
-						{
-							if (z == z->parent->left)
-							{
-								z = z->parent;
-								rightRotate(z);
-							}
-							z->parent->color = BLACK;
-							z->parent->parent->color = RED;
-							leftRotate(z->parent->parent);
-						}
-					}
-				}
-				_rbt->color = BLACK;
-			}
 
 		void _rbTransplant(rbt* x, rbt* y)
 		{
@@ -833,28 +675,6 @@ void printTree()
 
 */
 
-/*
-void printHelper(rbt* root, std::string indent, bool last) 
-{
-	if (root) 
-	{
-		std::cout << indent;
-		if (last) 
-		{
-			std::cout << "R----";
-			indent += "   ";
-		} 
-		else 
-		{
-			std::cout << "L----";
-			indent += "|  ";
-		}
-		std::string sColor = root->color ? "RED" : "BLACK";
-		std::cout << root->data.first << " - " << root->data.second << "(" << sColor << ")" << std::endl;
-		printHelper(root->left, indent, false);
-		printHelper(root->right, indent, true);
-	}
-}*/
 			
 
 	};

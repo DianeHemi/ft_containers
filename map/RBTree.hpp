@@ -69,7 +69,8 @@ namespace ft
 				: _cmp(comp), _alloc(alloc), _size(0)
 			{
 				_root = newNode(ft::make_pair(key_type(), mapped_type()));
-				//_nil
+				_root->color = BLACK;
+				_nil = _root;
 			};
 
 
@@ -110,7 +111,7 @@ namespace ft
 			}
 
 /****************************************************************
-						 Public functions
+						 	Nodes
 *****************************************************************/
 			node_ptr newNode( const value_type& key )
 			{
@@ -130,6 +131,10 @@ namespace ft
 				_alloc_rbt.deallocate(node, 1);
 			}
 
+
+/****************************************************************
+						 	Position
+*****************************************************************/
 			node_ptr minimum( node_ptr root ) const //Node at the utter left
 			{
 				while (root->left)
@@ -229,19 +234,214 @@ namespace ft
 /****************************************************************
 						 	Rotation
 *****************************************************************/		
+			void leftRotate( node_ptr x )
+			{
+				if (x->right == NULL || x->right == _nil)
+					return ;
 
+				node_ptr y = x->right;
+				x->right = y->left;
+				if (y->left != NULL)
+					y->left->parent = x;
+				y->parent = x->parent;
+
+				if (x->parent == NULL)	//Reassign root of the rbt
+					_root = y;
+				else if (x == x->parent->left)
+					x->parent->left = y;
+				else
+					x->parent->right = y;
+				y->left = x;
+				x->parent = y;
+
+			}
+
+			void rightRotate( node_ptr x )
+			{
+				if (x->left == NULL || x->left == _nil)
+					return ;
+
+				node_ptr y = x->left;
+
+				x->left = y->right;
+				y->parent = x->parent;
+				if (y->right != NULL)
+					y->right->parent = x;
+
+				if (x->parent == NULL)	//Reassign root of the rbt
+					_root = y;
+				else if (x == x->parent->right)
+					x->parent->right = y;
+				else
+					x->parent->left = y;
+				y->right = x;
+				x->parent = y;
+			}
 
 
 
 /****************************************************************
 						 	Insertion
 *****************************************************************/
+			node_ptr _insertSingle( const value_type& key )
+			{
+				if(!_root || _root == _nil)
+				{
+					_root = newNode(key);
+					_root->right = _nil;
+					_root->color = BLACK;
+					_nil->parent = _root;
+					_size++;
+					return _root;
+				}
+				node_ptr tmp = searchTree(key.first, _root);
+				if (tmp != NULL)
+					return tmp;
+
+				node_ptr linker = _root;
+				node_ptr node = newNode(key);
+				while (linker != NULL)
+				{
+					if (_cmp(key.first, linker->data.first))
+					{
+						if (linker->left == NULL)
+						{
+							linker->left = node;
+							node->color = RED;
+							node->parent = linker;
+							_size++;
+							break;
+						}
+						else 
+							linker = linker->left;
+					} 
+					else if (linker->data.first != key.first)
+					{
+						if (linker->right == _nil || linker->right == NULL)
+						{
+							if (linker->right == _nil)
+							{
+								node->right = _nil;
+								_nil->parent = node;
+							}
+							linker->right = node;
+							node->color = RED;
+							node->parent = linker;
+							_size++;
+							break; 
+						}
+						else
+							linker = linker->right;
+					}
+					else
+						return node;
+				}
+				insertFix(node);
+				return node;
+			}
+			
+			void insertFix( node_ptr z )
+			{
+				while (z != NULL && z != _nil && z->parent != NULL && z->parent->color == RED)
+				{
+					if (z->parent == z->parent->parent->left) //node->parent is left child
+					{
+						node_ptr y = z->parent->parent->right; //uncle of node
+						if (y && y->color == RED)
+						{
+							z->parent->color = BLACK;
+							y->color = BLACK;
+							z->parent->parent->color = RED;
+							z = z->parent->parent;
+						}
+						else
+						{
+							if (z == z->parent->right)
+							{
+								z = z->parent;
+								leftRotate(z);
+							}
+							z->parent->color = BLACK;
+							z->parent->parent->color = RED;
+							rightRotate(z->parent->parent);
+						}
+					}
+					else
+					{
+						node_ptr y = z->parent->parent->left;
+						if (y && y->color == RED)
+						{
+							z->parent->color = BLACK;
+							y->color = BLACK;
+							z->parent->parent->color = RED;
+							z = z->parent->parent;
+						}
+						else
+						{
+							if (z == z->parent->left)
+							{
+								z = z->parent;
+								rightRotate(z);
+							}
+							z->parent->color = BLACK;
+							z->parent->parent->color = RED;
+							leftRotate(z->parent->parent);
+						}
+					}
+				}
+				_root->color = BLACK;
+			}
+
 
 
 /****************************************************************
 						 	Deletion
 *****************************************************************/
 
+
+
+/****************************************************************
+						 	Affichage
+*****************************************************************/
+			void printTree()
+			{
+				if (_root)
+					printHelper(_root, "", true);
+			}
+
+			void printHelper( node_ptr root, std::string indent, bool last ) 
+			{
+				if (root) 
+				{
+					std::cout << indent;
+					if (last) 
+					{
+						std::cout << "R----";
+						indent += "   ";
+					} 
+					else 
+					{
+						std::cout << "L----";
+						indent += "|  ";
+					}
+					std::string sColor = root->color ? "RED" : "BLACK";
+					std::cout << root->data.first << " - " << root->data.second << "(" << sColor << ")" << std::endl;
+					printHelper(root->left, indent, false);
+					printHelper(root->right, indent, true);
+				}
+			}
+
+/****************************************************************
+						Member functions
+*****************************************************************/
+		size_type		count( const key_type& key )
+		{
+			if (searchTree(key, _root) != NULL)
+				return 1;
+			return 0; 
+		};
+
+		
 
 
 	};

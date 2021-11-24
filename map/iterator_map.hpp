@@ -2,7 +2,6 @@
 # define ITERATOR_MAP_HPP
 
 # include "../iterator_traits.hpp"
-
 # include "RBTree.hpp"
 
 namespace ft
@@ -16,10 +15,11 @@ namespace ft
 			typedef typename ft::iterator<ft::bidirectional_iterator_tag, T>::iterator_category	iterator_category;
 			typedef	T&	reference;
 			typedef	T*	pointer;
-			typedef RBTree<T>	brt;
+			typedef rbt_node<T>		node;
+			typedef rbt_node<T>*	node_ptr;
 
 			iterator_map( ) : _node(NULL) { };
-			iterator_map( brt* src ) : _node(src) { };	//t_list* node -> t_list<T>
+			iterator_map( node_ptr src ) : _node(src) { };
 			iterator_map( const iterator_map & src ) { *this = src; };
 			~iterator_map() { };
 			iterator_map& operator=( const iterator_map & rhs )
@@ -35,19 +35,91 @@ namespace ft
 			reference	operator*() const { return (_node->data); };
 			pointer		operator->() const { return &(_node->data); };
 
-			iterator_map&	operator++() { _node = successor(_node); return *this; };
-			iterator_map 	operator++(int) { iterator_map tmp(*this); _node = successor(_node); return tmp; };
+			iterator_map&	operator++() 
+			{
+				/*_node = successor(_node);
+				return *this;*/
+
+				if (_node->right)	//Cas ou right == nil a gerer
+				{
+					while (_node->left)	//Pareil ?
+						_node = _node->left;
+					return _node;
+				}
+				
+				node_ptr parent = _node->parent;
+				while (parent && _node == parent->right)
+				{
+					_node = parent;
+					parent = parent->parent;
+				}
+				return *this;
+			};
+			iterator_map 	operator++(int) 
+			{
+				/*iterator_map tmp(*this);
+				_node = successor(_node);
+				return tmp;*/
+
+				iterator_map tmp(*this);
+				if (_node->right) //Cas ou right == nil a gerer
+				{
+					std::cout << "Enter" << std::endl;
+					while (_node->left)	//Pareil ?
+						_node = _node->left;
+					return tmp;
+				}
+				
+				node_ptr parent = _node->parent;
+				while (parent && _node == parent->right)
+				{
+					_node = parent;
+					parent = parent->parent;
+				}
+				return tmp;
+			};
 			iterator_map&	operator--() 
 			{
 				//Prevoir le cas ou on est sur NIL/end -> Renvoyer max a la place ?
-				_node = predecessor(_node); 
-				return *this; 
+				/*_node = predecessor(_node); 
+				return *this;*/
+
+				if (_node->left)
+				{
+					while (_node->right)
+						_node = _node->right;
+					return *this;
+				}
+				
+				node_ptr parent = _node->parent;
+				while (parent && _node == parent->left)
+				{
+					_node = parent;
+					parent = parent->parent;
+				}
+				return *this;
 			};
 			iterator_map	operator--(int)
-			{ 
-				iterator_map tmp(*this); 
+			{
+				/*iterator_map tmp(*this); 
 				_node = predecessor(_node); 
-				return tmp; 
+				return tmp;*/
+
+				iterator_map tmp(*this);
+				if (_node->left)
+				{
+					while (_node->right)
+						_node = _node->right;
+					return tmp;
+				}
+				
+				node_ptr parent = _node->parent;
+				while (parent && _node == parent->left)
+				{
+					_node = parent;
+					parent = parent->parent;
+				}
+				return tmp;
 			};
 
 			friend bool	operator==( const iterator_map & lhs, const iterator_map & rhs )
@@ -56,13 +128,13 @@ namespace ft
 			{ return (lhs._node != rhs._node); };
 
 
-			brt*	_node;
+			node_ptr	_node;
 	};
 
 
 
 
-	template<class T>
+	/*template<class T>
 	class const_iterator_map : public ft::iterator< ft::bidirectional_iterator_tag, T >
 	{
 		public:
@@ -71,10 +143,11 @@ namespace ft
 			typedef typename ft::iterator<ft::bidirectional_iterator_tag, T>::iterator_category	iterator_category;
 			typedef	const T&	reference;
 			typedef	const T*	pointer;
-			typedef RBTree<T>	brt;
+			typedef rbt_node<T>		node;
+			typedef rbt_node<T>*	node_ptr;
 
 			const_iterator_map( ) : _node(NULL) { };
-			const_iterator_map( brt* src ) : _node(src) { };	//t_list* node -> t_list<T>
+			const_iterator_map( node_ptr src ) : _node(src) { };	//t_list* node -> t_list<T>
 			const_iterator_map( const const_iterator_map & src ) { *this = src; };
 			~const_iterator_map() { };
 			const_iterator_map& operator=( const const_iterator_map & rhs )
@@ -84,9 +157,6 @@ namespace ft
 				return *this;
 			}
 
-			/*
-				* Fonctions
-			*/
 			reference	operator*() const { return (_node->data); };
 			pointer		operator->() const { return &(_node->data); };
 
@@ -101,8 +171,8 @@ namespace ft
 			{ return (lhs._node != rhs._node); };
 
 
-			brt*	_node;
-	};
+			node_ptr	_node;
+	};*/
 }
 
 #endif
