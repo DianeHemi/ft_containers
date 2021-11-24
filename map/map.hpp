@@ -135,7 +135,7 @@ namespace ft
 				throw std::out_of_range("map::at");
 			else
 				return node->data.second;
-		}
+		};
 
 		/****
 			Modifiers
@@ -193,8 +193,7 @@ namespace ft
 			for ( ; first != last; first++)
 			{
 				_rbt->_insertSingle(*first);
-			}
-				
+			}	
 		};
 
 
@@ -243,9 +242,11 @@ namespace ft
 		};*/
 		size_type		count( const key_type& key ) const 
 		{ return (_rbt->count(key)); };
-		//iterator		lower_bound( const key_type& k ) { };
+		iterator		lower_bound( const key_type& key )  //First element greater or equal
+		{ return iterator((_rbt->lower_bound(key))); };
 		//const_iterator	lower_bound( const key_type& k ) const { };
-		//iterator		upper_bound( const key_type& k ) { };
+		iterator		upper_bound( const key_type& key ) 
+		{ return iterator((_rbt->upper_bound(key))); };
 		//const_iterator	upper_bound( const key_type& k ) const { };
 		//ft::pair<iterator, iterator>				equal_range( const key_type& k ) { };
 		//ft::pair<const_iterator, const_iterator>	equal_range( const key_type& k ) const { };
@@ -260,7 +261,6 @@ rbt*	getTree() const
 		private:
 			allocator_type  	_alloc;
 			Compare				_cmp;
-			//new_alloc			_alloc_rbt;
 			rbt*				_rbt;
 
 			
@@ -271,26 +271,6 @@ rbt*	getTree() const
 						Private functions
 *****************************************************************/
 		/*private:
-
-		
-
-			rbt* searchTree(const key_type& key, rbt* root) 
-			{
-				if(!root) 
-					return NULL; //return root ?
-
-				while (root) 
-				{
-					if (key == root->data.first)
-						return root;
-					else if (key < root->data.first)
-						root = root->left;
-					else 
-						root = root->right;
-				}
-				return NULL;
-			}
-
 
 		void _rbTransplant(rbt* x, rbt* y)
 		{
@@ -357,6 +337,9 @@ rbt*	getTree() const
 			_deleteNode(z);
 		}*/
 //https://www.geeksforgeeks.org/red-black-tree-set-3-delete-2/
+
+
+
 		/*void _erase(rbt* z)
 		{
 			_update_min_max_for_erased_node(z);
@@ -423,6 +406,10 @@ rbt*	getTree() const
 			_eraseFix(x, new_x_parent);
 		}*/
 
+
+
+
+
 		/*void _erase(rbt* x)
 		{
 			if (x->parent != NULL) 
@@ -487,10 +474,8 @@ rbt*	getTree() const
 			_deleteNode(x);
 		}*/
 /*
-		void _erase( rbt * z )
-		{
-			
-		}
+
+
 
 		void _eraseFix(rbt* x)
 		{
@@ -566,6 +551,8 @@ rbt*	getTree() const
 			}
 			x->color = BLACK;
 		}
+
+
 
 		void _update_min_max_for_erased_node( rbt* z )
 		{

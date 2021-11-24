@@ -153,6 +153,9 @@ int main()
 
 
 	std::cout << "\n\nDelete ?" << std::endl;
+
+	std::cout << "Lower bound of 15 : " << (m2.lower_bound(15))->first << std::endl;
+	std::cout << "Upper bound of 88 : " << (m2.upper_bound(18))->first << std::endl;
 	
 
 

@@ -144,7 +144,7 @@ namespace ft
 
 			node_ptr maximum( node_ptr root ) const //Node at the utter right
 			{
-				while (root->right && root != _nil)
+				while (root->right && root->right != _nil)
 					root = root->right;
 				return root;
 			}
@@ -434,12 +434,38 @@ namespace ft
 /****************************************************************
 						Member functions
 *****************************************************************/
-		size_type		count( const key_type& key )
-		{
-			if (searchTree(key, _root) != NULL)
-				return 1;
-			return 0; 
-		};
+			size_type		count( const key_type& key )
+			{
+				if (searchTree(key, _root) != NULL)
+					return 1;
+				return 0; 
+			};
+
+			node_ptr lower_bound( const key_type& key )
+			{
+				node_ptr 	tmp = minimum(_root);
+
+				while (tmp != NULL && tmp != _nil)
+				{
+					if (tmp->data.first >= key)
+						return tmp;
+					tmp = successor(tmp);
+				}
+				return _nil;
+			}
+
+			node_ptr upper_bound( const key_type& key )
+			{
+				node_ptr 	tmp = minimum(_root);
+
+				while (tmp != NULL && tmp != _nil)
+				{
+					if (tmp->data.first > key)
+						return tmp;
+					tmp = successor(tmp);
+				}
+				return _nil;
+			}
 
 		
 
