@@ -30,10 +30,12 @@ namespace ft
 
 			typedef typename ft::pair<const Key, T> value_type;
 			typedef ft::RBTree<key_type, mapped_type, key_compare, allocator_type>	rbt;
+
+		private:
 			typedef ft::rbt_node<value_type>	rbt_node;
 			typedef ft::rbt_node<value_type>*	rbt_node_ptr;
 
-
+		public:
 			typedef value_type&         					reference;
 			typedef const value_type&   					const_reference;
 			typedef typename allocator_type::pointer 		pointer;
@@ -45,6 +47,22 @@ namespace ft
 			typedef typename ft::reverse_iterator<iterator>		    		reverse_iterator;
 			//typedef typename ft::reverse_iterator<const_iterator>			const_reverse_iterator;
 			typedef typename Alloc::template rebind<rbt>::other    new_alloc;
+
+			class value_compare
+			{
+				public:
+					typedef	bool		result_type;
+					typedef	value_type	first_argument_type;
+					typedef	value_type	second_argument_type;
+
+					//constructor
+					value_compare( Compare c ) : comp(c) { };
+					bool operator()( const value_type& left, const value_type& right ) const 
+					{ return (comp(left.first, right.first)); };
+
+				protected:
+					Compare comp;
+			};
 
 		/****
 			Constructors
@@ -80,7 +98,7 @@ namespace ft
 		}
 
 		//Overload operator =
-		/*map& operator=( const & map rhs )
+		/*map& operator=( const map& rhs )
 		{
 			if (this != &rhs)
 			{
@@ -141,33 +159,31 @@ namespace ft
 			Modifiers
 		****/
 		//void 	clear() { };
-		/*void 	swap( map& x ) 
+		void 	swap( map& x ) 
 		{
-			rbt* tmp_rbt = _rbt;
-
-			*this->_rbt = x->_rbt;
-			x->_rbt = tmp_rbt;
-		};*/
-		/*void		erase( iterator position ) 
+			_rbt->swap(*x._rbt);
+		};
+		void		erase( iterator position ) 
 		{
-			rbt* node = searchTree(position->first, _rbt);
+			rbt_node* node = _rbt->searchTree(position->first, _rbt->getRoot());
 			if (node)
-				_erase(node);
+				_rbt->_erase(node);
 		};
-		size_type	erase( const key_type& k ) 
+		size_type	erase( const key_type& key ) 
 		{ 
-			size_type tmp = _size;
-			rbt* node = searchTree(k, _rbt);
-			erase(node);
-			return tmp - _size;
+			size_type tmp = _rbt->getSize();
+			rbt_node* node = _rbt->searchTree(key, _rbt->getRoot());
+			if (node)
+				_rbt->_erase(node);
+			return tmp - _rbt->getSize();
 		};
-		void		erase( iterator first, iterator last) 
-		{*/
-			/*if (first == begin() && last == end())
-				clear();*/
+		/*void		erase( iterator first, iterator last) 
+		{
+			//if (first == begin() && last == end())
+			//	clear();
 
 			//Start from the end
-			/*while (first != last)
+			while (first != last)
 			{
 				erase(first++);
 			}
@@ -207,23 +223,6 @@ namespace ft
 			Observers
 		****/
 		key_compare 	key_comp() const { return _rbt->getCompare(); };
-
-		class value_compare
-		{
-			friend class map;
-			public:
-				typedef	bool		result_type;
-				typedef	value_type	first_argument_type;
-				typedef	value_type	second_argument_type;
-
-				//constructor
-				value_compare( Compare c ) : comp(c) { };
-				bool operator()( const value_type& left, const value_type& right ) const 
-				{ return (comp(left.first, right.first)); };
-
-			protected:
-				Compare comp;
-		};
 		value_compare	value_comp() const { return (value_compare(_rbt->getCompare())); };
 
 		/****
@@ -349,77 +348,6 @@ rbt*	getTree() const
 			}
 			_deleteNode(z);
 		}*/
-//https://www.geeksforgeeks.org/red-black-tree-set-3-delete-2/
-
-
-
-		/*void _erase(rbt* z)
-		{
-			_update_min_max_for_erased_node(z);
-			rbt* y = z;
-			rbt* x = NULL;
-			rbt* new_x_parent = NULL;
-
-			if (y->left == NULL)
-				x = y->right;
-			else if (y->right == NULL)
-				x = y->left;
-			else
-			{
-				y = y->right;
-				while (y->left != NULL)
-					y = y->left;
-				x = y->right;
-			}
-			if (y == z)
-			{
-				new_x_parent = y->parent;
-				if (x != NULL)
-					x->parent = y->parent;
-				if (_rbt->parent == z)
-					_rbt->parent = x;
-				else if (z->parent->left == z)
-				{
-					y->left = z->parent;
-					z->parent->left = x;
-				}
-				else
-				{
-					y->left = NULL;
-					z->parent->right = x;
-				}
-			}
-			else
-			{
-				z->left->parent = y;
-				y->left = z->left;
-				if (y != z->right)
-				{
-					new_x_parent = y->parent;
-					if (x != NULL)
-						x->parent = y->parent;
-					y->parent->left = x;
-					y->right = z->right;
-					z->right->parent = y;
-				}
-				else
-					new_x_parent = y;
-				y->parent = z->parent;
-				bool tmp = y->color;
-				y->color = z->color;
-				z->color = tmp;
-				y = z;
-			}
-			if (y->color == RED)
-			{
-				_deleteNode(y);
-				return ;
-			}
-			_deleteNode(y);
-			_eraseFix(x, new_x_parent);
-		}*/
-
-
 
 
 
@@ -564,117 +492,6 @@ rbt*	getTree() const
 			}
 			x->color = BLACK;
 		}
-
-
-
-		void _update_min_max_for_erased_node( rbt* z )
-		{
-			if (_size == 1)
-			{
-				_rbt->left = _rbt;
-				_rbt->right = _rbt;
-			}
-			if (_rbt->left == z)
-			{
-				iterator it(z);
-				++it;
-				_rbt->left = it._node;
-			}
-			else if (_rbt->right == z)
-			{
-				iterator it(z);
-				--it;
-				_rbt->right = it._node;
-			}
-		}
-
-		void _eraseFix(rbt* p_x, rbt* p_new_x_parent)
-		{
-			while (p_x != _rbt->parent && p_x != _end && p_x && p_x->color == BLACK)
-			{
-				if (p_x == p_new_x_parent->left)
-				{
-					rbt* p_w = p_new_x_parent->right;
-					if (p_w->color == RED)
-					{
-						p_w->color = BLACK;
-						p_new_x_parent->color = RED;
-						leftRotate(p_new_x_parent);
-						p_w = p_new_x_parent->right;
-					}
-
-					if (p_w && p_w->left->color == BLACK && p_w->right->color == BLACK)
-					{
-						p_w->color = RED;
-						p_x = p_new_x_parent;
-						p_new_x_parent = p_new_x_parent->parent;
-					}
-					else
-					{
-						if (p_w && p_w->right->color == BLACK)
-						{
-						if (p_w->left != 0)
-						p_w->left->color = BLACK;
-
-						p_w->color = RED;
-						rightRotate(p_w);
-						p_w = p_new_x_parent->right;
-						}
-
-						p_w->color = p_new_x_parent->color;
-						p_new_x_parent->color = BLACK;
-
-						if (p_w->right != 0)
-						p_w->right->color = BLACK;
-
-						leftRotate(p_new_x_parent);
-						break;
-					}
-				}
-				else
-				{
-					rbt* p_w = p_new_x_parent->left;
-					if (p_w->color == RED)
-					{
-						p_w->color = BLACK;
-						p_new_x_parent->color = RED;
-						rightRotate(p_new_x_parent);
-						p_w = p_new_x_parent->left;
-					}
-
-					if (p_w->right->color == BLACK 
-						&& p_w->left->color == BLACK)
-					{
-						p_w->color = RED;
-						p_x = p_new_x_parent;
-						p_new_x_parent = p_new_x_parent->parent;
-					}
-					else
-					{
-						if (p_w->left->color == BLACK)
-						{
-							if (p_w->right != 0)
-								p_w->right->color = BLACK;
-
-							p_w->color = RED;
-							leftRotate(p_w);
-							p_w = p_new_x_parent->left;
-						}
-
-						p_w->color = p_new_x_parent->color;
-						p_new_x_parent->color = BLACK;
-
-						if (p_w->left != 0)
-							p_w->left->color = BLACK;
-
-						rightRotate(p_new_x_parent);
-						//this->update_to_top(p_new_x_parent, (node_update* )this);
-						break;
-					}
-				}
-			}
-		}
-
 */
 
 			

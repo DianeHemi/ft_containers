@@ -155,9 +155,28 @@ int main()
 	std::cout << "Upper bound of 18 : " << (m2.upper_bound(18))->first << std::endl;
 	std::cout << "Equal range of 18 : " << (m2.equal_range(18)).first->first << " | " << (m2.equal_range(18)).second->first << std::endl;*/
 
-	std::cout << "\n\nDelete ?" << std::endl;
-
+	/*std::cout << "\n\nSwap" << std::endl;
+	m1.getTree()->printTree();
+	m1.swap(m2);
+	m1.getTree()->printTree();
+	m2.getTree()->printTree();*/
 	
+	std::cout << "\n\nDelete" << std::endl;
+	ft::map<int, int>::iterator it2 = m2.begin();
+	ft::map<int, int>::iterator ite2 = m2.end();
+	it2++;
+	std::cout << it2->first << std::endl;
+	m2.erase(10);
+	m2.getTree()->printTree();
+
+	std::cout << "\n\nTest delete from iterator range" << std::endl;
+	it2 = m2.begin();
+	it2++;
+	ite2--;
+	std::cout << it2->first << " - " << ite2->first << std::endl;
+	//std::cout << "Doit rester seulement 5-80 et 98-25" << std::endl;
+	//m2.erase(it2, ite2);
+	//m2.getTree()->printTree();
 
 	
 
