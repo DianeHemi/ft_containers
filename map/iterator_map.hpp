@@ -49,7 +49,7 @@ namespace ft
 				else
 				{
 					node_ptr y = _node->parent;
-					while (_node && _node == y->right)
+					while (_node == y->right)
 					{
 						_node = y;
 						y = y->parent;
@@ -66,23 +66,8 @@ namespace ft
 				return tmp;*/
 
 				iterator_map tmp(*this);
-				if (_node->right != 0)	//Cas ou right == nil a gerer
-				{
-					_node = _node->right;
-					while (_node->left != 0)	//Pareil ?
-						_node = _node->left;
-				}
-				else
-				{
-					node_ptr y = _node->parent;
-					while (_node && _node == y->right)
-					{
-						_node = y;
-						y = y->parent;
-					}
-					if (_node->right != y)
-						_node = y;
-				}
+				operator++();
+
 				return tmp;
 			};
 			iterator_map&	operator--() 
@@ -90,8 +75,9 @@ namespace ft
 				//Prevoir le cas ou on est sur NIL/end -> Renvoyer max a la place ?
 				/*_node = predecessor(_node); 
 				return *this;*/
-
-				if (_node->left != 0)	//Cas ou right == nil a gerer
+				if (_node->color == RED && _node->parent->parent == _node)
+					_node = _node->right;
+				else if (_node->left != 0)	//Cas ou right == nil a gerer
 				{
 					_node = _node->left;
 					while (_node->right != 0)	//Pareil ?
@@ -100,13 +86,12 @@ namespace ft
 				else
 				{
 					node_ptr y = _node->parent;
-					while (_node && _node == y->left)
+					while (_node == y->left)
 					{
 						_node = y;
 						y = y->parent;
 					}
-					if (_node->left != y)
-						_node = y;
+					_node = y;
 				}
 				return *this;
 			};
@@ -117,23 +102,7 @@ namespace ft
 				return tmp;*/
 
 				iterator_map tmp(*this);
-				if (_node->left != 0)	//Cas ou right == nil a gerer
-				{
-					_node = _node->left;
-					while (_node->right != 0)	//Pareil ?
-						_node = _node->right;
-				}
-				else
-				{
-					node_ptr y = _node->parent;
-					while (_node && _node == y->left)
-					{
-						_node = y;
-						y = y->parent;
-					}
-					if (_node->left != y)
-						_node = y;
-				}
+				operator--();
 				return tmp;
 			};
 
@@ -149,7 +118,7 @@ namespace ft
 
 
 
-	/*template<class T>
+	template<class T>
 	class const_iterator_map : public ft::iterator< ft::bidirectional_iterator_tag, T >
 	{
 		public:
@@ -160,6 +129,7 @@ namespace ft
 			typedef	const T*	pointer;
 			typedef rbt_node<T>		node;
 			typedef rbt_node<T>*	node_ptr;
+
 
 			const_iterator_map( ) : _node(NULL) { };
 			const_iterator_map( node_ptr src ) : _node(src) { };	//t_list* node -> t_list<T>
@@ -175,10 +145,76 @@ namespace ft
 			reference	operator*() const { return (_node->data); };
 			pointer		operator->() const { return &(_node->data); };
 
-			const_iterator_map&	operator++() { _node = successor(_node); return *this; };
-			const_iterator_map 	operator++(int) { const_iterator_map tmp(*this); _node = successor(_node); return tmp; };
-			const_iterator_map&	operator--() { _node = predecessor(_node); return *this; };
-			const_iterator_map	operator--(int) { const_iterator_map tmp(*this); _node = predecessor(_node);; return tmp; };
+			const_iterator_map&	operator++() 
+			{
+				/*_node = successor(_node);
+				return *this;*/
+
+				if (_node->right != 0)	//Cas ou right == nil a gerer
+				{
+					_node = _node->right;
+					while (_node->left != 0)	//Pareil ?
+						_node = _node->left;
+				}
+				else
+				{
+					node_ptr y = _node->parent;
+					while (_node == y->right)
+					{
+						_node = y;
+						y = y->parent;
+					}
+					if (_node->right != y)
+						_node = y;
+				}
+				return *this;
+			};
+			const_iterator_map 	operator++(int) 
+			{
+				/*iterator_map tmp(*this);
+				_node = successor(_node);
+				return tmp;*/
+
+				const_iterator_map tmp(*this);
+				operator++();
+				return tmp;
+			};
+			const_iterator_map&	operator--() 
+			{
+				//Prevoir le cas ou on est sur NIL/end -> Renvoyer max a la place ?
+				/*_node = predecessor(_node); 
+				return *this;*/
+
+				if (_node->color == RED && _node->parent->parent == _node)
+					_node = _node->right;
+				else if (_node->left != 0)	//Cas ou right == nil a gerer
+				{
+					_node = _node->left;
+					while (_node->right != 0)	//Pareil ?
+						_node = _node->right;
+				}
+				else
+				{
+					node_ptr y = _node->parent;
+					while (_node == y->left)
+					{
+						_node = y;
+						y = y->parent;
+					}
+					_node = y;
+				}
+				return *this;
+			};
+			const_iterator_map	operator--(int)
+			{
+				/*iterator_map tmp(*this); 
+				_node = predecessor(_node); 
+				return tmp;*/
+
+				const_iterator_map tmp(*this);
+				operator--();
+				return tmp;
+			};
 
 			friend bool	operator==( const const_iterator_map & lhs, const const_iterator_map & rhs )
 			{ return (lhs._node == rhs._node); };
@@ -187,7 +223,7 @@ namespace ft
 
 
 			node_ptr	_node;
-	};*/
+	};
 }
 
 #endif

@@ -43,7 +43,7 @@ namespace ft
 			
 
 			typedef typename ft::iterator_map<value_type>			    	iterator;        //legacy bidirectionnal iterator to value_type
-			//typedef typename ft::const_iterator_map<value_type>	    		const_iterator;  //legacy bidirectionnal iterator to const value_type
+			typedef typename ft::const_iterator_map<value_type>	    		const_iterator;  //legacy bidirectionnal iterator to const value_type
 			typedef typename ft::reverse_iterator<iterator>		    		reverse_iterator;
 			//typedef typename ft::reverse_iterator<const_iterator>			const_reverse_iterator;
 			typedef typename Alloc::template rebind<rbt>::other    new_alloc;
@@ -116,9 +116,9 @@ namespace ft
 			Iterators
 		****/
 		iterator        begin() { return iterator(_rbt->minimum(_rbt->getRoot())); };
-		//const_iterator  begin() const { return const_iterator(_rbt->minimum(_rbt)); };
+		const_iterator  begin() const { return const_iterator(_rbt->minimum(_rbt->getRoot())); };
 		iterator        end() { return iterator(_rbt->getNil()); };
-		//const_iterator  end() const { return const_iterator(_rbt->getNil()); };
+		const_iterator  end() const { return const_iterator(_rbt->getNil()); };
 
 		reverse_iterator        rbegin() { return reverse_iterator(_rbt->getNil()); };
 		//const_reverse_iterator  rbegin() const { return const_reverse_iterator(_rbt->getNil()); }; //Ou maximum ?
@@ -177,7 +177,7 @@ namespace ft
 				_rbt->_erase(node);
 			return tmp - _rbt->getSize();
 		};
-		/*void		erase( iterator first, iterator last) 
+		void		erase( iterator first, iterator last) 
 		{
 			//if (first == begin() && last == end())
 			//	clear();
@@ -187,7 +187,7 @@ namespace ft
 			{
 				erase(first++);
 			}
-		};*/
+		};
 		ft::pair<iterator, bool>	insert( const value_type& val ) 
 		{
 			ft::pair<iterator, bool> ret;

@@ -156,7 +156,7 @@ namespace ft
 *****************************************************************/
 			node_ptr minimum( node_ptr root ) const //Node at the utter left
 			{
-				while (root->left)
+				while (root->left && root->left != _nil)
 					root = root->left;
 				return root;
 			}
@@ -170,7 +170,7 @@ namespace ft
 
 			node_ptr successor( node_ptr node ) const
 			{
-				if (node->right)
+				if (node->right && node->right != _nil)
 					return minimum(node->right);
 				
 				node_ptr parent = node->parent;
@@ -200,7 +200,7 @@ namespace ft
 			{
 				node_ptr tmp = node;
 
-				while (tmp != NULL)
+				while (tmp != NULL && tmp != _nil)
 				{
 					if (key == tmp->data.first)
 						return tmp;
@@ -274,8 +274,7 @@ namespace ft
 				if (y->left != NULL)
 					y->left->parent = x;
 				y->parent = x->parent;
-
-				if (x->parent == NULL)	//Reassign root of the rbt
+				if (x == _root || x->parent == NULL)	//Reassign root of the rbt
 					_root = y;
 				else if (x == x->parent->left)
 					x->parent->left = y;
@@ -283,7 +282,6 @@ namespace ft
 					x->parent->right = y;
 				y->left = x;
 				x->parent = y;
-
 			}
 
 			void rightRotate( node_ptr x )
@@ -297,8 +295,8 @@ namespace ft
 				y->parent = x->parent;
 				if (y->right != NULL)
 					y->right->parent = x;
-
-				if (x->parent == NULL)	//Reassign root of the rbt
+				y->parent = x->parent;
+				if (x == _root || x->parent == NULL)	//Reassign root of the rbt
 					_root = y;
 				else if (x == x->parent->right)
 					x->parent->right = y;
@@ -358,7 +356,7 @@ namespace ft
 							node->color = RED;
 							node->parent = linker;
 							_size++;
-							break; 
+							break;
 						}
 						else
 							linker = linker->right;
@@ -443,10 +441,10 @@ namespace ft
 			}
 
 
-			void _erase( node_ptr node )
+			void _erase( node_ptr z )
 			{
-				if (node == NULL || node == _nil)
-					return ;
+				//if (node == NULL || node == _nil)
+				//	return ;
 				/*if (node == _root && node->left == NULL && node->left == _nil)
 				{
 					deleteNode(node);
@@ -483,7 +481,7 @@ namespace ft
 				}*/
 
 				//BST deletion
-				if (node->left == NULL && node->right == NULL)
+				/*if (node->left == NULL && node->right == NULL)
 				{
 					std::cout << node->data.first << std::endl;
 					if (node != _root)
@@ -537,21 +535,83 @@ namespace ft
 				else if (node->color == BLACK)
 				{
 					
+				}*/
+				node_ptr	x = NULL;
+				bool		y_original_color = z->color;
+				if (z->left == NULL || z->right == NULL)
+				{
+					if (z->left == NULL)
+					{
+						x = z->right;
+						_rbTransplant(z, z->right);
+					}
+					else if (z->right == NULL)
+					{
+						x = z->left;
+						_rbTransplant(z, z->left);
+					}
+					else
+					{
+						if (z->color == BLACK)
+							x = _nil;
+						else
+							x = NULL;
+						_rbTransplant(z, x);
+					}
 				}
-
-
-
-
-				//deleteNode(node);
-
-				//_eraseFix(node);
-
-				
-					
-
-
-					
+				else
+				{
+					node_ptr y = minimum(z->right);
+					if (y->right)
+						x = y->right;
+					else
+					{
+						x = _nil;
+						y->right = x;
+						x->parent = z->right;
+					}
+					y_original_color = y->color;
+					if (y->parent == z)
+						x->parent = y;
+					else
+					{
+						_rbTransplant(y, y->right);
+						y->right = z->right;
+						y->right->parent = y;
+					}
+					_rbTransplant(z, y);
+					y->left = z->left;
+					y->left->parent = y;
+					y->color = z->color;
+				}
+				if (y_original_color == BLACK)
+					_eraseFix(x);
+				if (x == _nil)
+					_rbTransplant(x, NULL);
+				_update_min_max_for_erased_node(z);
+				deleteNode(z);
 			}
+
+
+			void _update_min_max_for_erased_node( node_ptr z )
+			{
+				if (_size == 1)
+				{
+					_root->left = _root; //Ou NULL ?
+					_root->right = _root; //Ou NULL ?
+				}
+				if (_root->left == z)
+				{
+					z = successor(z);
+					_root->left = z;
+				}
+				else if (_root->right == z)
+				{
+					z = predecessor(z);
+					_root->right = z;
+				}
+			}
+
 
 			/*void _erase( node_ptr x )
 			{
@@ -691,8 +751,9 @@ namespace ft
 					}
 				}
 				x->color = BLACK;
-			}
 
+	}
+	
 
 
 
@@ -707,7 +768,7 @@ namespace ft
 
 			void printHelper( node_ptr root, std::string indent, bool last ) 
 			{
-				if (root) 
+				if (root)
 				{
 					std::cout << indent;
 					if (last) 
@@ -725,6 +786,7 @@ namespace ft
 					printHelper(root->left, indent, false);
 					printHelper(root->right, indent, true);
 				}
+				
 			}
 
 /****************************************************************
