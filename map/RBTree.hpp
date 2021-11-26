@@ -20,6 +20,7 @@ namespace ft
 		struct rbt_node*	left;
 		struct rbt_node*	right;
 
+		rbt_node() : color(RED), data(T()), parent(NULL), left(NULL), right(NULL) { };
 		rbt_node(T data) : color(RED), data(data), parent(NULL), left(NULL), right(NULL) { };
 	};
 
@@ -40,10 +41,10 @@ namespace ft
 
 			typedef typename ft::pair<const Key, T> 	value_type;
 
-			typedef rbt_node<value_type>	node;
+			typedef rbt_node<value_type>	node_t;
 			typedef rbt_node<value_type>*	node_ptr;
 
-			typedef typename Alloc::template rebind<node>::other		new_alloc;
+			typedef typename Alloc::template rebind<node_t>::other		new_alloc;
 
 
 /****************************************************************
@@ -134,6 +135,7 @@ namespace ft
 *****************************************************************/
 			node_ptr newNode( const value_type& key )
 			{
+				
 				node_ptr node = _alloc_rbt.allocate(1);
 				_alloc.construct(&node->data, key);
 				node->parent = NULL;
@@ -172,7 +174,7 @@ namespace ft
 			{
 				if (node->right && node->right != _nil)
 					return minimum(node->right);
-				
+
 				node_ptr parent = node->parent;
 				while (parent && node == parent->right)
 				{
@@ -184,7 +186,7 @@ namespace ft
 
 			node_ptr predecessor( node_ptr node ) const
 			{
-				if (node->left)
+				if (node->left && node->left != _nil)
 					return maximum(node->left);
 				
 				node_ptr parent = node->parent;
@@ -317,6 +319,7 @@ namespace ft
 				{
 					_root = newNode(key);
 					_root->right = _nil;
+					_root->left = _nil;
 					_root->color = BLACK;
 					_nil->parent = _root;
 					_size++;
@@ -328,12 +331,19 @@ namespace ft
 
 				node_ptr linker = _root;
 				node_ptr node = newNode(key);
+
 				while (linker != NULL)
 				{
 					if (_cmp(key.first, linker->data.first))
 					{
-						if (linker->left == NULL)
+						if (linker->left == _nil || linker->left == NULL)
 						{
+							if (linker->left == _nil)
+							{
+								node->left = _nil;
+								//_nil->parent = node;
+								//_nil->parent = maximum(_root);
+							}
 							linker->left = node;
 							node->color = RED;
 							node->parent = linker;
@@ -351,6 +361,7 @@ namespace ft
 							{
 								node->right = _nil;
 								_nil->parent = node;
+								//_nil->parent = minimum(_root);
 							}
 							linker->right = node;
 							node->color = RED;
@@ -372,9 +383,11 @@ namespace ft
 			{
 				while (z != NULL && z != _nil && z->parent != NULL && z->parent->color == RED)
 				{
-					if (z->parent == z->parent->parent->left) //node->parent is left child
+					if (z->parent && z->parent->parent && z->parent == z->parent->parent->left) //node->parent is left child
 					{
-						node_ptr y = z->parent->parent->right; //uncle of node
+						node_ptr y = NULL;
+						if (z->parent->parent)
+							y = z->parent->parent->right; //uncle of node
 						if (y && y->color == RED)
 						{
 							z->parent->color = BLACK;
@@ -390,13 +403,18 @@ namespace ft
 								leftRotate(z);
 							}
 							z->parent->color = BLACK;
-							z->parent->parent->color = RED;
-							rightRotate(z->parent->parent);
+							if (z->parent->parent)
+							{
+								z->parent->parent->color = RED;
+								rightRotate(z->parent->parent);
+							}
 						}
 					}
 					else
 					{
-						node_ptr y = z->parent->parent->left;
+						node_ptr y = NULL;
+						if (z->parent->parent)
+							y = z->parent->parent->left;
 						if (y && y->color == RED)
 						{
 							z->parent->color = BLACK;
@@ -412,8 +430,11 @@ namespace ft
 								rightRotate(z);
 							}
 							z->parent->color = BLACK;
-							z->parent->parent->color = RED;
-							leftRotate(z->parent->parent);
+							if (z->parent->parent)
+							{
+								z->parent->parent->color = RED;
+								leftRotate(z->parent->parent);
+							}
 						}
 					}
 				}
@@ -429,123 +450,62 @@ namespace ft
 			{
 				if (x->parent == NULL || x->parent == _nil)
 					_root = y;
+
 				if (x->parent)
 				{
 					if (x == x->parent->left)
+					{
 						x->parent->left = y;
+					}
 					else
-						x->parent->right = y;
+					{
+						if (y == NULL)
+							x->parent->right = _nil;
+						else
+							x->parent->right = y;
+					}	
 				}
 				if (y && x)
+				{
 					y->parent = x->parent;
+				}
+				if (x)
+				{
+					if (x->left == NULL)
+						x->left = _nil;
+					if (x->right == NULL)
+						x->right = _nil;
+				}
+				
+				if (_root)
+				{
+					if (_root->left == NULL)
+						_root->left = _nil;
+					if (_root->right == NULL)
+						_root->right = _nil;
+				}
 			}
 
 
 			void _erase( node_ptr z )
 			{
-				//if (node == NULL || node == _nil)
-				//	return ;
-				/*if (node == _root && node->left == NULL && node->left == _nil)
-				{
-					deleteNode(node);
-					_root = _nil;
-					_nil->parent = NULL;
-				}*/
-				/*else if (node == _root)
-				{
-					if (node->right != NULL && node->right != _nil) 
-					{
-						_root = node->right;
-						node->right->parent = NULL;
+				if (z == NULL || z == _nil)
+					return ;
 
-						if (node->left != NULL) 
-						{
-							node_ptr tmp = node->right;
-							while (tmp->left)
-								tmp = tmp->left;
-							tmp->left = node->left;
-							node->left->parent = tmp;
-						}
-					}
-					else if (node->left != NULL) 
-					{
-						_root = node->left;
-						node->left->parent = NULL;
-					}
-					else 
-						_root = _nil;
-				}
-				else
-				{
-
-				}*/
-
-				//BST deletion
-				/*if (node->left == NULL && node->right == NULL)
-				{
-					std::cout << node->data.first << std::endl;
-					if (node != _root)
-					{
-						node->parent->left == node ? node->parent->left = NULL : node->parent->right = NULL;
-					}
-					else
-						_root = _nil;
-					deleteNode(node);
-				}
-				else if (node->left && node->right)
-				{
-					node_ptr son = successor(node);
-					node_ptr tmp = node;
-					node = son;
-					if (tmp->left && tmp->left != son)
-						node->left = tmp->left;
-					else if (tmp->right && tmp->right != son)
-						node->right = tmp->right;
-					if (tmp->parent->left == tmp)
-						tmp->parent->left = node;
-					else
-						tmp->parent->right = node;
-					deleteNode(tmp);
-				}
-				else if (node->left != NULL)
-				{
-					std::cout << "Case" << std::endl;
-					if (node != _root)
-					{
-						node_ptr tmp = node;
-						node = node->left;
-						node->parent = tmp->parent;
-					}
-					else
-						_root = node->left;
-					deleteNode(node);
-				}
-				else if (node->right != NULL)
-				{
-					if (node != _root)
-					{
-						node_ptr tmp = node;
-						node = node->right;
-						node->parent = tmp->parent;
-					}
-					else
-						_root = node->right;
-					deleteNode(node);
-				} //End of BST deletion
-				else if (node->color == BLACK)
-				{
-					
-				}*/
 				node_ptr	x = NULL;
-				bool		y_original_color = z->color;
-				if (z->left == NULL || z->right == NULL)
+				int 		y_original_color = z->color;
+				node_t 		leaf;
+
+				if (z->left == NULL || z->right == NULL || z->left == _nil || z->right == _nil)
 				{
-					if (z->left == NULL)
+					if ((z->left == NULL && z->right != NULL && z->right != _nil) 
+						|| (z->left == _nil && z->right != NULL && z->right != _nil))
 					{
 						x = z->right;
 						_rbTransplant(z, z->right);
 					}
-					else if (z->right == NULL)
+					else if ((z->right == NULL && z->left != NULL && z->left != _nil) 
+						|| (z->right == _nil && z->left != NULL && z->left != _nil))
 					{
 						x = z->left;
 						_rbTransplant(z, z->left);
@@ -553,9 +513,9 @@ namespace ft
 					else
 					{
 						if (z->color == BLACK)
-							x = _nil;
+							x = &leaf;
 						else
-							x = NULL;
+							x = _nil;
 						_rbTransplant(z, x);
 					}
 				}
@@ -566,7 +526,7 @@ namespace ft
 						x = y->right;
 					else
 					{
-						x = _nil;
+						x = &leaf;
 						y->right = x;
 						x->parent = z->right;
 					}
@@ -584,31 +544,39 @@ namespace ft
 					y->left->parent = y;
 					y->color = z->color;
 				}
+			
 				if (y_original_color == BLACK)
 					_eraseFix(x);
-				if (x == _nil)
+
+				if (x == &leaf)
 					_rbTransplant(x, NULL);
+
 				_update_min_max_for_erased_node(z);
 				deleteNode(z);
+	
 			}
 
 
 			void _update_min_max_for_erased_node( node_ptr z )
 			{
-				if (_size == 1)
+				if (_root == NULL || _root == _nil)
 				{
-					_root->left = _root; //Ou NULL ?
-					_root->right = _root; //Ou NULL ?
+					_root = z;
 				}
-				if (_root->left == z)
+				else if (_root->left == z) //
 				{
 					z = successor(z);
 					_root->left = z;
 				}
-				else if (_root->right == z)
+				else if (_root->right == z) //
 				{
 					z = predecessor(z);
 					_root->right = z;
+				}
+				if (_size == 1)
+				{
+					_root->left = _nil; //Ou NULL ou _root ?
+					_root->right = _nil; //Ou NULL ou _root?
 				}
 			}
 
@@ -682,7 +650,7 @@ namespace ft
 			{
 				while (x != _root && x->color == BLACK)
 				{
-					if (x == x->parent->left)
+					if (x->parent && x == x->parent->left)
 					{
 						node_ptr w = x->parent->right;
 						if (w && w->color == RED)
@@ -701,7 +669,8 @@ namespace ft
 						{
 							if (w && w->right && w->right->color == BLACK)
 							{
-								w->left->color = BLACK;
+								if (w->left)
+									w->left->color = BLACK;
 								w->color = RED;
 								rightRotate(w);
 								w = x->parent->right;
@@ -713,6 +682,10 @@ namespace ft
 								w->right->color = BLACK;
 							leftRotate(x->parent);
 							x = _root;
+							if (x->left == NULL)
+								x->left = _nil;
+							if (x->right == NULL)
+								x->right = _nil;
 						}
 					}
 					else
@@ -747,12 +720,15 @@ namespace ft
 								w->left->color = BLACK;
 							rightRotate(x->parent);
 							x = _root;
+							if (x->left == NULL)
+								x->left = _nil;
+							if (x->right == NULL)
+								x->right = _nil;
 						}
 					}
 				}
 				x->color = BLACK;
-
-	}
+			}
 	
 
 

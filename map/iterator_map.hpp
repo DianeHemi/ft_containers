@@ -37,19 +37,16 @@ namespace ft
 
 			iterator_map&	operator++() 
 			{
-				/*_node = successor(_node);
-				return *this;*/
-
-				if (_node->right != 0)	//Cas ou right == nil a gerer
+				if (_node->right != 0)
 				{
 					_node = _node->right;
-					while (_node->left != 0)	//Pareil ?
+					while (_node->left != 0)
 						_node = _node->left;
 				}
 				else
 				{
 					node_ptr y = _node->parent;
-					while (_node == y->right)
+					while (_node && y && _node == y->right)
 					{
 						_node = y;
 						y = y->parent;
@@ -59,7 +56,7 @@ namespace ft
 				}
 				return *this;
 			};
-			iterator_map 	operator++(int) 
+			iterator_map 	operator++(int) //Successor
 			{
 				/*iterator_map tmp(*this);
 				_node = successor(_node);
@@ -72,12 +69,7 @@ namespace ft
 			};
 			iterator_map&	operator--() 
 			{
-				//Prevoir le cas ou on est sur NIL/end -> Renvoyer max a la place ?
-				/*_node = predecessor(_node); 
-				return *this;*/
-				if (_node->color == RED && _node->parent->parent == _node)
-					_node = _node->right;
-				else if (_node->left != 0)	//Cas ou right == nil a gerer
+				if (_node->left != 0)	//Cas ou right == nil a gerer
 				{
 					_node = _node->left;
 					while (_node->right != 0)	//Pareil ?
@@ -86,7 +78,7 @@ namespace ft
 				else
 				{
 					node_ptr y = _node->parent;
-					while (_node == y->left)
+					while (_node && y && _node == y->left)
 					{
 						_node = y;
 						y = y->parent;
@@ -95,7 +87,7 @@ namespace ft
 				}
 				return *this;
 			};
-			iterator_map	operator--(int)
+			iterator_map	operator--(int)	//Successor
 			{
 				/*iterator_map tmp(*this); 
 				_node = predecessor(_node); 
@@ -147,19 +139,17 @@ namespace ft
 
 			const_iterator_map&	operator++() 
 			{
-				/*_node = successor(_node);
-				return *this;*/
-
-				if (_node->right != 0)	//Cas ou right == nil a gerer
+				if (_node->right != NULL)
 				{
+					
 					_node = _node->right;
-					while (_node->left != 0)	//Pareil ?
+					while (_node->left != 0)
 						_node = _node->left;
 				}
 				else
 				{
 					node_ptr y = _node->parent;
-					while (_node == y->right)
+					while (_node && y && _node == y->right)
 					{
 						_node = y;
 						y = y->parent;
@@ -181,13 +171,7 @@ namespace ft
 			};
 			const_iterator_map&	operator--() 
 			{
-				//Prevoir le cas ou on est sur NIL/end -> Renvoyer max a la place ?
-				/*_node = predecessor(_node); 
-				return *this;*/
-
-				if (_node->color == RED && _node->parent->parent == _node)
-					_node = _node->right;
-				else if (_node->left != 0)	//Cas ou right == nil a gerer
+				if (_node->left != 0)	//Cas ou right == nil a gerer
 				{
 					_node = _node->left;
 					while (_node->right != 0)	//Pareil ?
@@ -196,7 +180,7 @@ namespace ft
 				else
 				{
 					node_ptr y = _node->parent;
-					while (_node == y->left)
+					while (_node && y && _node == y->left)
 					{
 						_node = y;
 						y = y->parent;

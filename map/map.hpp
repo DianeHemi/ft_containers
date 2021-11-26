@@ -158,7 +158,7 @@ namespace ft
 		/****
 			Modifiers
 		****/
-		//void 	clear() { };
+		void 	clear() { _rbt->clear(); };
 		void 	swap( map& x ) 
 		{
 			_rbt->swap(*x._rbt);
@@ -170,7 +170,7 @@ namespace ft
 				_rbt->_erase(node);
 		};
 		size_type	erase( const key_type& key ) 
-		{ 
+		{
 			size_type tmp = _rbt->getSize();
 			rbt_node* node = _rbt->searchTree(key, _rbt->getRoot());
 			if (node)
@@ -179,10 +179,12 @@ namespace ft
 		};
 		void		erase( iterator first, iterator last) 
 		{
-			//if (first == begin() && last == end())
-			//	clear();
+			/*if (first == begin() && last == end())
+			{
+				clear();
+				return ;
+			}*/
 
-			//Start from the end
 			while (first != last)
 			{
 				erase(first++);
@@ -191,7 +193,6 @@ namespace ft
 		ft::pair<iterator, bool>	insert( const value_type& val ) 
 		{
 			ft::pair<iterator, bool> ret;
-
 			size_type tmp_size = _rbt->getSize();
 			rbt_node_ptr node = _rbt->_insertSingle(val);
 

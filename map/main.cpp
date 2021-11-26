@@ -169,17 +169,18 @@ int main()
 	m2.erase(10);
 	m2.getTree()->printTree();
 	
-	/*
+	
 	std::cout << "\n\nTest delete from iterator range" << std::endl;
 	it2 = m2.begin();
+	ite2 = m2.end();
 	it2++;
 	ite2--;
-	std::cout << it2->first << " - " << ite2->first << std::endl;*/
-	//std::cout << "Doit rester seulement 5-80 et 98-25" << std::endl;
-	//m2.erase(it2, ite2);
-	//m2.getTree()->printTree();
+	//ite2--;
+	std::cout << it2->first << " - " << ite2->first << std::endl;
+	std::cout << "Doit rester seulement 5-80 et 98-25" << std::endl;
+	m2.erase(it2, ite2);
+	m2.getTree()->printTree();
 
-	
 
 
     return 0;
