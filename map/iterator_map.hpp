@@ -3,7 +3,7 @@
 
 # include "../iterator_traits.hpp"
 # include "RBTree.hpp"
-
+#include <unistd.h>
 namespace ft
 {
 	template<class T>
@@ -35,72 +35,32 @@ namespace ft
 			reference	operator*() const { return (_node->data); };
 			pointer		operator->() const { return &(_node->data); };
 
-			iterator_map&	operator++() 
+			iterator_map&	operator++() //Successor
 			{
-				/*_node = successor(_node);
-				return *this;*/
-
-				if (_node->right != 0)	//Cas ou right == nil a gerer
-				{
-					_node = _node->right;
-					while (_node->left != 0)	//Pareil ?
-						_node = _node->left;
-				}
-				else
-				{
-					node_ptr y = _node->parent;
-					while (_node == y->right)
-					{
-						_node = y;
-						y = y->parent;
-					}
-					if (_node->right != y)
-						_node = y;
-				}
+				if (_node->color != NIL)
+					_node = successor(_node);
 				return *this;
 			};
 			iterator_map 	operator++(int) 
 			{
-				/*iterator_map tmp(*this);
-				_node = successor(_node);
-				return tmp;*/
-
 				iterator_map tmp(*this);
 				operator++();
-
 				return tmp;
 			};
-			iterator_map&	operator--() 
+			iterator_map&	operator--() //Predecessor
 			{
-				//Prevoir le cas ou on est sur NIL/end -> Renvoyer max a la place ?
-				/*_node = predecessor(_node); 
-				return *this;*/
-				if (_node->color == RED && _node->parent->parent == _node)
-					_node = _node->right;
-				else if (_node->left != 0)	//Cas ou right == nil a gerer
+				if (_node->color == NIL)
 				{
-					_node = _node->left;
-					while (_node->right != 0)	//Pareil ?
-						_node = _node->right;
+					while (_node->parent)	//Looking for root
+						_node = _node->parent;
+					_node = max(_node);
 				}
 				else
-				{
-					node_ptr y = _node->parent;
-					while (_node == y->left)
-					{
-						_node = y;
-						y = y->parent;
-					}
-					_node = y;
-				}
+					_node = predecessor(_node);
 				return *this;
 			};
 			iterator_map	operator--(int)
 			{
-				/*iterator_map tmp(*this); 
-				_node = predecessor(_node); 
-				return tmp;*/
-
 				iterator_map tmp(*this);
 				operator--();
 				return tmp;
@@ -111,8 +71,62 @@ namespace ft
 			friend bool	operator!=( const iterator_map & lhs, const iterator_map & rhs )
 			{ return (lhs._node != rhs._node); };
 
-
 			node_ptr	_node;
+
+
+
+			protected :
+				node_ptr min(node_ptr node )
+				{
+					while (node->left && node->left->color != NIL)
+					{
+						node = node->left;
+					}
+					return node;
+				}
+
+				node_ptr max(node_ptr node )
+				{
+					while (node->right && node->right->color != NIL)
+						node = node->right;
+					return node;
+				}
+
+				node_ptr successor( node_ptr node )
+				{
+					if (node->right && node->right->color != NIL)
+					{
+						return (min(node->right));
+					}
+					node_ptr y = node->parent;
+					while (y != NULL && node == y->right)
+					{
+						node = y;
+						y = y->parent;
+					}
+					if (y == NULL)
+					{
+						while (node->color != NIL)
+							node = node->right;
+						y = node;
+					}	
+					return y;
+				}
+
+				node_ptr predecessor(node_ptr node )
+				{
+					if (node->left && node->left->color != NIL)
+					{
+						return max(node->left);
+					}
+					node_ptr y = node->parent;
+					while (y->color != NIL && node == y->left)
+					{
+						node = y;
+						y = y->parent;
+					}
+					return y;
+				}
 	};
 
 
@@ -132,8 +146,9 @@ namespace ft
 
 
 			const_iterator_map( ) : _node(NULL) { };
-			const_iterator_map( node_ptr src ) : _node(src) { };	//t_list* node -> t_list<T>
+			const_iterator_map( node_ptr src ) : _node(src) { };
 			const_iterator_map( const const_iterator_map & src ) { *this = src; };
+			const_iterator_map( const iterator_map<T> & src ) : _node(src._node) { };
 			~const_iterator_map() { };
 			const_iterator_map& operator=( const const_iterator_map & rhs )
 			{
@@ -147,70 +162,30 @@ namespace ft
 
 			const_iterator_map&	operator++() 
 			{
-				/*_node = successor(_node);
-				return *this;*/
-
-				if (_node->right != 0)	//Cas ou right == nil a gerer
-				{
-					_node = _node->right;
-					while (_node->left != 0)	//Pareil ?
-						_node = _node->left;
-				}
-				else
-				{
-					node_ptr y = _node->parent;
-					while (_node == y->right)
-					{
-						_node = y;
-						y = y->parent;
-					}
-					if (_node->right != y)
-						_node = y;
-				}
+				if (_node->color != NIL)
+					_node = successor(_node);
 				return *this;
 			};
 			const_iterator_map 	operator++(int) 
 			{
-				/*iterator_map tmp(*this);
-				_node = successor(_node);
-				return tmp;*/
-
 				const_iterator_map tmp(*this);
 				operator++();
 				return tmp;
 			};
 			const_iterator_map&	operator--() 
 			{
-				//Prevoir le cas ou on est sur NIL/end -> Renvoyer max a la place ?
-				/*_node = predecessor(_node); 
-				return *this;*/
-
-				if (_node->color == RED && _node->parent->parent == _node)
-					_node = _node->right;
-				else if (_node->left != 0)	//Cas ou right == nil a gerer
+				if (_node->color == NIL)
 				{
-					_node = _node->left;
-					while (_node->right != 0)	//Pareil ?
-						_node = _node->right;
+					while (_node->parent)	//Looking for root
+						_node = _node->parent;
+					_node = max(_node);
 				}
 				else
-				{
-					node_ptr y = _node->parent;
-					while (_node == y->left)
-					{
-						_node = y;
-						y = y->parent;
-					}
-					_node = y;
-				}
+					_node = predecessor(_node);
 				return *this;
 			};
 			const_iterator_map	operator--(int)
 			{
-				/*iterator_map tmp(*this); 
-				_node = predecessor(_node); 
-				return tmp;*/
-
 				const_iterator_map tmp(*this);
 				operator--();
 				return tmp;
@@ -223,6 +198,58 @@ namespace ft
 
 
 			node_ptr	_node;
+
+
+			protected :
+				node_ptr min(node_ptr node )
+				{
+					while (node->left && node->left->color != NIL)
+						node = node->left;
+					return node;
+				}
+
+				node_ptr max(node_ptr node )
+				{
+					while (node->right && node->right->color != NIL)
+						node = node->right;
+					return node;
+				}
+
+				node_ptr successor( node_ptr node )
+				{
+					if (node->right && node->right->color != NIL)
+					{
+						return (min(node->right));
+					}
+					node_ptr y = node->parent;
+					while (y != NULL && node == y->right)
+					{
+						node = y;
+						y = y->parent;
+					}
+					if (y == NULL)
+					{
+						while (node->color != NIL)
+							node = node->right;
+						y = node;
+					}						
+					return y;
+				}
+
+				node_ptr predecessor(node_ptr node )
+				{
+					if (node->left && node->left->color != NIL)
+					{
+						return max(node->left);
+					}
+					node_ptr y = node->parent;
+					while (y->color != NIL && node == y->left)
+					{
+						node = y;
+						y = y->parent;
+					}
+					return y;
+				}
 	};
 }
 
