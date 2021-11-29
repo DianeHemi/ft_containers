@@ -1,8 +1,13 @@
 #include "map.hpp"
 #include <map>
 #include <iostream>
+#include <list>
 
 #include "RBTree.hpp"
+
+
+#include <chrono>
+using namespace std::chrono;
 
 /*
 void testInsert()
@@ -85,6 +90,9 @@ void testDelete(ft::map<int, int> m2)
 }
 */
 
+
+
+
 int main()
 {
 	/*ft::RBTree<int, int> tree;
@@ -104,7 +112,7 @@ int main()
 
 
 
-	std::cout << "\n" << std::endl;
+	std::cout << "\nInsert" << std::endl;
 	ft::map<int, int> m1;
 
 	m1.insert(ft::make_pair(13, 25));
@@ -132,6 +140,7 @@ int main()
 
 	
 	std::cout << "\n\nIterator insert" << std::endl;
+	m1.getTree()->printTree();
 	ft::map<int, int>::iterator it = m1.begin();
 	ft::map<int, int>::iterator ite = m1.end();
 	it++;
@@ -146,6 +155,15 @@ int main()
 	std::cout << it->first << " - " << ite->first << std::endl;
 	m2.insert(it, ite);
 	m2.getTree()->printTree();
+
+
+/*auto start = high_resolution_clock::now();
+for (int i = 0; i < 1000000; i++)
+	m2.insert(ft::make_pair(i, i));
+auto stop = high_resolution_clock::now();
+auto duration = duration_cast<milliseconds>(stop - start);
+std::cout << duration.count() << std::endl;*/
+
 
 	/*std::cout << "\n\nIterator constructor" << std::endl;
 	ft::map<int, int> m3(it, ite);

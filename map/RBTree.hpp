@@ -8,7 +8,7 @@ namespace ft
 {
 	enum color
 	{
-		BLACK, RED
+		BLACK, RED, NIL
 	};
 
 	template <class T>
@@ -24,8 +24,10 @@ namespace ft
 		rbt_node(T data) : color(RED), data(data), parent(NULL), left(NULL), right(NULL) { };
 	};
 
+
+
 	template <class Key, class T, class Compare = ft::less<Key>, 
-			class Alloc = std::allocator<rbt_node<ft::pair<const Key, T> > > >
+			class Alloc = std::allocator<rbt_node<T> > >
 	class RBTree
 	{
 /****************************************************************
@@ -45,6 +47,8 @@ namespace ft
 			typedef rbt_node<value_type>*	node_ptr;
 
 			typedef typename Alloc::template rebind<node_t>::other		new_alloc;
+
+			
 
 
 /****************************************************************
@@ -69,7 +73,14 @@ namespace ft
 			RBTree( const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type() ) 
 				: _cmp(comp), _alloc(alloc), _size(0)
 			{
+				/*_nil = _alloc_rbt.allocate(1);
+				_alloc.construct(_nil, node_t(value_type()));
+				_nil->color = NIL;
+				_root = _nil;*/
 				_root = newNode(ft::make_pair(key_type(), mapped_type()));
+				_root->left = NULL;
+				_root->right = NULL;
+				_root->color = NIL;
 				_nil = _root;
 			};
 
@@ -82,7 +93,7 @@ namespace ft
 			{
 				if (this != &rhs)
 				{
-					clear();
+					//clear();
 					_root = rhs._root;
 					_nil = rhs._nil;
 					_cmp = rhs._cmp;
@@ -139,11 +150,12 @@ namespace ft
 				node_ptr node = _alloc_rbt.allocate(1);
 				_alloc.construct(&node->data, key);
 				node->parent = NULL;
-				node->left = NULL;
-				node->right = NULL;
+				node->left = _nil;
+				node->right = _nil;
 				node->color = RED;
 				return node;
 			};
+
 
 			void deleteNode( node_ptr node )
 			{
@@ -156,18 +168,24 @@ namespace ft
 /****************************************************************
 						 	Position
 *****************************************************************/
-			node_ptr minimum( node_ptr root ) const //Node at the utter left
+			node_ptr minimum( node_ptr node ) const //Node at the utter left
 			{
-				while (root->left && root->left != _nil)
-					root = root->left;
-				return root;
+				if (node == _nil)
+					return _root;
+
+				while (node->left && node->left != _nil)
+					node = node->left;
+				return node;
 			}
 
-			node_ptr maximum( node_ptr root ) const //Node at the utter right
+			node_ptr maximum( node_ptr node ) const //Node at the utter right
 			{
-				while (root->right && root->right != _nil)
-					root = root->right;
-				return root;
+				if (node == _nil)
+					return _root;
+
+				while (node->right && node->right != _nil)
+					node = node->right;
+				return node;
 			}
 
 			node_ptr successor( node_ptr node ) const
@@ -176,7 +194,7 @@ namespace ft
 					return minimum(node->right);
 
 				node_ptr parent = node->parent;
-				while (parent && node == parent->right)
+				while (parent && parent != _nil && node == parent->right)
 				{
 					node = parent;
 					parent = parent->parent;
@@ -190,7 +208,7 @@ namespace ft
 					return maximum(node->left);
 				
 				node_ptr parent = node->parent;
-				while (parent && node == parent->left)
+				while (parent && parent != _nil && node == parent->left)
 				{
 					node = parent;
 					parent = parent->parent;
@@ -217,11 +235,6 @@ namespace ft
 /****************************************************************
 						 	Helpers
 *****************************************************************/
-			/*Compare	value_comp() const
-			{ 
-				return (value_compare(_cmp)); 
-			};*/
-
 			void clear()
 			{
 				//A faire
@@ -235,48 +248,19 @@ namespace ft
 				return node->parent;
 			}
 
-			node_ptr getGrandParent( node_ptr node )
-			{
-				return getParent(getParent(node));
-			}
-
-			node_ptr getSibling( node_ptr node )
-			{
-				node_ptr parent = getParent(node);
-
-				if (parent != NULL)
-				{
-					if (node == parent->left)
-						return parent->right;
-					else
-						return parent->left;
-				}
-				return NULL;
-			}
-
-			node_ptr getUncle( node_ptr node )
-			{
-				node_ptr parent = getParent(node);
-
-				if (parent != NULL)
-					return getSibling(parent);
-				return NULL;
-			}
 
 /****************************************************************
 						 	Rotation
 *****************************************************************/		
 			void leftRotate( node_ptr x )
 			{
-				if (x->right == NULL || x->right == _nil)
-					return ;
-
 				node_ptr y = x->right;
+				
 				x->right = y->left;
-				if (y->left != NULL)
+				if (y->left && y->left != _nil)
 					y->left->parent = x;
 				y->parent = x->parent;
-				if (x == _root || x->parent == NULL)	//Reassign root of the rbt
+				if (x->parent == NULL)	//Reassign root of the rbt
 					_root = y;
 				else if (x == x->parent->left)
 					x->parent->left = y;
@@ -288,17 +272,13 @@ namespace ft
 
 			void rightRotate( node_ptr x )
 			{
-				if (x->left == NULL || x->left == _nil)
-					return ;
-
 				node_ptr y = x->left;
 
 				x->left = y->right;
-				y->parent = x->parent;
-				if (y->right != NULL)
+				if (y->right && y->right != _nil)
 					y->right->parent = x;
 				y->parent = x->parent;
-				if (x == _root || x->parent == NULL)	//Reassign root of the rbt
+				if (x->parent == NULL)	//Reassign root of the rbt
 					_root = y;
 				else if (x == x->parent->right)
 					x->parent->right = y;
@@ -318,125 +298,92 @@ namespace ft
 				if(!_root || _root == _nil)
 				{
 					_root = newNode(key);
-					_root->right = _nil;
-					_root->left = _nil;
 					_root->color = BLACK;
 					_nil->parent = _root;
 					_size++;
 					return _root;
 				}
-				node_ptr tmp = searchTree(key.first, _root);
-				if (tmp != NULL)
-					return tmp;
 
-				node_ptr linker = _root;
+				node_ptr y = NULL;
+				node_ptr x = _root;
 				node_ptr node = newNode(key);
-
-				while (linker != NULL)
+				while (x && x != _nil)
 				{
-					if (_cmp(key.first, linker->data.first))
-					{
-						if (linker->left == _nil || linker->left == NULL)
-						{
-							if (linker->left == _nil)
-							{
-								node->left = _nil;
-								//_nil->parent = node;
-								//_nil->parent = maximum(_root);
-							}
-							linker->left = node;
-							node->color = RED;
-							node->parent = linker;
-							_size++;
-							break;
-						}
-						else 
-							linker = linker->left;
-					} 
-					else if (linker->data.first != key.first)
-					{
-						if (linker->right == _nil || linker->right == NULL)
-						{
-							if (linker->right == _nil)
-							{
-								node->right = _nil;
-								_nil->parent = node;
-								//_nil->parent = minimum(_root);
-							}
-							linker->right = node;
-							node->color = RED;
-							node->parent = linker;
-							_size++;
-							break;
-						}
-						else
-							linker = linker->right;
-					}
+					y = x;
+					if (_cmp(node->data.first, x->data.first))
+						x = x->left;
+					else if (_cmp(x->data.first, node->data.first))
+						x = x->right;
 					else
-						return node;
+					{
+						deleteNode(node);
+						_size++;
+						return x;
+					}
 				}
+				
+				node->parent = y;
+				_size++;
+				if (_cmp(node->data.first, y->data.first))
+					y->left = node;	
+				else
+					y->right = node;
+				if (node->parent == NULL)
+				{
+					node->color = BLACK;
+					return node;
+				}
+				if (node->parent->parent == NULL)
+					return node;
+
 				insertFix(node);
+
+				_nil->parent = _root;
+				_nil->color = NIL;
+
 				return node;
 			}
-			
+
 			void insertFix( node_ptr z )
 			{
-				while (z != NULL && z != _nil && z->parent != NULL && z->parent->color == RED)
+				node_ptr x = NULL;
+				while (z->parent->color == RED)
 				{
-					if (z->parent && z->parent->parent && z->parent == z->parent->parent->left) //node->parent is left child
-					{
-						node_ptr y = NULL;
-						if (z->parent->parent)
-							y = z->parent->parent->right; //uncle of node
-						if (y && y->color == RED)
-						{
-							z->parent->color = BLACK;
-							y->color = BLACK;
-							z->parent->parent->color = RED;
-							z = z->parent->parent;
-						}
-						else
-						{
-							if (z == z->parent->right)
-							{
-								z = z->parent;
-								leftRotate(z);
-							}
-							z->parent->color = BLACK;
-							if (z->parent->parent)
-							{
-								z->parent->parent->color = RED;
-								rightRotate(z->parent->parent);
-							}
-						}
-					}
+					if (z->parent == z->parent->parent->right)
+						x = z->parent->parent->left;
 					else
+						x = z->parent->parent->right;
+					if (x && x->color == RED)
 					{
-						node_ptr y = NULL;
-						if (z->parent->parent)
-							y = z->parent->parent->left;
-						if (y && y->color == RED)
-						{
-							z->parent->color = BLACK;
-							y->color = BLACK;
-							z->parent->parent->color = RED;
-							z = z->parent->parent;
-						}
-						else
-						{
-							if (z == z->parent->left)
-							{
-								z = z->parent;
-								rightRotate(z);
-							}
-							z->parent->color = BLACK;
-							if (z->parent->parent)
-							{
-								z->parent->parent->color = RED;
-								leftRotate(z->parent->parent);
-							}
-						}
+						x->color = BLACK;
+						z->parent->color = BLACK;
+						z->parent->parent->color = RED;
+						z = z->parent->parent;
 					}
+					else if (z->parent == z->parent->parent->right)
+					{
+						if (z == z->parent->left)
+						{
+							z = z->parent;
+							rightRotate(z);
+						}
+						z->parent->color = BLACK;
+						z->parent->parent->color = RED;
+						leftRotate(z->parent->parent);
+					}
+					else if (z->parent == z->parent->parent->left)
+					{
+						if (z == z->parent->right)
+						{
+							z = z->parent;
+							leftRotate(z);
+						}
+						z->parent->color = BLACK;
+						z->parent->parent->color = RED;
+						rightRotate(z->parent->parent);
+					}
+					if (z == _root)
+						break;
 				}
 				_root->color = BLACK;
 			}
@@ -448,7 +395,7 @@ namespace ft
 *****************************************************************/
 			void _rbTransplant(node_ptr x, node_ptr y)
 			{
-				if (x->parent == NULL || x->parent == _nil)
+				if (x->parent == NULL)
 					_root = y;
 
 				if (x->parent)
@@ -465,72 +412,32 @@ namespace ft
 							x->parent->right = y;
 					}	
 				}
-				if (y && x)
-				{
-					y->parent = x->parent;
-				}
-				if (x)
-				{
-					if (x->left == NULL)
-						x->left = _nil;
-					if (x->right == NULL)
-						x->right = _nil;
-				}
-				
-				if (_root)
-				{
-					if (_root->left == NULL)
-						_root->left = _nil;
-					if (_root->right == NULL)
-						_root->right = _nil;
-				}
+				y->parent = x->parent;
 			}
 
 
 			void _erase( node_ptr z )
 			{
-				if (z == NULL || z == _nil)
-					return ;
+				node_ptr x;
+				node_ptr y = z;
+				color y_original_color = y->color;
 
-				node_ptr	x = NULL;
-				int 		y_original_color = z->color;
-				node_t 		leaf;
-
-				if (z->left == NULL || z->right == NULL || z->left == _nil || z->right == _nil)
+				if (!z->left || z->left == _nil) //1 child
 				{
-					if ((z->left == NULL && z->right != NULL && z->right != _nil) 
-						|| (z->left == _nil && z->right != NULL && z->right != _nil))
-					{
-						x = z->right;
-						_rbTransplant(z, z->right);
-					}
-					else if ((z->right == NULL && z->left != NULL && z->left != _nil) 
-						|| (z->right == _nil && z->left != NULL && z->left != _nil))
-					{
-						x = z->left;
-						_rbTransplant(z, z->left);
-					}
-					else
-					{
-						if (z->color == BLACK)
-							x = &leaf;
-						else
-							x = _nil;
-						_rbTransplant(z, x);
-					}
+					x = z->right;
+					_rbTransplant(z, z->right);
 				}
-				else
+				else if (!z->right || z->right == _nil) //1 child
+				{	
+					x = z->left;
+					_rbTransplant(z, z->left);
+				}
+				else //2 childs
 				{
-					node_ptr y = minimum(z->right);
-					if (y->right)
-						x = y->right;
-					else
-					{
-						x = &leaf;
-						y->right = x;
-						x->parent = z->right;
-					}
+					y = minimum(z->right);
+					x = y->right;
 					y_original_color = y->color;
+					
 					if (y->parent == z)
 						x->parent = y;
 					else
@@ -544,115 +451,22 @@ namespace ft
 					y->left->parent = y;
 					y->color = z->color;
 				}
-			
+				deleteNode(z);
 				if (y_original_color == BLACK)
 					_eraseFix(x);
-
-				if (x == &leaf)
-					_rbTransplant(x, NULL);
-
-				_update_min_max_for_erased_node(z);
-				deleteNode(z);
-	
+				_nil->parent = _root;
+				_nil->color = NIL;
 			}
-
-
-			void _update_min_max_for_erased_node( node_ptr z )
-			{
-				if (_root == NULL || _root == _nil)
-				{
-					_root = z;
-				}
-				else if (_root->left == z) //
-				{
-					z = successor(z);
-					_root->left = z;
-				}
-				else if (_root->right == z) //
-				{
-					z = predecessor(z);
-					_root->right = z;
-				}
-				if (_size == 1)
-				{
-					_root->left = _nil; //Ou NULL ou _root ?
-					_root->right = _nil; //Ou NULL ou _root?
-				}
-			}
-
-
-			/*void _erase( node_ptr x )
-			{
-				if (x->parent != NULL) 
-				{
-					if (x->right != NULL) 
-					{
-						if (x->parent->right == x)
-							x->parent->right = x->right;
-						else
-							x->parent->left = x->right;
-						x->right->parent = x->parent;
-
-						if (x->left != NULL) 
-						{
-							node_ptr tmp = x->right;
-							while (tmp->left)
-								tmp = tmp->left;
-							tmp->left = x->left;
-							x->left->parent = tmp;
-						}
-					}
-					else if (x->left != NULL) 
-					{
-						if (x->parent->right == x)
-							x->parent->right = x->left;
-						else
-							x->parent->left = x->left;
-						x->left->parent = x->parent;
-					}
-					else {
-						if (x == x->parent->right)
-							x->parent->right = NULL;
-						else
-							x->parent->left = NULL;
-					}
-				}
-				else 
-				{
-					if (x->right != NULL) 
-					{
-						_root = x->right;
-						x->right->parent = NULL;
-
-						if (x->left != NULL) 
-						{
-							node_ptr tmp = x->right;
-							while (tmp->left)
-								tmp = tmp->left;
-							tmp->left = x->left;
-							x->left->parent = tmp;
-						}
-					}
-					else if (x->left != NULL) 
-					{
-						_root = x->left;
-						x->left->parent = NULL;
-					}
-					else 
-						_root = _nil;
-				}
-				if (x->color == BLACK)
-					_eraseFix(x);
-				deleteNode(x);
-			}*/
 
 			void _eraseFix(node_ptr x)
 			{
+				node_ptr w;
+
 				while (x != _root && x->color == BLACK)
 				{
 					if (x->parent && x == x->parent->left)
 					{
-						node_ptr w = x->parent->right;
+						w = x->parent->right;
 						if (w && w->color == RED)
 						{
 							w->color = BLACK;
@@ -660,7 +474,7 @@ namespace ft
 							leftRotate(x->parent);
 							w = x->parent->right;
 						}
-						if ( w && w->left && w->right && w->left->color == BLACK && w->right->color == BLACK)
+						if (w && w->left && w->right && w->left->color == BLACK && w->right->color == BLACK)
 						{
 							w->color = RED;
 							x = x->parent;
@@ -675,10 +489,9 @@ namespace ft
 								rightRotate(w);
 								w = x->parent->right;
 							}
-							if (w)
-								w->color = x->parent->color;
+							w->color = x->parent->color;
 							x->parent->color = BLACK;
-							if (w && w->right)
+							if (w->right)
 								w->right->color = BLACK;
 							leftRotate(x->parent);
 							x = _root;
@@ -690,7 +503,7 @@ namespace ft
 					}
 					else
 					{
-						node_ptr w = x->parent->left;
+						w = x->parent->left;
 						if (w && w->color == RED)
 						{
 							w->color = BLACK;
@@ -707,16 +520,14 @@ namespace ft
 						{
 							if (w && w->left && w->left->color == BLACK)
 							{
-								if (w->right)
-									w->right->color = BLACK;
+								w->right->color = BLACK;
 								w->color = RED;
 								leftRotate(w);
 								w = x->parent->left;
 							}
-							if (w)
-								w->color = x->parent->color;
+							w->color = x->parent->color;
 							x->parent->color = BLACK;
-							if (w && w->left)
+							if (w ->left)
 								w->left->color = BLACK;
 							rightRotate(x->parent);
 							x = _root;
@@ -744,7 +555,7 @@ namespace ft
 
 			void printHelper( node_ptr root, std::string indent, bool last ) 
 			{
-				if (root)
+				if (root != _nil)
 				{
 					std::cout << indent;
 					if (last) 
@@ -757,7 +568,13 @@ namespace ft
 						std::cout << "L----";
 						indent += "|  ";
 					}
-					std::string sColor = root->color ? "RED" : "BLACK";
+					std::string sColor;
+					if (root->color == RED)
+						sColor = "RED";
+					else if (root->color == BLACK)
+						sColor = "BLACK";
+					else
+						sColor = "NIL";
 					std::cout << root->data.first << " - " << root->data.second << "(" << sColor << ")" << std::endl;
 					printHelper(root->left, indent, false);
 					printHelper(root->right, indent, true);

@@ -98,16 +98,17 @@ namespace ft
 		}
 
 		//Overload operator =
-		/*map& operator=( const map& rhs )
+		map& operator=( const map& rhs )
 		{
 			if (this != &rhs)
 			{
 				clear();
-				if (rhs._size > 0)
-					insert(rhs.begin(), rhs.end());
+				_alloc = rhs._alloc;
+				_cmp = rhs._cmp;
+				insert(rhs.begin(), rhs.end());
 			}
 			return *this;
-		};*/
+		};
 
 		allocator_type get_allocator() const { return _alloc; };
 
@@ -158,7 +159,7 @@ namespace ft
 		/****
 			Modifiers
 		****/
-		void 	clear() { _rbt->clear(); };
+		void 	clear() { erase(begin(), end()); };
 		void 	swap( map& x ) 
 		{
 			_rbt->swap(*x._rbt);
@@ -179,16 +180,11 @@ namespace ft
 		};
 		void		erase( iterator first, iterator last) 
 		{
-			/*if (first == begin() && last == end())
-			{
-				clear();
-				return ;
-			}*/
-
 			while (first != last)
 			{
 				erase(first++);
 			}
+				
 		};
 		ft::pair<iterator, bool>	insert( const value_type& val ) 
 		{
@@ -206,8 +202,6 @@ namespace ft
 		iterator	insert( iterator position, const value_type& val ) 
 		{
 			iterator it = position;
-			//rbt_node_ptr node = _rbt->_insertSingle(val);
-	
 			return iterator(_rbt->_insertSingle(val));
 		};
 		template <class InputIterator>
@@ -263,11 +257,15 @@ namespace ft
 			return ret;
 		};
 		//ft::pair<const_iterator, const_iterator>	equal_range( const key_type& k ) const { };
-		
+
+
+
 rbt*	getTree() const
 {
 	return _rbt;
 }
+
+
 /****************************************************************
 						 Private members
 *****************************************************************/
@@ -275,225 +273,6 @@ rbt*	getTree() const
 			allocator_type  	_alloc;
 			Compare				_cmp;
 			rbt*				_rbt;
-
-			
-
-
-
-/****************************************************************
-						Private functions
-*****************************************************************/
-		/*private:
-
-		void _rbTransplant(rbt* x, rbt* y)
-		{
-			if (x->parent == NULL || x->parent == _end)
-				_rbt = y;
-			if (x->parent)
-			{
-				if (x == x->parent->left)
-					x->parent->left = y;
-				else
-					x->parent->right = y;
-			}
-			if (y && x)
-				y->parent = x->parent;
-		}
-*/
-		/*void _erase(rbt* z)
-		{
-			if (_rbt == NULL || _rbt == _end)
-				return ;
-
-			rbt* x = NULL;
-			rbt* y = z;
-			int y_original_color = y->color;
-			if (z->left == NULL)
-			{
-				x = z->right;
-				_rbTransplant(z, z->right);
-			}
-			else if (z->right == NULL)
-			{
-				x = z->left;
-				_rbTransplant(z, z->left);
-			}
-			else
-			{
-				if (z->right)
-					y = minimum(z->right);
-				y_original_color = y->color;
-				
-				x = y->right;
-				if (y->parent == z && x)
-					x->parent = y;
-				else
-				{
-					_rbTransplant(y, y->right);
-					y->right = z->right;
-					if (y->right != NULL)
-						y->right->parent = y;
-				}
-				_rbTransplant(z, y);
-				y->left = z->left;
-				if (y->left != NULL)
-					y->left->parent = y;
-				y->color = z->color;
-			}
-			if (y_original_color == BLACK)
-			{
-				if (!x)
-					_eraseFix(y);
-				else
-					_eraseFix(x);
-			}
-			_deleteNode(z);
-		}*/
-
-
-
-		/*void _erase(rbt* x)
-		{
-			if (x->parent != NULL) 
-			{
-				if (x->right != NULL) 
-				{
-					if (x->parent->right == x)
-						x->parent->right = x->right;
-					else
-						x->parent->left = x->right;
-					x->right->parent = x->parent;
-
-					if (x->left != NULL) 
-					{
-						rbt *tmp = x->right;
-						while (tmp->left)
-							tmp = tmp->left;
-						tmp->left = x->left;
-						x->left->parent = tmp;
-					}
-				}
-				else if (x->left != NULL) 
-				{
-					if (x->parent->right == x)
-						x->parent->right = x->left;
-					else
-						x->parent->left = x->left;
-					x->left->parent = x->parent;
-				}
-				else {
-					if (n == n->parent->right)
-						n->parent->right = NULL;
-					else
-						n->parent->left = NULL;
-				}
-			}
-			else {
-				if (x->right != NULL) 
-				{
-					_rbt = x->right;
-					x->right->parent = NULL;
-
-					if (x->left != NULL) 
-					{
-						rbt *tmp = x->right;
-						while (tmp->left)
-							tmp = tmp->left;
-						tmp->left = x->left;
-						x->left->parent = tmp;
-					}
-				}
-				else if (x->left != NULL) 
-				{
-					_rbt = x->left;
-					x->left->parent = NULL;
-				}
-				else 
-					_rbt = _end;
-			}
-			if (x->color == BLACK)
-				_eraseFix(x);
-			_deleteNode(x);
-		}*/
-/*
-
-
-
-		void _eraseFix(rbt* x)
-		{
-			while (x != _rbt && x->color == BLACK)
-			{
-				if (x == x->parent->left)
-				{
-					rbt* w = x->parent->right;
-					if (w && w->color == RED)
-					{
-						w->color = BLACK;
-						x->parent->color = RED;
-						leftRotate(x->parent);
-						w = x->parent->right;
-					}
-					if ( w && w->left && w->right && w->left->color == BLACK && w->right->color == BLACK)
-					{
-						w->color = RED;
-						x = x->parent;
-					}
-					else
-					{
-						if (w && w->right && w->right->color == BLACK)
-						{
-							w->left->color = BLACK;
-							w->color = RED;
-							rightRotate(w);
-							w = x->parent->right;
-						}
-						if (w)
-							w->color = x->parent->color;
-						x->parent->color = BLACK;
-						if (w && w->right)
-							w->right->color = BLACK;
-						leftRotate(x->parent);
-						x = _rbt;
-					}
-				}
-				else
-				{
-					rbt* w = x->parent->left;
-					if (w && w->color == RED)
-					{
-						w->color = BLACK;
-						x->parent->color = RED;
-						rightRotate(x->parent);
-						w = x->parent->left;
-					}
-					if (w && w->right && w->left && w->right->color == BLACK && w->left->color == BLACK)
-					{
-						w->color = RED;
-						x = x->parent;
-					}
-					else
-					{
-						if (w && w->left && w->left->color == BLACK)
-						{
-							if (w->right)
-								w->right->color = BLACK;
-							w->color = RED;
-							leftRotate(w);
-							w = x->parent->left;
-						}
-						if (w)
-							w->color = x->parent->color;
-						x->parent->color = BLACK;
-						if (w && w->left)
-							w->left->color = BLACK;
-						rightRotate(x->parent);
-						x = _rbt;
-					}
-				}
-			}
-			x->color = BLACK;
-		}
-*/
 
 			
 
