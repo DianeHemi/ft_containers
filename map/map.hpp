@@ -42,10 +42,10 @@ namespace ft
 			typedef typename allocator_type::const_pointer	const_pointer;
 			
 
-			typedef typename ft::iterator_map<value_type>			    	iterator;        //legacy bidirectionnal iterator to value_type
-			typedef typename ft::const_iterator_map<value_type>	    		const_iterator;  //legacy bidirectionnal iterator to const value_type
+			typedef typename ft::iterator_map<value_type>			    	iterator;
+			typedef typename ft::const_iterator_map<value_type>	    		const_iterator;
 			typedef typename ft::reverse_iterator<iterator>		    		reverse_iterator;
-			//typedef typename ft::reverse_iterator<const_iterator>			const_reverse_iterator;
+			typedef typename ft::reverse_iterator<const_iterator>			const_reverse_iterator;
 			typedef typename Alloc::template rebind<rbt>::other    new_alloc;
 
 			class value_compare
@@ -72,8 +72,6 @@ namespace ft
 			: _alloc(alloc), _cmp(comp)
 		{
 			_rbt = new rbt(_cmp, _alloc);
-			//_rbt = newNode(ft::make_pair(key_type(), mapped_type()));
-			//_end = _rbt;
 		};
 
 		//Range constructor
@@ -88,13 +86,13 @@ namespace ft
 		};
 
 		//Copy constructor
-		//map( const map& src ) { *this = src; };
+		map( const map& src ) { *this = src; };
 
 		//Destructor
 		~map()
 		{
+			clear();
 			delete _rbt;
-			//clear();
 		}
 
 		//Overload operator =
@@ -103,8 +101,11 @@ namespace ft
 			if (this != &rhs)
 			{
 				clear();
+				delete _rbt;
+
 				_alloc = rhs._alloc;
 				_cmp = rhs._cmp;
+				_rbt = new rbt(_cmp, _alloc);
 				insert(rhs.begin(), rhs.end());
 			}
 			return *this;

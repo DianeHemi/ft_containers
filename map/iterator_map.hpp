@@ -3,7 +3,7 @@
 
 # include "../iterator_traits.hpp"
 # include "RBTree.hpp"
-#include <unistd.h>
+
 namespace ft
 {
 	template<class T>
@@ -41,7 +41,7 @@ namespace ft
 					_node = successor(_node);
 				return *this;
 			};
-			iterator_map 	operator++(int) //Successor
+			iterator_map 	operator++(int)
 			{
 				iterator_map tmp(*this);
 				operator++();
@@ -59,7 +59,7 @@ namespace ft
 					_node = predecessor(_node);
 				return *this;
 			};
-			iterator_map	operator--(int)	//Successor
+			iterator_map	operator--(int)
 			{
 				iterator_map tmp(*this);
 				operator--();
@@ -73,60 +73,6 @@ namespace ft
 
 			node_ptr	_node;
 
-
-
-			protected :
-				node_ptr min(node_ptr node )
-				{
-					while (node->left && node->left->color != NIL)
-					{
-						node = node->left;
-					}
-					return node;
-				}
-
-				node_ptr max(node_ptr node )
-				{
-					while (node->right && node->right->color != NIL)
-						node = node->right;
-					return node;
-				}
-
-				node_ptr successor( node_ptr node )
-				{
-					if (node->right && node->right->color != NIL)
-					{
-						return (min(node->right));
-					}
-					node_ptr y = node->parent;
-					while (y != NULL && node == y->right)
-					{
-						node = y;
-						y = y->parent;
-					}
-					if (y == NULL)
-					{
-						while (node->color != NIL)
-							node = node->right;
-						y = node;
-					}	
-					return y;
-				}
-
-				node_ptr predecessor(node_ptr node )
-				{
-					if (node->left && node->left->color != NIL)
-					{
-						return max(node->left);
-					}
-					node_ptr y = node->parent;
-					while (y->color != NIL && node == y->left)
-					{
-						node = y;
-						y = y->parent;
-					}
-					return y;
-				}
 	};
 
 
@@ -199,58 +145,62 @@ namespace ft
 
 			node_ptr	_node;
 
-
-			protected :
-				node_ptr min(node_ptr node )
-				{
-					while (node->left && node->left->color != NIL)
-						node = node->left;
-					return node;
-				}
-
-				node_ptr max(node_ptr node )
-				{
-					while (node->right && node->right->color != NIL)
-						node = node->right;
-					return node;
-				}
-
-				node_ptr successor( node_ptr node )
-				{
-					if (node->right && node->right->color != NIL)
-					{
-						return (min(node->right));
-					}
-					node_ptr y = node->parent;
-					while (y != NULL && node == y->right)
-					{
-						node = y;
-						y = y->parent;
-					}
-					if (y == NULL)
-					{
-						while (node->color != NIL)
-							node = node->right;
-						y = node;
-					}						
-					return y;
-				}
-
-				node_ptr predecessor(node_ptr node )
-				{
-					if (node->left && node->left->color != NIL)
-					{
-						return max(node->left);
-					}
-					node_ptr y = node->parent;
-					while (y->color != NIL && node == y->left)
-					{
-						node = y;
-						y = y->parent;
-					}
-					return y;
-				}
 	};
+
+
+	template <class T>
+	T min( T node )
+	{
+		while (node->left && node->left->color != NIL)
+			node = node->left;
+		return node;
+	}
+
+	template <class T>
+	T max( T node )
+	{
+		while (node->right && node->right->color != NIL)
+			node = node->right;
+		return node;
+	}
+
+	template <class T>
+	T successor( T node )
+	{
+		if (node->right && node->right->color != NIL)
+		{
+			return (min(node->right));
+		}
+		T y = node->parent;
+		while (y != NULL && node == y->right)
+		{
+			node = y;
+			y = y->parent;
+		}
+		if (y == NULL)
+		{
+			while (node->color != NIL)
+				node = node->right;
+			y = node;
+		}						
+		return y;
+	}
+
+	template <class T>
+	T predecessor ( T node )
+	{
+		if (node->left && node->left->color != NIL)
+		{
+			return max(node->left);
+		}
+		T y = node->parent;
+		while (y->color != NIL && node == y->left)
+		{
+			node = y;
+			y = y->parent;
+		}
+		return y;
+	}
 }
 
 #endif

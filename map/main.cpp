@@ -91,7 +91,9 @@ void testDelete(ft::map<int, int> m2)
 */
 
 
-
+#define T1 float
+#define T2 int
+typedef ft::pair<const T1, T2> T3;
 
 int main()
 {
@@ -179,7 +181,7 @@ std::cout << duration.count() << std::endl;*/
 	m1.getTree()->printTree();
 	m2.getTree()->printTree();*/
 	
-	std::cout << "\n\nDelete" << std::endl;
+	/*std::cout << "\n\nDelete" << std::endl;
 	ft::map<int, int>::iterator it2 = m2.begin();
 	ft::map<int, int>::iterator ite2 = m2.end();
 	it2++;
@@ -187,19 +189,31 @@ std::cout << duration.count() << std::endl;*/
 	m2.erase(10);
 	m2.getTree()->printTree();
 	
-	
 	std::cout << "\n\nTest delete from iterator range" << std::endl;
 	it2 = m2.begin();
 	ite2 = m2.end();
 	it2++;
 	ite2--;
-	//ite2--;
 	std::cout << it2->first << " - " << ite2->first << std::endl;
-	std::cout << "Doit rester seulement 5-80 et 98-25" << std::endl;
+	std::cout << "Doit rester seulement 98-25 et 5-80" << std::endl;
 	m2.erase(it2, ite2);
-	m2.getTree()->printTree();
+	m2.getTree()->printTree();*/
+
+	
 
 
+	std::cout << std::endl;
+	std::list<T3> lst;
+	unsigned int lst_size = 5;
+	for (unsigned int i = 0; i < lst_size; ++i)
+		lst.push_back(T3(2.5 + i, i + 1));
+
+	ft::map<T1, T2> mp(lst.begin(), lst.end());
+	ft::map<T1, T2>::iterator tit(mp.begin());
+	ft::map<T1, T2>::const_iterator tite(mp.begin());
+
+	std::cout << mp.max_size() << std::endl;
+	mp.getTree()->printTree();
 
     return 0;
 }

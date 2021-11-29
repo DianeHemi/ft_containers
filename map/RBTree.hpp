@@ -73,13 +73,7 @@ namespace ft
 			RBTree( const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type() ) 
 				: _cmp(comp), _alloc(alloc), _size(0)
 			{
-				/*_nil = _alloc_rbt.allocate(1);
-				_alloc.construct(_nil, node_t(value_type()));
-				_nil->color = NIL;
-				_root = _nil;*/
 				_root = newNode(ft::make_pair(key_type(), mapped_type()));
-				_root->left = NULL;
-				_root->right = NULL;
 				_root->color = NIL;
 				_nil = _root;
 			};
@@ -108,7 +102,7 @@ namespace ft
 			//Destructor
 			~RBTree()
 			{
-				//clear();
+				deleteNode(_nil);
 			};
 
 
@@ -235,12 +229,6 @@ namespace ft
 /****************************************************************
 						 	Helpers
 *****************************************************************/
-			void clear()
-			{
-				//A faire
-				std::cout << "Clear" << std::endl;
-			}
-
 			node_ptr getParent( node_ptr node )
 			{
 				if (node == NULL)
