@@ -5,7 +5,6 @@
 # include "iterator_map.hpp"
 # include "../lexicographical_compare.hpp"
 # include <memory>
-# include <iostream>
 
 
 //https://metal-geography-067.notion.site/Binary-Search-Tree-30d6473427324e6fb1cc8c24d0f7938e
@@ -46,7 +45,7 @@ namespace ft
 			typedef typename ft::const_iterator_map<value_type>	    		const_iterator;
 			typedef typename ft::reverse_iterator<iterator>		    		reverse_iterator;
 			typedef typename ft::reverse_iterator<const_iterator>			const_reverse_iterator;
-			//typedef typename Alloc::template rebind<rbt>::other    new_alloc;
+			//typedef typename Alloc::template rebind<rbt_node>::other    	new_alloc;
 
 			class value_compare
 			{
@@ -229,29 +228,36 @@ namespace ft
 		****/
 		iterator		find( const key_type& key ) 
 		{ 
-			iterator it = _rbt->searchTree(key, _rbt->getRoot());
+			iterator it = begin();
+			iterator ite = end();
 
-			if (it->first)
-				return it;
-			return (_rbt->getNil());
-			//return iterator(_rbt->searchTree(key, _rbt->getRoot()));
+			while (it != ite)
+			{
+				if (!_cmp(it->first, key) && !_cmp(key, it->first))
+					return it;
+				it++;
+			};
+			return end();
 		};
-		/*const_iterator	find( const key_type& k ) const 
+		const_iterator	find( const key_type& key ) const 
 		{
 			const_iterator it = _rbt->searchTree(key, _rbt->getRoot());
 
 			if (it->first)
 				return it;
 			return (_rbt->getNil());
-		};*/
+		};
+
 		size_type		count( const key_type& key ) const 
 		{ return (_rbt->count(key)); };
 		iterator		lower_bound( const key_type& key )  //First element greater or equal
 		{ return iterator((_rbt->lower_bound(key))); };
-		//const_iterator	lower_bound( const key_type& k ) const { };
+		const_iterator	lower_bound( const key_type& key ) const 
+		{ return const_iterator((_rbt->lower_bound(key))); };
 		iterator		upper_bound( const key_type& key )	//First element greater than
 		{ return iterator((_rbt->upper_bound(key))); };
-		//const_iterator	upper_bound( const key_type& k ) const { };
+		const_iterator	upper_bound( const key_type& key ) const 
+		{ return const_iterator((_rbt->upper_bound(key))); };
 		ft::pair<iterator, iterator>	equal_range( const key_type& key )	//Range : first greater or equal + 
 		{
 			ft::pair<iterator, iterator> ret;
@@ -260,7 +266,14 @@ namespace ft
 			ret.second = iterator(_rbt->upper_bound(key));
 			return ret;
 		};
-		//ft::pair<const_iterator, const_iterator>	equal_range( const key_type& k ) const { };
+		ft::pair<const_iterator, const_iterator>	equal_range( const key_type& key ) const 
+		{
+			ft::pair<const_iterator, const_iterator> ret;
+			
+			ret.first = iterator(_rbt->lower_bound(key));
+			ret.second = iterator(_rbt->upper_bound(key));
+			return ret;
+		};
 
 
 
@@ -324,11 +337,11 @@ rbt*	getTree() const
 		return !(lhs < rhs);
 	}
 
-	/*template< class Key, class T, class Compare, class Alloc >
+	template< class Key, class T, class Compare, class Alloc >
 	void swap( ft::map<Key,T,Compare,Alloc>& lhs, ft::map<Key,T,Compare,Alloc>& rhs )
 	{
-
-	}*/
+		lhs.swap(rhs);
+	}
 
 }
 

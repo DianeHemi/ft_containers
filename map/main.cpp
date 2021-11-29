@@ -91,9 +91,7 @@ void testDelete(ft::map<int, int> m2)
 */
 
 
-#define T1 int
-#define T2 int
-typedef ft::pair<const T1, T2> T3;
+
 
 int main()
 {
@@ -199,10 +197,6 @@ std::cout << duration.count() << std::endl;*/
 	m2.erase(it2, ite2);
 	m2.getTree()->printTree();*/
 
-	
-
-
-	std::cout << std::endl;
 	
 
 

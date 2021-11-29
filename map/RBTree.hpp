@@ -6,7 +6,7 @@
 
 namespace ft
 {
-	enum color
+	enum eColor
 	{
 		BLACK, RED, NIL
 	};
@@ -14,39 +14,41 @@ namespace ft
 	template <class T>
 	struct rbt_node
 	{
-		color				color;
-		T					data;
-		struct rbt_node*	parent;
-		struct rbt_node*	left;
-		struct rbt_node*	right;
+		eColor		color;
+		T			data;
+		rbt_node*	parent;
+		rbt_node*	left;
+		rbt_node*	right;
+
 
 		rbt_node() : color(RED), data(T()), parent(NULL), left(NULL), right(NULL) { };
 		rbt_node(T data) : color(RED), data(data), parent(NULL), left(NULL), right(NULL) { };
+		//virtual ~rbt_node() {};
 	};
 
 
 
-	template <class Key, class T, class Compare = ft::less<Key>, 
-			class Alloc = std::allocator<rbt_node<T> > >
+	template <class Key, class Mapped, class Compare = ft::less<Key>, 
+			class Alloc = std::allocator<Key> >
 	class RBTree
 	{
 /****************************************************************
 						 Definitions
 *****************************************************************/
 		public:
-			typedef Key                 key_type;
-			typedef T                   mapped_type;
+			typedef Key					key_type;
+			typedef Mapped				mapped_type;
 			typedef std::size_t			size_type;
 			typedef std::ptrdiff_t		difference_type;
-			typedef Compare             key_compare;
+			typedef Compare				key_compare;
 			typedef Alloc				allocator_type;
 
-			typedef typename ft::pair<const Key, T> 	value_type;
+			typedef typename ft::pair<const Key, Mapped> 	value_type;
 
 			typedef rbt_node<value_type>	node_t;
 			typedef rbt_node<value_type>*	node_ptr;
 
-			typedef typename Alloc::template rebind<node_t>::other		new_alloc;
+			typedef typename Alloc::template rebind<node_t>::other	new_alloc;
 
 			
 
@@ -59,7 +61,7 @@ namespace ft
 			node_ptr		_nil;
 			Compare			_cmp;
 
-			allocator_type  _alloc;
+			allocator_type	_alloc;
 			new_alloc		_alloc_rbt;
 
 			size_type		_size;
@@ -87,7 +89,6 @@ namespace ft
 			{
 				if (this != &rhs)
 				{
-					//clear();
 					_root = rhs._root;
 					_nil = rhs._nil;
 					_cmp = rhs._cmp;
@@ -225,6 +226,7 @@ namespace ft
 				}
 				return NULL;
 			}
+
 
 /****************************************************************
 						 	Helpers
@@ -408,7 +410,7 @@ namespace ft
 			{
 				node_ptr x;
 				node_ptr y = z;
-				color y_original_color = y->color;
+				eColor y_original_color = y->color;
 
 				if (!z->left || z->left == _nil) //1 child
 				{
