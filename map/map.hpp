@@ -46,7 +46,7 @@ namespace ft
 			typedef typename ft::const_iterator_map<value_type>	    		const_iterator;
 			typedef typename ft::reverse_iterator<iterator>		    		reverse_iterator;
 			typedef typename ft::reverse_iterator<const_iterator>			const_reverse_iterator;
-			typedef typename Alloc::template rebind<rbt>::other    new_alloc;
+			//typedef typename Alloc::template rebind<rbt>::other    new_alloc;
 
 			class value_compare
 			{
@@ -100,9 +100,12 @@ namespace ft
 		{
 			if (this != &rhs)
 			{
-				clear();
-				delete _rbt;
-
+				/*if (_rbt)
+				{
+					clear();
+					delete _rbt;
+				}*/
+				
 				_alloc = rhs._alloc;
 				_cmp = rhs._cmp;
 				_rbt = new rbt(_cmp, _alloc);
