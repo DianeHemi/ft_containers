@@ -92,6 +92,10 @@ void testDelete(ft::map<int, int> m2)
 
 
 
+#define T1 char
+#define T2 int
+typedef ft::pair<const T1, T2> T3;
+
 
 int main()
 {
@@ -198,6 +202,44 @@ std::cout << duration.count() << std::endl;*/
 	m2.getTree()->printTree();*/
 
 	
+	std::cout << std::endl;
+	std::list<T3> lst;
+
+	unsigned int lst_size = 7;
+	for (unsigned int i = 0; i < lst_size; ++i)
+		lst.push_back(T3('a' + i, lst_size - i));
+	ft::map<T1, T2> foo(lst.begin(), lst.end());
+
+	lst.clear(); lst_size = 4;
+	for (unsigned int i = 0; i < lst_size; ++i)
+		lst.push_back(T3('z' - i, i * 5));
+	ft::map<T1, T2> bar(lst.begin(), lst.end());
+
+	ft::map<T1, T2>::const_iterator it_foo = foo.begin();
+	ft::map<T1, T2>::const_iterator it_bar = bar.begin();
+
+	std::cout << "BEFORE SWAP" << std::endl;
+
+	std::cout << "foo contains:" << std::endl;
+	foo.getTree()->printTree();
+	std::cout << "\nbar contains:" << std::endl;
+	bar.getTree()->printTree();
+
+	foo.swap(bar);
+
+	std::cout << "\nAFTER SWAP" << std::endl;
+
+	std::cout << "foo contains:" << std::endl;
+	foo.getTree()->printTree();
+	std::cout << "bar contains:" << std::endl;
+	bar.getTree()->printTree();
+
+	std::cout << "Iterator validity:" << std::endl;
+	std::cout << (it_foo == bar.begin()) << std::endl;
+	std::cout << (it_bar == foo.begin()) << std::endl;
+
+
+
 
 
     return 0;

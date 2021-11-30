@@ -143,7 +143,7 @@ namespace ft
 			{
 				
 				node_ptr node = _alloc_rbt.allocate(1);
-				_alloc.construct(&node->data, key);
+				_alloc_rbt.construct(node, key);
 				node->parent = NULL;
 				node->left = _nil;
 				node->right = _nil;
@@ -155,7 +155,7 @@ namespace ft
 			void deleteNode( node_ptr node )
 			{
 				_size--;
-				_alloc.destroy(&node->data);
+				_alloc_rbt.destroy(node);
 				_alloc_rbt.deallocate(node, 1);
 			}
 
@@ -238,6 +238,14 @@ namespace ft
 				return node->parent;
 			}
 
+			node_ptr getGrandParent( node_ptr node )
+			{
+				if (node == NULL)
+					return NULL;
+				return node->parent->parent;
+			}
+
+
 
 /****************************************************************
 						 	Rotation
@@ -300,10 +308,10 @@ namespace ft
 				while (x && x != _nil)
 				{
 					y = x;
-					if (_cmp(node->data.first, x->data.first))
-						x = x->left;
-					else if (_cmp(x->data.first, node->data.first))
+					if (_cmp(x->data.first, node->data.first))
 						x = x->right;
+					else if (_cmp(node->data.first, x->data.first))
+						x = x->left;
 					else
 					{
 						deleteNode(node);
@@ -311,21 +319,14 @@ namespace ft
 						return x;
 					}
 				}
-				
 				node->parent = y;
 				_size++;
 				if (_cmp(node->data.first, y->data.first))
 					y->left = node;	
 				else
 					y->right = node;
-				if (node->parent == NULL)
-				{
-					node->color = BLACK;
+				if (getGrandParent(node) == NULL)	//New node is red -> no need to fix insert
 					return node;
-				}
-				if (node->parent->parent == NULL)
-					return node;
-
 				insertFix(node);
 
 				_nil->parent = _root;
@@ -339,7 +340,7 @@ namespace ft
 				node_ptr x = NULL;
 				while (z->parent->color == RED)
 				{
-					if (z->parent == z->parent->parent->right)
+					/*if (z->parent == z->parent->parent->right)
 						x = z->parent->parent->left;
 					else
 						x = z->parent->parent->right;
@@ -348,13 +349,13 @@ namespace ft
 						x->color = BLACK;
 						z->parent->color = BLACK;
 						z->parent->parent->color = RED;
-						z = z->parent->parent;
+						z = getGrandParent(z);
 					}
 					else if (z->parent == z->parent->parent->right)
 					{
 						if (z == z->parent->left)
 						{
-							z = z->parent;
+							z = getParent(z);
 							rightRotate(z);
 						}
 						z->parent->color = BLACK;
@@ -365,12 +366,59 @@ namespace ft
 					{
 						if (z == z->parent->right)
 						{
-							z = z->parent;
+							z = getParent(z);
 							leftRotate(z);
 						}
 						z->parent->color = BLACK;
 						z->parent->parent->color = RED;
 						rightRotate(z->parent->parent);
+					}
+					if (z == _root)
+						break;*/
+
+					if (z->parent == z->parent->parent->right)
+					{
+						x = z->parent->parent->left;
+						if (x && x->color == RED)
+						{
+							x->color = BLACK;
+							z->parent->color = BLACK;
+							z->parent->parent->color = RED;
+							z = getGrandParent(z);
+						}
+						else 
+						{
+							if (z == z->parent->left)
+							{
+								z = getParent(z);
+								rightRotate(z);
+							}
+							z->parent->color = BLACK;
+							z->parent->parent->color = RED;
+							leftRotate(z->parent->parent);
+						}
+					}
+					else
+					{
+						x = z->parent->parent->right;
+						if (x && x->color == RED)
+						{
+							x->color = BLACK;
+							z->parent->color = BLACK;
+							z->parent->parent->color = RED;
+							z = getGrandParent(z);
+						}
+						else
+						{
+							if (z == z->parent->right)
+							{
+								z = getParent(z);
+								leftRotate(z);
+							}
+							z->parent->color = BLACK;
+							z->parent->parent->color = RED;
+							rightRotate(z->parent->parent);
+						}
 					}
 					if (z == _root)
 						break;
@@ -385,7 +433,7 @@ namespace ft
 *****************************************************************/
 			void _rbTransplant(node_ptr x, node_ptr y)
 			{
-				if (x->parent == NULL)
+				if (getParent(x) == NULL)
 					_root = y;
 
 				if (x->parent)
@@ -402,7 +450,7 @@ namespace ft
 							x->parent->right = y;
 					}	
 				}
-				y->parent = x->parent;
+				y->parent = getParent(x);
 			}
 
 
@@ -414,34 +462,34 @@ namespace ft
 
 				if (!z->left || z->left == _nil) //1 child
 				{
-					x = z->right;
-					_rbTransplant(z, z->right);
+					x = z->right;	//We copy the child
+					_rbTransplant(z, z->right);	//We move the child to were z was
 				}
 				else if (!z->right || z->right == _nil) //1 child
 				{	
 					x = z->left;
-					_rbTransplant(z, z->left);
+					_rbTransplant(z, z->left);	//Remplacer z->left/z->right par x ?
 				}
 				else //2 childs
 				{
-					y = minimum(z->right);
-					x = y->right;
+					y = minimum(z->right);	//Search for smaller element in right tree branch
+					x = y->right; 
 					y_original_color = y->color;
 					
 					if (y->parent == z)
 						x->parent = y;
 					else
 					{
-						_rbTransplant(y, y->right);
+						_rbTransplant(y, y->right);	//Copy z right side to y
 						y->right = z->right;
 						y->right->parent = y;
 					}
-					_rbTransplant(z, y);
-					y->left = z->left;
+					_rbTransplant(z, y);	//Copy z left side to y
+					y->left = z->left;		// = We move y to were z was and keep the children
 					y->left->parent = y;
 					y->color = z->color;
 				}
-				deleteNode(z);
+				deleteNode(z);	//No child -> We end up here and juste delete the node
 				if (y_original_color == BLACK)
 					_eraseFix(x);
 				_nil->parent = _root;
@@ -467,7 +515,7 @@ namespace ft
 						if (w && w->left && w->right && w->left->color == BLACK && w->right->color == BLACK)
 						{
 							w->color = RED;
-							x = x->parent;
+							x = getParent(x);
 						}
 						else
 						{
@@ -485,10 +533,10 @@ namespace ft
 								w->right->color = BLACK;
 							leftRotate(x->parent);
 							x = _root;
-							if (x->left == NULL)
+							/*if (x->left == NULL)
 								x->left = _nil;
 							if (x->right == NULL)
-								x->right = _nil;
+								x->right = _nil;*/
 						}
 					}
 					else
@@ -504,7 +552,7 @@ namespace ft
 						if (w && w->right && w->left && w->right->color == BLACK && w->left->color == BLACK)
 						{
 							w->color = RED;
-							x = x->parent;
+							x = getParent(x);
 						}
 						else
 						{
@@ -521,10 +569,10 @@ namespace ft
 								w->left->color = BLACK;
 							rightRotate(x->parent);
 							x = _root;
-							if (x->left == NULL)
+							/*if (x->left == NULL)
 								x->left = _nil;
 							if (x->right == NULL)
-								x->right = _nil;
+								x->right = _nil;*/
 						}
 					}
 				}
@@ -588,7 +636,7 @@ namespace ft
 
 				while (tmp != NULL && tmp != _nil)
 				{
-					if (tmp->data.first >= key) //value_compare()
+					if (tmp->data.first >= key)
 						return tmp;
 					tmp = successor(tmp);
 				}
@@ -610,9 +658,30 @@ namespace ft
 
 			void swap( RBTree& other )
 			{
-				RBTree tmp = *this;
+				/*RBTree tmp = *this;
 				*this = other;
-				other = tmp;
+				other = tmp;*/
+
+				size_type sz = this->_size;
+				node_ptr rt = this->_root;
+				node_ptr nil = this->_nil;
+				Compare	cmp = this->_cmp;
+				allocator_type alloc = this->_alloc;
+				new_alloc alloc_rbt = this->_alloc_rbt;
+
+				this->_size = other._size;
+				this->_root = other._root;
+				this->_nil = other._nil;
+				this->_cmp = other._cmp;
+				this->_alloc = other._alloc;
+				this->_alloc_rbt = other._alloc_rbt;
+
+				other._size = sz;
+				other._root = rt;
+				other._nil = nil;
+				other._cmp = cmp;
+				other._alloc = alloc;
+				other._alloc_rbt = alloc_rbt;
 			}
 
 
