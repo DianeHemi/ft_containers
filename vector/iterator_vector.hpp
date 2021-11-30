@@ -6,9 +6,9 @@
 
 namespace ft
 {
-	/*
-		Iterator
-	*/
+/****************************************************************
+							Iterator
+*****************************************************************/
 	template<class T>
 	class iterator_vector : public ft::iterator< ft::random_access_iterator_tag, T >
 	{
@@ -67,9 +67,9 @@ namespace ft
 	};
 
 
-	/*
-		Const iterator
-	*/
+/****************************************************************
+						 Const iterator
+*****************************************************************/
 	template<class T>
 	class const_iterator_vector : public ft::iterator< ft::random_access_iterator_tag, T >
 	{
@@ -126,7 +126,6 @@ namespace ft
 
 			pointer	_ptr;
 	};
-
 
 } //ft
 

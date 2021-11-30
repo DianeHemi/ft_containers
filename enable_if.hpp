@@ -3,9 +3,9 @@
 
 namespace ft
 {
-	/*
-		Enable if
-	*/
+/****************************************************************
+						 Enable if
+****************************************************************/
 	template< bool B, class T  = void>
 	struct enable_if {};
 
@@ -13,9 +13,9 @@ namespace ft
 	struct enable_if<true, T> { typedef T type; };
 
 
-	/*
-		Is integral
-	*/
+/****************************************************************
+						Is integral
+****************************************************************/
 	template <typename T>
 	struct is_integral { static const bool value = false; };
 
@@ -75,6 +75,6 @@ namespace ft
 
 	template <>
 	struct is_integral<const double> { static const bool value = true; };
-}
+} //ft
 
 #endif

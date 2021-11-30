@@ -5,9 +5,9 @@
 
 namespace ft
 {
-	/*
-		Iterator tags
-	*/
+/****************************************************************
+						 Iterator tags
+*****************************************************************/
 	struct input_iterator_tag { };
 	struct output_iterator_tag { };
 	struct forward_iterator_tag : public input_iterator_tag { };
@@ -15,9 +15,9 @@ namespace ft
 	struct random_access_iterator_tag : public bidirectional_iterator_tag { };
 
 
-	/*
-		Iterator traits
-	*/
+/****************************************************************
+						Iterator traits
+*****************************************************************/
 	template<class Iter>
 	struct iterator_traits
 	{
@@ -48,12 +48,13 @@ namespace ft
 		typedef ft::random_access_iterator_tag 	iterator_category;
 	};
 
-	/*
-		Iterator base class
-	*/
+
+/****************************************************************
+				  Iterator category base class
+*****************************************************************/
 	template<
 		class Category,                     //Category of the iterator
-		class T,                            //Type of valuesthat can be obtained by dereferencing the iterator
+		class T,                            //Type of values that can be obtained by dereferencing the iterator
 		class Distance = std::ptrdiff_t,    //A type that can be used to identify distance between iterators
 		class Pointer = T*,                 //Defines a pointer to the type iterated over (T)
 		class Reference = T&                //Defines a reference to the type iterated over (T)
@@ -67,9 +68,10 @@ namespace ft
 			typedef Reference	reference;
 	};
 
-	/*
-		Distance entre deux iterateurs
-	*/
+
+/****************************************************************
+				  Distance between two operators
+*****************************************************************/
 	template < class InputIt >
 	typename ft::iterator_traits<InputIt>::difference_type it_distance ( InputIt start, InputIt end )
 	{
@@ -80,9 +82,9 @@ namespace ft
 	};
 
 
-	/*
-		Reverse iterator
-	*/
+/****************************************************************
+						Reverse iterator
+*****************************************************************/
 	template<class Iter>
 	class reverse_iterator
 	{
@@ -95,9 +97,9 @@ namespace ft
 			typedef typename	iterator_traits<Iter>::reference			reference;
 
 
-			/****
-			 * Constructors
-			****/
+			/****************************************************************
+									Constructeurs
+			****************************************************************/
 			reverse_iterator( ) : _current(NULL) { };
 			explicit reverse_iterator( iterator_type x ) : _current(x) { };
 			template< class U >
@@ -110,9 +112,10 @@ namespace ft
 			};
 			~reverse_iterator() { };
 
-			/****
-			 * Member functions
-			****/
+
+			/****************************************************************
+									Member functions
+			****************************************************************/
 			iterator_type	base() const { return _current; };
 			reference	operator*() const { Iter tmp = _current; return *--tmp; };
 			pointer		operator->() const { return &(operator*()); };
@@ -135,7 +138,9 @@ namespace ft
 	};
 
 
-
+/****************************************************************
+					 Non-member functions
+****************************************************************/
 	template< class Iter1, class Iter2 >
 	bool	operator==( const reverse_iterator<Iter1> & lhs,
 						const reverse_iterator<Iter2> & rhs ) 
@@ -193,7 +198,6 @@ namespace ft
 	{
 		return (rhs.base() - lhs.base());
 	};
-
 
 } //ft
 

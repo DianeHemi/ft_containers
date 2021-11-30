@@ -6,6 +6,9 @@
 
 namespace ft
 {
+/****************************************************************
+							Iterator
+*****************************************************************/
 	template<class T>
 	class iterator_map : public ft::iterator< ft::bidirectional_iterator_tag, T >
 	{
@@ -29,9 +32,9 @@ namespace ft
 				return *this;
 			}
 
-			/*
-				* Fonctions
-			*/
+			/****************************************************************
+										Functions
+			*****************************************************************/
 			reference	operator*() const { return (_node->data); };
 			pointer		operator->() const { return &(_node->data); };
 
@@ -72,12 +75,12 @@ namespace ft
 			{ return (lhs._node != rhs._node); };
 
 			node_ptr	_node;
-
 	};
 
 
-
-
+/****************************************************************
+						 Const iterator
+*****************************************************************/
 	template<class T>
 	class const_iterator_map : public ft::iterator< ft::bidirectional_iterator_tag, T >
 	{
@@ -103,6 +106,10 @@ namespace ft
 				return *this;
 			}
 
+
+			/****************************************************************
+										Functions
+			*****************************************************************/
 			reference	operator*() const { return (_node->data); };
 			pointer		operator->() const { return &(_node->data); };
 
@@ -142,12 +149,13 @@ namespace ft
 			friend bool	operator!=( const const_iterator_map & lhs, const const_iterator_map & rhs )
 			{ return (lhs._node != rhs._node); };
 
-
 			node_ptr	_node;
-
 	};
 
 
+/****************************************************************
+							Helpers
+*****************************************************************/
 	template <class T>
 	T min( T node )
 	{
@@ -201,6 +209,7 @@ namespace ft
 		}
 		return y;
 	}
-}
+
+} //ft
 
 #endif

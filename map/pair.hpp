@@ -3,9 +3,9 @@
 
 namespace ft
 {
-	/*
-		Pair
-	*/
+/****************************************************************
+							Pair
+*****************************************************************/
 	template<class T1, class T2>
 	struct pair
 	{
@@ -32,6 +32,10 @@ namespace ft
 			second_type     second;
 	};
 
+
+/****************************************************************
+							Comparateurs
+*****************************************************************/
 	template <class T1, class T2>
 	bool operator==(const pair<T1, T2>& lhs, const pair<T1, T2>& rhs)
 	{ return lhs.first == rhs.first && lhs.second == rhs.second; }
@@ -57,23 +61,23 @@ namespace ft
 	{ return !( lhs < rhs ); }
 
 
-	/*
-		Make pair
-	*/
+/****************************************************************
+							Make pair
+*****************************************************************/
 	template<class T1, class T2>
     pair<T1, T2> make_pair( T1 x, T2 y )
 	{ return (pair<T1, T2>( x, y )); }
 
 
-	/*
-		Less
-	*/
+/****************************************************************
+							Less
+*****************************************************************/
 	template<class T>
 	struct less
 	{
 		bool operator() (const T& x, const T& y) const { return x < y; };
 	};
 
-}
+} //ft
 
 #endif

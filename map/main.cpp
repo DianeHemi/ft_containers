@@ -3,11 +3,6 @@
 #include <iostream>
 #include <list>
 
-#include "RBTree.hpp"
-
-
-#include <chrono>
-using namespace std::chrono;
 
 /*
 void testInsert()
@@ -34,7 +29,6 @@ void testInsert()
 	m1.insert(ft::pair<int, int>(20, 28));
 	m1.insert(ft::pair<int, int>(62, 29));*/
 /*	
-	m1.printTree();
 
 	std::cout << "\n\nIterator insert" << std::endl;
 	ft::map<int, int>::iterator it = m1.begin();
@@ -49,14 +43,12 @@ void testInsert()
 	m2.insert(ft::make_pair(18, 25));
 	m2.insert(ft::make_pair(98, 25));
 	m2.insert(it, ite);
-	m2.printTree();
 }
 
 void iteratorConstructor( ft::map<int, int>::iterator it, ft::map<int, int>::iterator ite )
 {
 	std::cout << "\n\nIterator constructor" << std::endl;
 	ft::map<int, int> m3(it, ite);
-	m3.printTree();
 }
 
 void reverseIterator(ft::map<int, int> m1, ft::map<int, int> m2)
@@ -71,13 +63,11 @@ void reverseIterator(ft::map<int, int> m1, ft::map<int, int> m2)
 void testDelete(ft::map<int, int> m2)
 {
 	std::cout << "\n\nTest delete from one iterator" << std::endl;
-	m2.printTree();
 	ft::map<int, int>::iterator it2 = m2.begin();
 	ft::map<int, int>::iterator ite2 = m2.end();
 	it2++;
 	std::cout << it2->first << std::endl;
 	m2.erase(it2);
-	m2.printTree();
 
 	std::cout << "\n\nTest delete from iterator range" << std::endl;
 	it2 = m2.begin();
@@ -86,15 +76,9 @@ void testDelete(ft::map<int, int> m2)
 	std::cout << it2->first << " - " << ite2->first << std::endl;
 	std::cout << "Doit rester seulement 5-80 et 98-25" << std::endl;
 	m2.erase(it2, ite2);
-	m2.printTree();
 }
 */
 
-
-
-#define T1 char
-#define T2 int
-typedef ft::pair<const T1, T2> T3;
 
 
 int main()
@@ -110,8 +94,7 @@ int main()
 	tree._insertSingle(ft::make_pair(5, 80));
 	tree._insertSingle(ft::make_pair(3, 80));
 	tree._insertSingle(ft::make_pair(12, 80));
-
-	tree.printTree();*/
+	*/
 
 
 
@@ -128,7 +111,6 @@ int main()
 	m1.insert(ft::make_pair(5, 80));
 	m1.insert(ft::make_pair(3, 80));
 	m1.insert(ft::make_pair(12, 80));
-	m1.getTree()->printTree();
 
 
 	//std::cout << m1.count(17) << std::endl;
@@ -139,12 +121,10 @@ int main()
 	//std::cout << m1.empty() << " - " << m1.size() << " - " << m1.max_size() << std::endl;
 	
 	/*std::cout << m1[17] << std::endl;
-	std::cout << m1[18] << std::endl;
-	m1.getTree()->printTree();*/
+	std::cout << m1[18] << std::endl;*/
 
 	
 	std::cout << "\n\nIterator insert" << std::endl;
-	m1.getTree()->printTree();
 	ft::map<int, int>::iterator it = m1.begin();
 	ft::map<int, int>::iterator ite = m1.end();
 	it++;
@@ -158,7 +138,6 @@ int main()
 	m2.insert(ft::make_pair(98, 25));
 	std::cout << it->first << " - " << ite->first << std::endl;
 	m2.insert(it, ite);
-	m2.getTree()->printTree();
 
 
 /*auto start = high_resolution_clock::now();
@@ -169,19 +148,20 @@ auto duration = duration_cast<milliseconds>(stop - start);
 std::cout << duration.count() << std::endl;*/
 
 
-	/*std::cout << "\n\nIterator constructor" << std::endl;
+	/*
+	std::cout << "\n\nIterator constructor" << std::endl;
 	ft::map<int, int> m3(it, ite);
-	m3.getTree()->printTree();*/
+	*/
 
-	/*std::cout << "Lower bound of 15 : " << (m2.lower_bound(15))->first << std::endl;
+	/*
+	std::cout << "Lower bound of 15 : " << (m2.lower_bound(15))->first << std::endl;
 	std::cout << "Upper bound of 18 : " << (m2.upper_bound(18))->first << std::endl;
-	std::cout << "Equal range of 18 : " << (m2.equal_range(18)).first->first << " | " << (m2.equal_range(18)).second->first << std::endl;*/
+	std::cout << "Equal range of 18 : " << (m2.equal_range(18)).first->first << " | " << (m2.equal_range(18)).second->first << std::endl;
+	*/
 
 	/*std::cout << "\n\nSwap" << std::endl;
-	m1.getTree()->printTree();
 	m1.swap(m2);
-	m1.getTree()->printTree();
-	m2.getTree()->printTree();*/
+	*/
 	
 	/*std::cout << "\n\nDelete" << std::endl;
 	ft::map<int, int>::iterator it2 = m2.begin();
@@ -189,7 +169,6 @@ std::cout << duration.count() << std::endl;*/
 	it2++;
 	std::cout << it2->first << std::endl;
 	m2.erase(10);
-	m2.getTree()->printTree();
 	
 	std::cout << "\n\nTest delete from iterator range" << std::endl;
 	it2 = m2.begin();
@@ -199,48 +178,7 @@ std::cout << duration.count() << std::endl;*/
 	std::cout << it2->first << " - " << ite2->first << std::endl;
 	std::cout << "Doit rester seulement 98-25 et 5-80" << std::endl;
 	m2.erase(it2, ite2);
-	m2.getTree()->printTree();*/
-
-	
-	std::cout << std::endl;
-	std::list<T3> lst;
-
-	unsigned int lst_size = 7;
-	for (unsigned int i = 0; i < lst_size; ++i)
-		lst.push_back(T3('a' + i, lst_size - i));
-	ft::map<T1, T2> foo(lst.begin(), lst.end());
-
-	lst.clear(); lst_size = 4;
-	for (unsigned int i = 0; i < lst_size; ++i)
-		lst.push_back(T3('z' - i, i * 5));
-	ft::map<T1, T2> bar(lst.begin(), lst.end());
-
-	ft::map<T1, T2>::const_iterator it_foo = foo.begin();
-	ft::map<T1, T2>::const_iterator it_bar = bar.begin();
-
-	std::cout << "BEFORE SWAP" << std::endl;
-
-	std::cout << "foo contains:" << std::endl;
-	foo.getTree()->printTree();
-	std::cout << "\nbar contains:" << std::endl;
-	bar.getTree()->printTree();
-
-	foo.swap(bar);
-
-	std::cout << "\nAFTER SWAP" << std::endl;
-
-	std::cout << "foo contains:" << std::endl;
-	foo.getTree()->printTree();
-	std::cout << "bar contains:" << std::endl;
-	bar.getTree()->printTree();
-
-	std::cout << "Iterator validity:" << std::endl;
-	std::cout << (it_foo == bar.begin()) << std::endl;
-	std::cout << (it_bar == foo.begin()) << std::endl;
-
-
-
-
+	*/
 
     return 0;
 }
