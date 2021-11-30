@@ -4,17 +4,21 @@
 # include <iostream>
 # include "pair.hpp"
 
+# define BLACK 0
+# define RED 1
+# define NIL 2
+
 namespace ft
 {
-	enum eColor
+	/*enum eColor
 	{
 		BLACK, RED, NIL
-	};
+	};*/
 
 	template <class T>
 	struct rbt_node
 	{
-		eColor		color;
+		size_t		color;
 		T			data;
 		rbt_node*	parent;
 		rbt_node*	left;
@@ -458,7 +462,7 @@ namespace ft
 			{
 				node_ptr x;
 				node_ptr y = z;
-				eColor y_original_color = y->color;
+				size_t y_original_color = y->color;
 
 				if (!z->left || z->left == _nil) //1 child
 				{
@@ -658,16 +662,12 @@ namespace ft
 
 			void swap( RBTree& other )
 			{
-				/*RBTree tmp = *this;
-				*this = other;
-				other = tmp;*/
-
-				size_type sz = this->_size;
-				node_ptr rt = this->_root;
-				node_ptr nil = this->_nil;
-				Compare	cmp = this->_cmp;
-				allocator_type alloc = this->_alloc;
-				new_alloc alloc_rbt = this->_alloc_rbt;
+				size_type	sz = this->_size;
+				node_ptr	rt = this->_root;
+				node_ptr	nil = this->_nil;
+				Compare		cmp = this->_cmp;
+				allocator_type	alloc = this->_alloc;
+				new_alloc		alloc_rbt = this->_alloc_rbt;
 
 				this->_size = other._size;
 				this->_root = other._root;
@@ -683,8 +683,6 @@ namespace ft
 				other._alloc = alloc;
 				other._alloc_rbt = alloc_rbt;
 			}
-
-
 	};
 }
 
