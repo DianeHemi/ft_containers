@@ -27,7 +27,6 @@ namespace ft
 
 		rbt_node() : color(RED), data(T()), parent(NULL), left(NULL), right(NULL) { };
 		rbt_node(T data) : color(RED), data(data), parent(NULL), left(NULL), right(NULL) { };
-		//virtual ~rbt_node() {};
 	};
 
 

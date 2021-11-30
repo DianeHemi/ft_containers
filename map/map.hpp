@@ -45,7 +45,6 @@ namespace ft
 			typedef typename ft::const_iterator_map<value_type>	    		const_iterator;
 			typedef typename ft::reverse_iterator<iterator>		    		reverse_iterator;
 			typedef typename ft::reverse_iterator<const_iterator>			const_reverse_iterator;
-			//typedef typename Alloc::template rebind<rbt_node>::other    	new_alloc;
 
 			class value_compare
 			{
@@ -139,9 +138,9 @@ namespace ft
 
 
 
-		/****
-			Element access
-		****/
+/****************************************************************
+						 Element access
+*****************************************************************/
 		mapped_type& operator[]( const key_type& key ) 
 		{
 			rbt_node_ptr node = _rbt->searchTree(key, _rbt->getRoot());
@@ -159,9 +158,9 @@ namespace ft
 				return node->data.second;
 		};
 
-		/****
-			Modifiers
-		****/
+/****************************************************************
+						 Modifiers
+*****************************************************************/
 		void 	clear() { erase(begin(), end()); };
 		void 	swap( map& x ) 
 		{
@@ -217,15 +216,15 @@ namespace ft
 		};
 
 
-		/****
-			Observers
-		****/
+/****************************************************************
+						 Observers
+*****************************************************************/
 		key_compare 	key_comp() const { return _rbt->getCompare(); };
 		value_compare	value_comp() const { return (value_compare(_rbt->getCompare())); };
 
-		/****
-			Operations
-		****/
+/****************************************************************
+						 Operations
+*****************************************************************/
 		iterator		find( const key_type& key ) 
 		{ 
 			iterator it = begin();
@@ -250,14 +249,19 @@ namespace ft
 
 		size_type		count( const key_type& key ) const 
 		{ return (_rbt->count(key)); };
+
 		iterator		lower_bound( const key_type& key )  //First element greater or equal
 		{ return iterator((_rbt->lower_bound(key))); };
+
 		const_iterator	lower_bound( const key_type& key ) const 
 		{ return const_iterator((_rbt->lower_bound(key))); };
+
 		iterator		upper_bound( const key_type& key )	//First element greater than
 		{ return iterator((_rbt->upper_bound(key))); };
+
 		const_iterator	upper_bound( const key_type& key ) const 
 		{ return const_iterator((_rbt->upper_bound(key))); };
+
 		ft::pair<iterator, iterator>	equal_range( const key_type& key )	//Range : first greater or equal + 
 		{
 			ft::pair<iterator, iterator> ret;
@@ -266,6 +270,7 @@ namespace ft
 			ret.second = iterator(_rbt->upper_bound(key));
 			return ret;
 		};
+
 		ft::pair<const_iterator, const_iterator>	equal_range( const key_type& key ) const 
 		{
 			ft::pair<const_iterator, const_iterator> ret;
