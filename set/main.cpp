@@ -4,7 +4,7 @@
 
 int main()
 {
-
+    ft::set<int> s;
 
     return 0;
 }

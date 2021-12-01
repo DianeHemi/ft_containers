@@ -21,11 +21,11 @@ namespace ft
 			typedef rbt_node<T>		node;
 			typedef rbt_node<T>*	node_ptr;
 
-			iterator_map( ) : _node(NULL) { };
-			iterator_map( node_ptr src ) : _node(src) { };
-			iterator_map( const iterator_map & src ) { *this = src; };
-			~iterator_map() { };
-			iterator_map& operator=( const iterator_map & rhs )
+			bidirectionnal_iterator( ) : _node(NULL) { };
+			bidirectionnal_iterator( node_ptr src ) : _node(src) { };
+			bidirectionnal_iterator( const bidirectionnal_iterator & src ) { *this = src; };
+			~bidirectionnal_iterator() { };
+			bidirectionnal_iterator& operator=( const bidirectionnal_iterator & rhs )
 			{
 				if (this != &rhs)
 					this->_node = rhs._node;
@@ -38,19 +38,19 @@ namespace ft
 			reference	operator*() const { return (_node->data); };
 			pointer		operator->() const { return &(_node->data); };
 
-			iterator_map&	operator++() //Successor
+			bidirectionnal_iterator&	operator++() //Successor
 			{
 				if (_node->color != NIL)
 					_node = successor(_node);
 				return *this;
 			};
-			iterator_map 	operator++(int)
+			bidirectionnal_iterator 	operator++(int)
 			{
-				iterator_map tmp(*this);
+				bidirectionnal_iterator tmp(*this);
 				operator++();
 				return tmp;
 			};
-			iterator_map&	operator--() //Predecessor
+			bidirectionnal_iterator&	operator--() //Predecessor
 			{
 				if (_node->color == NIL)
 				{
@@ -62,16 +62,16 @@ namespace ft
 					_node = predecessor(_node);
 				return *this;
 			};
-			iterator_map	operator--(int)
+			bidirectionnal_iterator	operator--(int)
 			{
-				iterator_map tmp(*this);
+				bidirectionnal_iterator tmp(*this);
 				operator--();
 				return tmp;
 			};
 
-			friend bool	operator==( const iterator_map & lhs, const iterator_map & rhs )
+			friend bool	operator==( const bidirectionnal_iterator & lhs, const bidirectionnal_iterator & rhs )
 			{ return (lhs._node == rhs._node); };
-			friend bool	operator!=( const iterator_map & lhs, const iterator_map & rhs )
+			friend bool	operator!=( const bidirectionnal_iterator & lhs, const bidirectionnal_iterator & rhs )
 			{ return (lhs._node != rhs._node); };
 
 			node_ptr	_node;
@@ -94,12 +94,12 @@ namespace ft
 			typedef rbt_node<T>*	node_ptr;
 
 
-			const_iterator_map( ) : _node(NULL) { };
-			const_iterator_map( node_ptr src ) : _node(src) { };
-			const_iterator_map( const const_iterator_map & src ) { *this = src; };
-			const_iterator_map( const iterator_map<T> & src ) : _node(src._node) { };
-			~const_iterator_map() { };
-			const_iterator_map& operator=( const const_iterator_map & rhs )
+			const_bidirectionnal_iterator( ) : _node(NULL) { };
+			const_bidirectionnal_iterator( node_ptr src ) : _node(src) { };
+			const_bidirectionnal_iterator( const const_bidirectionnal_iterator & src ) { *this = src; };
+			const_bidirectionnal_iterator( const bidirectionnal_iterator<T> & src ) : _node(src._node) { };
+			~const_bidirectionnal_iterator() { };
+			const_bidirectionnal_iterator& operator=( const const_bidirectionnal_iterator & rhs )
 			{
 				if (this != &rhs)
 					this->_node = rhs._node;
@@ -113,19 +113,19 @@ namespace ft
 			reference	operator*() const { return (_node->data); };
 			pointer		operator->() const { return &(_node->data); };
 
-			const_iterator_map&	operator++() 
+			const_bidirectionnal_iterator&	operator++() 
 			{
 				if (_node->color != NIL)
 					_node = successor(_node);
 				return *this;
 			};
-			const_iterator_map 	operator++(int) 
+			const_bidirectionnal_iterator 	operator++(int) 
 			{
-				const_iterator_map tmp(*this);
+				const_bidirectionnal_iterator tmp(*this);
 				operator++();
 				return tmp;
 			};
-			const_iterator_map&	operator--() 
+			const_bidirectionnal_iterator&	operator--() 
 			{
 				if (_node->color == NIL)
 				{
@@ -137,16 +137,16 @@ namespace ft
 					_node = predecessor(_node);
 				return *this;
 			};
-			const_iterator_map	operator--(int)
+			const_bidirectionnal_iterator	operator--(int)
 			{
-				const_iterator_map tmp(*this);
+				const_bidirectionnal_iterator tmp(*this);
 				operator--();
 				return tmp;
 			};
 
-			friend bool	operator==( const const_iterator_map & lhs, const const_iterator_map & rhs )
+			friend bool	operator==( const const_bidirectionnal_iterator & lhs, const const_bidirectionnal_iterator & rhs )
 			{ return (lhs._node == rhs._node); };
-			friend bool	operator!=( const const_iterator_map & lhs, const const_iterator_map & rhs )
+			friend bool	operator!=( const const_bidirectionnal_iterator & lhs, const const_bidirectionnal_iterator & rhs )
 			{ return (lhs._node != rhs._node); };
 
 			node_ptr	_node;

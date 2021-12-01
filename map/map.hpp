@@ -159,8 +159,6 @@ namespace ft
 		/****************************************************************
 								 Modifiers
 		*****************************************************************/
-		void 	clear() { erase(begin(), end()); };
-
 		ft::pair<iterator, bool>	insert( const value_type& value )
 		{
 			ft::pair<iterator, bool> ret;
@@ -214,10 +212,8 @@ namespace ft
 			return tmp - _rbt->getSize();
 		};
 
-		void 	swap( map& other )
-		{
-			_rbt->swap(*other._rbt);
-		};
+		void 	swap( map& other ) { _rbt->swap(*other._rbt); };
+		void 	clear() { erase(begin(), end()); };
 
 
 		/****************************************************************
@@ -281,8 +277,8 @@ namespace ft
 		{
 			ft::pair<const_iterator, const_iterator> ret;
 			
-			ret.first = iterator(_rbt->lower_bound(key));
-			ret.second = iterator(_rbt->upper_bound(key));
+			ret.first = const_iterator(_rbt->lower_bound(key));
+			ret.second = const_iterator(_rbt->upper_bound(key));
 			return ret;
 		};
 
@@ -344,6 +340,6 @@ namespace ft
 		lhs.swap(rhs);
 	}
 
-}
+} //ft
 
 #endif
