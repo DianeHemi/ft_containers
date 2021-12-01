@@ -104,10 +104,10 @@ namespace ft
 			insert(begin(), first, last);
 		};
 
-		void assign( size_type count, const value_type& value )
+		void assign( size_type n, const value_type& val )
 		{
 			erase(begin(), end());
-			insert(begin(), count, value);
+			insert(begin(), n, val);
 		};
 
 		allocator_type	get_allocator() const { return _alloc; };
@@ -193,18 +193,16 @@ namespace ft
 		/****************************************************************
 								 Modifiers
 		****************************************************************/
-		void		push_back( const value_type& val )
-		{
-			insert(end(), val);
-		};
+		void	push_back( const value_type& val )
+		{ insert(end(), val); };
 
-		void		pop_back()
+		void	pop_back()
 		{
 			_alloc.destroy(_data + _size - 1);
 			_size--;
 		};
 
-		iterator	insert( iterator pos, const T& value )
+		iterator	insert( iterator pos, const value_type& val )
 		{
 			size_type	offset = pos - _data;
 
@@ -216,12 +214,12 @@ namespace ft
 				_alloc.construct(_data + i, _data[i - 1]);
 				_alloc.destroy(_data + i - 1);
 			}
-			_data[offset] = value;
+			_data[offset] = val;
 			_size++;
 			return (begin() + offset);
 		};
 
-		void	insert( iterator pos, size_type count, const T& value )
+		void	insert( iterator pos, size_type n, const value_type& val )
 		{
 			ft::vector<T> tmp;
 			tmp._data = tmp._alloc.allocate(_capacity);
@@ -230,8 +228,8 @@ namespace ft
 			iterator it = begin();
 			for ( ; it != pos; it++)
 				tmp.push_back(*it);
-			for( ; count > 0; count--)
-				tmp.push_back(value);
+			for( ; n > 0; n--)
+				tmp.push_back(val);
 			for ( ; it != end(); it++)
 				tmp.push_back(*it);
 			tmp.swap(*this);
