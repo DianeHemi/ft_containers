@@ -36,8 +36,8 @@ namespace ft
 			typedef ft::rbt_node<value_type>*	rbt_node_ptr;
 
 		public:
-			typedef typename ft::bidirectionnal_iterator<value_type>	iterator;
-			typedef typename ft::bidirectionnal_iterator<value_type>	const_iterator;
+			typedef typename ft::const_bidirectionnal_iterator<value_type>		iterator;
+			typedef typename ft::const_bidirectionnal_iterator<value_type>	const_iterator;
 			typedef typename ft::reverse_iterator<iterator>				reverse_iterator;
 			typedef typename ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 
@@ -111,7 +111,7 @@ namespace ft
 		/****************************************************************
 								  Capacity
 		*****************************************************************/
-		bool		empy() const { return _rbt->getSize() == 0; };
+		bool		empty() const { return _rbt->getSize() == 0; };
 		size_type	size() const { return _rbt->getSize(); };
 		size_type	max_size() const { return _rbt->getRBtAlloc().max_size(); };
 
@@ -150,7 +150,7 @@ namespace ft
 
 		void erase( iterator pos )
 		{
-			rbt_node* node = _rbt->searchTree(pos, _rbt->getRoot());
+			rbt_node* node = _rbt->searchTree(*pos, _rbt->getRoot());
 
 			if (node)
 				_rbt->_erase(node);
@@ -195,7 +195,7 @@ namespace ft
 
 			while (it != ite)
 			{
-				if (!_cmp(it->first, val) && !_cmp(val, it->first))
+				if (!_cmp(*it, val) && !_cmp(val, *it))
 					return it;
 				it++;
 			};
@@ -206,7 +206,7 @@ namespace ft
 		{
 			const_iterator it = _rbt->searchTree(val, _rbt->getRoot());
 
-			if (it->first)
+			if (*it)
 				return it;
 			return (_rbt->getNil());
 		};

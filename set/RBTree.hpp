@@ -2,7 +2,7 @@
 # define RBTREE_HPP
 
 # include <iostream>
-# include "pair.hpp"
+# include "../map/pair.hpp"
 
 # define BLACK 0
 # define RED 1
@@ -67,7 +67,7 @@ namespace ft
 			RBTree( const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type() ) 
 				: _cmp(comp), _alloc(alloc), _size(0)
 			{
-				_root = newNode(ft::make_pair(key_type(), mapped_type()));
+				_root = newNode(value_type());
 				_root->color = NIL;
 				_nil = _root;
 			};
@@ -193,9 +193,9 @@ namespace ft
 
 			while (tmp != NULL && tmp != _nil)
 			{
-				if (key == tmp->data.first)
+				if (key == tmp->data)
 					return tmp;
-				else if (key < tmp->data.first)
+				else if (key < tmp->data)
 					tmp = tmp->left;
 				else
 					tmp = tmp->right;
@@ -284,9 +284,9 @@ namespace ft
 			while (x && x != _nil)
 			{
 				y = x;
-				if (_cmp(x->data.first, node->data.first))
+				if (_cmp(x->data, node->data))
 					x = x->right;
-				else if (_cmp(node->data.first, x->data.first))
+				else if (_cmp(node->data, x->data))
 					x = x->left;
 				else
 				{
@@ -297,7 +297,7 @@ namespace ft
 			}
 			node->parent = y;
 			_size++;
-			if (_cmp(node->data.first, y->data.first))
+			if (_cmp(node->data, y->data))
 				y->left = node;	
 			else
 				y->right = node;
@@ -510,45 +510,6 @@ namespace ft
 		}
 	
 
-
-
-		/****************************************************************
-									Affichage
-		*****************************************************************/
-		void printTree()
-		{
-			if (_root)
-				printHelper(_root, "", true);
-		}
-
-		void printHelper( node_ptr root, std::string indent, bool last ) 
-		{
-			if (root != _nil)
-			{
-				std::cout << indent;
-				if (last) 
-				{
-					std::cout << "R----";
-					indent += "   ";
-				} 
-				else 
-				{
-					std::cout << "L----";
-					indent += "|  ";
-				}
-				std::string sColor;
-				if (root->color == RED)
-					sColor = "RED";
-				else if (root->color == BLACK)
-					sColor = "BLACK";
-				else
-					sColor = "NIL";
-				std::cout << root->data.first << " - " << root->data.second << "(" << sColor << ")" << std::endl;
-				printHelper(root->left, indent, false);
-				printHelper(root->right, indent, true);
-			}	
-		}
-
 		/****************************************************************
 								Member functions
 		*****************************************************************/
@@ -565,7 +526,7 @@ namespace ft
 
 			while (tmp != NULL && tmp != _nil)
 			{
-				if (tmp->data.first >= key)
+				if (tmp->data >= key)
 					return tmp;
 				tmp = successor(tmp);
 			}
@@ -578,7 +539,7 @@ namespace ft
 
 			while (tmp != NULL && tmp != _nil)
 			{
-				if (tmp->data.first > key)
+				if (tmp->data > key)
 					return tmp;
 				tmp = successor(tmp);
 			}

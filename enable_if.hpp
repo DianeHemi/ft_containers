@@ -75,6 +75,7 @@ namespace ft
 
 	template <>
 	struct is_integral<const double> { static const bool value = true; };
+	
 } //ft
 
 #endif
