@@ -1,5 +1,5 @@
-#ifndef RBTREE_HPP
-# define RBTREE_HPP
+#ifndef RBTREE_MAP_HPP
+# define RBTREE_MAP_HPP
 
 # include <iostream>
 # include "../pair.hpp"
@@ -24,7 +24,7 @@ namespace ft
 	};
 
 
-	template <class Key, class Compare = ft::less<Key>, 
+	template <class Key, class Mapped, class Compare = ft::less<Key>, 
 			class Alloc = std::allocator<Key> >
 	class RBTree
 	{
@@ -33,11 +33,13 @@ namespace ft
 		*****************************************************************/
 		public:
 			typedef Key					key_type;
-			typedef Key					value_type;
+			typedef Mapped				mapped_type;
 			typedef std::size_t			size_type;
 			typedef std::ptrdiff_t		difference_type;
 			typedef Compare				key_compare;
 			typedef Alloc				allocator_type;
+
+			typedef typename ft::pair<const Key, Mapped> 	value_type;
 
 			typedef rbt_node<value_type>	node_t;
 			typedef rbt_node<value_type>*	node_ptr;
@@ -67,7 +69,7 @@ namespace ft
 			RBTree( const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type() ) 
 				: _cmp(comp), _alloc(alloc), _size(0)
 			{
-				_root = newNode(value_type());
+				_root = newNode(ft::make_pair(key_type(), mapped_type()));
 				_root->color = NIL;
 				_nil = _root;
 			};
@@ -97,7 +99,6 @@ namespace ft
 			{
 				deleteNode(_nil);
 			};
-
 
 
 		/****************************************************************
@@ -193,9 +194,9 @@ namespace ft
 
 			while (tmp != NULL && tmp != _nil)
 			{
-				if (key == tmp->data)
+				if (key == tmp->data.first)
 					return tmp;
-				else if (key < tmp->data)
+				else if (key < tmp->data.first)
 					tmp = tmp->left;
 				else
 					tmp = tmp->right;
@@ -220,7 +221,6 @@ namespace ft
 				return NULL;
 			return node->parent->parent;
 		}
-
 
 
 		/****************************************************************
@@ -263,7 +263,6 @@ namespace ft
 		}
 
 
-
 		/****************************************************************
 									Insertion
 		*****************************************************************/
@@ -284,9 +283,9 @@ namespace ft
 			while (x && x != _nil)
 			{
 				y = x;
-				if (_cmp(x->data, node->data))
+				if (_cmp(x->data.first, node->data.first))
 					x = x->right;
-				else if (_cmp(node->data, x->data))
+				else if (_cmp(node->data.first, x->data.first))
 					x = x->left;
 				else
 				{
@@ -297,7 +296,7 @@ namespace ft
 			}
 			node->parent = y;
 			_size++;
-			if (_cmp(node->data, y->data))
+			if (_cmp(node->data.first, y->data.first))
 				y->left = node;	
 			else
 				y->right = node;
@@ -363,7 +362,6 @@ namespace ft
 			}
 			_root->color = BLACK;
 		}
-
 
 
 		/****************************************************************
@@ -526,7 +524,7 @@ namespace ft
 
 			while (tmp != NULL && tmp != _nil)
 			{
-				if (tmp->data >= key)
+				if (tmp->data.first >= key)
 					return tmp;
 				tmp = successor(tmp);
 			}
@@ -539,7 +537,7 @@ namespace ft
 
 			while (tmp != NULL && tmp != _nil)
 			{
-				if (tmp->data > key)
+				if (tmp->data.first > key)
 					return tmp;
 				tmp = successor(tmp);
 			}
