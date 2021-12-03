@@ -71,7 +71,24 @@ void vector_modifiers()
     print_vector(v1);
 
     std::cout << "\nErasing values from vector - erase[single element]" << std::endl;
-    
+    v1.erase(v1.begin() + 3);
+    print_vector(v1);
+    v1.erase(v1.end() - 2);
+    v1.erase(v1.begin() + 5);
+    print_vector(v1);
 
     std::cout << "\nErasing values from vector - erase[range]" << std::endl;
+    v1.erase(v1.begin() + 1, v1.end() - 5);
+    print_vector(v1);
+
+
+}
+
+void vector_stresstest()
+{
+    std::cout << "Inserting a million elements :" << std::endl;
+    NAMESPACE::vector<int> v1;
+    v1.insert(v1.begin(), 1000000, 2);
+    std::cout << "Erasing a million elements :" << std::endl;
+    v1.erase(v1.begin(), v1.end());
 }
