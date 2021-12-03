@@ -2,7 +2,7 @@
 # define RBTREE_HPP
 
 # include <iostream>
-# include "../map/pair.hpp"
+# include "../pair.hpp"
 
 # define BLACK 0
 # define RED 1

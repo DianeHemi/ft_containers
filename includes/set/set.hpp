@@ -3,7 +3,7 @@
 
 # include <memory>
 # include "../lexicographical_compare.hpp"
-# include "bidirectionnal_iterator.hpp"
+# include "iterator_set.hpp"
 
 
 namespace ft
@@ -36,8 +36,8 @@ namespace ft
 			typedef ft::rbt_node<value_type>*	rbt_node_ptr;
 
 		public:
-			typedef typename ft::const_bidirectionnal_iterator<value_type>		iterator;
-			typedef typename ft::const_bidirectionnal_iterator<value_type>	const_iterator;
+			typedef typename ft::const_iterator_set<value_type>		iterator;
+			typedef typename ft::const_iterator_set<value_type>	const_iterator;
 			typedef typename ft::reverse_iterator<iterator>				reverse_iterator;
 			typedef typename ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 
