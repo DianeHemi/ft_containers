@@ -2,6 +2,7 @@
 #include <ctime>
 #include "test_stack.cpp"
 #include "test_vector.cpp"
+#include "test_map.cpp"
 
 int main(void)
 {
@@ -33,9 +34,33 @@ int main(void)
 	****************************************************************/
     std::cout << "\n\nVECTOR" << std::endl;
 
-    std::cout << "\033[1;32m--- Modifiers --- \033[0m" << std::endl;
+    std::cout << "\033[1;32m\n--- Modifiers --- \033[0m" << std::endl;
     start = clock();
     vector_modifiers();
+    end = clock();
+    std::cout << "Execution time : " << (double)(end - start)/CLOCKS_PER_SEC << std::endl;
+
+    std::cout << "\033[1;32m\n--- Access --- \033[0m" << std::endl;
+    start = clock();
+    vector_access();
+    end = clock();
+    std::cout << "Execution time : " << (double)(end - start)/CLOCKS_PER_SEC << std::endl;
+
+    std::cout << "\033[1;32m\n--- Iterators --- \033[0m" << std::endl;
+    start = clock();
+    vector_iterator();
+    end = clock();
+    std::cout << "Execution time : " << (double)(end - start)/CLOCKS_PER_SEC << std::endl;
+
+    std::cout << "\033[1;32m\n--- Reverse iterators --- \033[0m" << std::endl;
+    start = clock();
+    vector_reverse_iterator();
+    end = clock();
+    std::cout << "Execution time : " << (double)(end - start)/CLOCKS_PER_SEC << std::endl;
+
+    std::cout << "\033[1;32m\n--- Relational operators --- \033[0m" << std::endl;
+    start = clock();
+    vector_relational_ope();
     end = clock();
     std::cout << "Execution time : " << (double)(end - start)/CLOCKS_PER_SEC << std::endl;
 
@@ -46,14 +71,40 @@ int main(void)
     std::cout << "Execution time : " << (double)(end - start)/CLOCKS_PER_SEC << std::endl;*/
 
 
-
-
-
-
     /****************************************************************
 							    Map
 	****************************************************************/
+    std::cout << "\n\nMAP" << std::endl;
 
+    std::cout << "\033[1;32m\n--- Modifiers --- \033[0m" << std::endl;
+    start = clock();
+    map_modifiers();
+    end = clock();
+    std::cout << "Execution time : " << (double)(end - start)/CLOCKS_PER_SEC << std::endl;
+
+    std::cout << "\033[1;32m\n--- Iterators --- \033[0m" << std::endl;
+    start = clock();
+    map_iterators();
+    end = clock();
+    std::cout << "Execution time : " << (double)(end - start)/CLOCKS_PER_SEC << std::endl;
+
+    /*std::cout << "\033[1;32m\n--- Reverse iterators --- \033[0m" << std::endl;
+    start = clock();
+    map_reverse_iterators();
+    end = clock();
+    std::cout << "Execution time : " << (double)(end - start)/CLOCKS_PER_SEC << std::endl;
+
+    std::cout << "\033[1;32m\n--- Relational operators --- \033[0m" << std::endl;
+    start = clock();
+    map_relational_ope();
+    end = clock();
+    std::cout << "Execution time : " << (double)(end - start)/CLOCKS_PER_SEC << std::endl;
+    
+    std::cout << "\033[1;32m\n--- Stress test --- \033[0m" << std::endl;
+    start = clock();
+    map_stresstest();
+    end = clock();
+    std::cout << "Execution time : " << (double)(end - start)/CLOCKS_PER_SEC << std::endl;*/
 
     /****************************************************************
 							    Set
