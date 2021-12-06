@@ -213,6 +213,7 @@ void print_operator(NAMESPACE::vector<int> a, NAMESPACE::vector<int> b)
 	std::cout << "Lower : \t" << (a < b) << " | Lower or equal : \t" << (a <= b) << std::endl;
 	std::cout << "Greater : \t" << (a > b) << " | Greater or equal : \t" << (a >= b) << std::endl;
 }
+
 void vector_relational_ope()
 {
     NAMESPACE::vector<int> v1;
@@ -226,10 +227,12 @@ void vector_relational_ope()
     print_operator(v1, v1);
     print_operator(v1, v2);
 
+    std::cout << "\nAdding a value in the first vector : " << std::endl;
     v1.push_back(2);
     print_operator(v1, v2);
     print_operator(v2, v1);
 
+    std::cout << "\nAdding two values in the second vector : " << std::endl;
     v2.push_back(0);
     v2.push_back(123);
     print_operator(v1, v2);

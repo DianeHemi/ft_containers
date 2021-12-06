@@ -15,7 +15,7 @@ void print( NAMESPACE::set<T> const & set)
 	std::cout << "Content :" << std::endl;
 	for (; it != ite; ++it)
 	{
-		std::cout << "- " << *it;
+		std::cout << " - " << *it;
 	}	
 }
 
@@ -174,6 +174,41 @@ void set_stresstest()
     std::cout << s1.size() << std::endl;
 }
 
+template<class T>
+void print_operator(NAMESPACE::set<T> a, NAMESPACE::set<T> b)
+{
+    static int i = 0;
+
+	std::cout << "\n\t******** " << i++ << " ********" << std::endl;
+	std::cout << "Equality : \t" << (a == b) << " | Difference : \t" << (a != b) << std::endl;
+	std::cout << "Lower : \t" << (a < b) << " | Lower or equal : \t" << (a <= b) << std::endl;
+	std::cout << "Greater : \t" << (a > b) << " | Greater or equal : \t" << (a >= b) << std::endl;
+}
+
+void set_relational_ope()
+{
+    typename NAMESPACE::set<int> s1;
+    std::cout << "\nInserting some values in a map and copying it into another" << std::endl;
+    for(int i = 1; i < 4096; i = i * 3)
+        s1.insert(i * 2);
+    NAMESPACE::set<int> s2(s1); 
+    print(s1);
+
+    print_operator(s1, s1);
+    print_operator(s1, s2);
+
+    std::cout << "\nAdding a value in the first map : " << std::endl;
+    s1.insert(19);
+    print_operator(s1, s2);
+    print_operator(s2, s1);
+
+    std::cout << "\nAdding two values in the second map : " << std::endl;
+    s2.insert(5);
+    s2.insert(1035);
+    print_operator(s1, s2);
+    print_operator(s2, s1);
+}
+
 int main(void)
 {
     /****************************************************************
@@ -192,6 +227,9 @@ int main(void)
 
     std::cout << "\033[1;32m\n--- Operations --- \033[0m" << std::endl;
     set_operations();
+
+    std::cout << "\033[1;32m\n--- Relational operators --- \033[0m" << std::endl;
+    set_relational_ope();
     
     /*std::cout << "\033[1;32m\n--- Stress test --- \033[0m" << std::endl;
     set_stresstest();*/

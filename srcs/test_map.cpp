@@ -22,7 +22,7 @@ void print( NAMESPACE::map<T, U> const & mp)
 	std::cout << "Content :" << std::endl;
 	for (; it != ite; ++it)
 	{
-		std::cout << "- ";
+		std::cout << " - ";
         printPair(it);
 	}	
 }
@@ -223,6 +223,41 @@ void map_stresstest()
     std::cout << m1.size() << std::endl;
 }
 
+template<class T, class U>
+void print_operator(NAMESPACE::map<T, U> a, NAMESPACE::map<T, U> b)
+{
+    static int i = 0;
+
+	std::cout << "\n\t******** " << i++ << " ********" << std::endl;
+	std::cout << "Equality : \t" << (a == b) << " | Difference : \t" << (a != b) << std::endl;
+	std::cout << "Lower : \t" << (a < b) << " | Lower or equal : \t" << (a <= b) << std::endl;
+	std::cout << "Greater : \t" << (a > b) << " | Greater or equal : \t" << (a >= b) << std::endl;
+}
+
+void map_relational_ope()
+{
+    typename NAMESPACE::map<int, int> m1;
+    std::cout << "\nInserting some values in a map and copying it into another" << std::endl;
+    for(int i = 1; i < 4096; i = i * 3)
+        m1.insert(NAMESPACE::make_pair(i, i * 2));
+    NAMESPACE::map<int, int> m2(m1); 
+    print(m1);
+
+    print_operator(m1, m1);
+    print_operator(m1, m2);
+
+    std::cout << "\nAdding a value in the first map : " << std::endl;
+    m1.insert(NAMESPACE::make_pair(19, 13));
+    print_operator(m1, m2);
+    print_operator(m2, m1);
+
+    std::cout << "\nAdding two values in the second map : " << std::endl;
+    m2.insert(NAMESPACE::make_pair(5, 0));
+    m2.insert(NAMESPACE::make_pair(1025, 0));
+    print_operator(m1, m2);
+    print_operator(m2, m1);
+}
+
 int main(void)
 {
     /****************************************************************
@@ -244,6 +279,9 @@ int main(void)
 
     std::cout << "\033[1;32m\n--- Operations --- \033[0m" << std::endl;
     map_operations();
+
+    std::cout << "\033[1;32m\n--- Relational operators --- \033[0m" << std::endl;
+    map_relational_ope();
     
     /*std::cout << "\033[1;32m\n--- Stress test --- \033[0m" << std::endl;
     map_stresstest();*/
