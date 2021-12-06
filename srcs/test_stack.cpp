@@ -188,3 +188,22 @@ void stack_list_test()
 	print_cmp_list(s1, s2);
 	print_cmp_list(s2, s1);
 }
+
+int main(void)
+{
+	/****************************************************************
+							    Stack
+	****************************************************************/
+    std::cout << "STACK" << std::endl;
+
+    std::cout << "\033[1;32m--- Basic --- \033[0m" << std::endl;
+    stack_basic_tests();
+
+    std::cout << "\033[1;32m\n--- Relational operators --- \033[0m" << std::endl;
+    stack_relational_test();
+
+    std::cout << "\033[1;32m\n--- List compatibility --- \033[0m" << std::endl;
+    stack_list_test();
+
+	return 0;
+}

@@ -85,7 +85,18 @@ void vector_modifiers()
     print_vector(v2);
     v1.swap(v2);
     std::cout << "Second vector after swap :" << std::endl;
-    print_vector(v2); 
+    print_vector(v2);
+
+    std::cout << "\nCapacity" << std::endl;
+    std::cout << "Current capacity : " << v2.capacity() << std::endl;
+    v2.reserve(58);
+    std::cout << "Reserve 58 : " << v2.capacity() << std::endl;
+
+    std::cout << "\nSize" << std::endl;
+    std::cout << "Current size : " << v2.size() << std::endl;
+    v2.resize(2);
+    std::cout << "Resize to 2 : " << std::endl;
+    print_vector(v2);
 }
 
 void vector_stresstest()
@@ -223,4 +234,32 @@ void vector_relational_ope()
     v2.push_back(123);
     print_operator(v1, v2);
     print_operator(v2, v1);
+}
+
+int main(void)
+{
+    /****************************************************************
+							    Vector
+	****************************************************************/
+    std::cout << "\n\nVECTOR" << std::endl;
+
+    std::cout << "\033[1;32m\n--- Modifiers --- \033[0m" << std::endl;
+    vector_modifiers();
+
+    std::cout << "\033[1;32m\n--- Access --- \033[0m" << std::endl;
+    vector_access();
+
+    std::cout << "\033[1;32m\n--- Iterators --- \033[0m" << std::endl;
+    vector_iterator();
+
+    std::cout << "\033[1;32m\n--- Reverse iterators --- \033[0m" << std::endl;
+    vector_reverse_iterator();
+
+    std::cout << "\033[1;32m\n--- Relational operators --- \033[0m" << std::endl;
+    vector_relational_ope();
+
+    /*std::cout << "\033[1;32m--- Stress test --- \033[0m" << std::endl;
+    vector_stresstest();*/
+
+    return 0;
 }
