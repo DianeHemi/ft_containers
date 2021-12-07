@@ -157,15 +157,15 @@ void map_access()
     NAMESPACE::map<int, std::string> m1;
     map_print(m1);
 
-    std::cout << "[] - Non existing value 12 : " << m1[12] << std::endl;
+    std::cout << "[12] : " << m1[12] << std::endl;
 
     std::cout << "\nFilling map : " << std::endl;
     for(int i = 0; i < 5; i++)
         m1.insert(NAMESPACE::make_pair(i * 9, "Mapped"));
     map_print(m1);
 
-    std::cout << "\n[] - Existing value 18 : " << m1[18] << std::endl;
-    std::cout << "at - Existing value 27 : " << m1[27] << std::endl;
+    std::cout << "\n[18] : " << m1[18] << std::endl;
+    std::cout << "at - 27 : " << m1[27] << std::endl;
 }
 
 void map_operations()
@@ -178,10 +178,10 @@ void map_operations()
     m1.insert(NAMESPACE::make_pair(16, "Six"));
     map_print(m1);
 
-    std::cout << "\nFind - Existing element" << std::endl;
+    std::cout << "\nFind - 4" << std::endl;
     map_printPair(m1.find(4));
 
-    std::cout << "\nCount - Existing element 16 : " << m1.count(16) << std::endl;
+    std::cout << "\nCount - 16 : " << m1.count(16) << std::endl;
 
     std::cout << "\nLower bound 8" << std::endl;
     map_printPair(m1.lower_bound(8));

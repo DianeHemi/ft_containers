@@ -138,11 +138,10 @@ void set_operations()
     s1.insert(16);
     set_print(s1);
 
-    std::cout << "\nFind - Existing element 4 : " << *(s1.find(4)) << std::endl;
-    std::cout << "\nFind - Non-existing element 5 : " << *(s1.find(5)) << std::endl;
+    std::cout << "\nFind - 4 : " << *(s1.find(4)) << std::endl;
 
-    std::cout << "\nCount - Existing element 16 : " << s1.count(16) << std::endl;
-    std::cout << "Count - Non-existing element 5 : " << s1.count(5) << std::endl;
+    std::cout << "\nCount - 16 : " << s1.count(16) << std::endl;
+    std::cout << "Count - 5 : " << s1.count(5) << std::endl;
 
     std::cout << "\nLower bound 8 : " << *(s1.lower_bound(8)) << std::endl;
     std::cout << "Lower bound 12 : " << *(s1.lower_bound(12)) << std::endl;

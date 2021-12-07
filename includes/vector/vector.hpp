@@ -4,6 +4,7 @@
 # include <memory>
 # include <cstddef>
 # include <stdexcept>
+# include <iostream>
 # include "iterator_vector.hpp"
 # include "../lexicographical_compare.hpp"
 # include "../enable_if.hpp"
@@ -80,10 +81,8 @@ namespace ft
 		{
 			if (this != &other)
 			{
-				clear();
-				insert(begin(), other.begin(), other.end());
+				assign(other.begin(), other.end());
 				_size = other._size;
-				_capacity = other._capacity;
 			}
 			return (*this);
 		};
@@ -242,7 +241,6 @@ namespace ft
 			ft::vector<T> tmp;
 			tmp._data = tmp._alloc.allocate(_capacity);
 			tmp._capacity = _capacity;
-
 			iterator it = begin();
 			for( ; it != pos; it++)
 				tmp.push_back(*it);

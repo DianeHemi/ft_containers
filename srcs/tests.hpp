@@ -1,5 +1,9 @@
-#if SPACE == ft
-    #define NAMESPACE ft
+#ifndef NAMESPACE
+    # define NAMESPACE ft
+#endif
+
+
+
     #include <iostream>
     #include "../includes/vector/vector.hpp"
     #include "../includes/set/set.hpp"
@@ -7,17 +11,12 @@
     #include <list>
     #include <vector>
     #include "../includes/stack/stack.hpp"
-#else
-    #define NAMESPACE std
-    #include <iostream>
-    #include <list>
+
+        #include <iostream>
     #include <stack>
-    #include <vector>
     #include <string>
     #include <set>
     #include <map>
-#endif
-
 
 //VECTOR
 template<class T>

@@ -21,7 +21,7 @@ INCL	= 	./includes/pair.hpp \
 			./includes/set/RBTree_set.hpp \
 			./includes/stack/stack.hpp \
 			./includes/vector/iterator_vector.hpp \
-			./includes/vector/ \
+			./includes/vector/vector.hpp \
 			./srcs/tests.hpp
 
 OBJS_FT		= $(addprefix ${PATH_OBJS_FT},${SRCS:.cpp=.o})
@@ -36,10 +36,10 @@ PATH_OBJS_STD	= ./objs/std/
 
 
 $(PATH_OBJS_FT)%.o :%.cpp $(INCL)
-	$(CXX) $(CXXFLAGS) -D SPACE=ft -c $< -o $@ 
+	$(CXX) $(CXXFLAGS) -D NAMESPACE=ft -c $< -o $@ 
 
 $(PATH_OBJS_STD)%.o :%.cpp $(INCL)
-	$(CXX) $(CXXFLAGS) -D SPACE=std -c $< -o $@ 
+	$(CXX) $(CXXFLAGS) -D NAMESPACE=std -c $< -o $@ 
 
 
 all: ${PATH_OBJS} ${PATH_OBJS_FT} $(F_NAME) ${PATH_OBJS_STD} $(S_NAME)

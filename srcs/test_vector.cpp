@@ -3,7 +3,10 @@
 template<class T>
 void print_vector(const NAMESPACE::vector<T>& v)
 {
-	std::cout << "Size : " << v.size() << " | Capacity : " << v.capacity() << " | Max size : " << v.max_size() << std::endl;
+    const size_t capacity = v.capacity();
+	const std::string isCapacityOk = (capacity >= v.size()) ? "OK" : "KO";
+
+	std::cout << "Size : " << v.size() << " | Capacity : " << isCapacityOk << " | Max size : " << v.max_size() << std::endl;
 
 	typename NAMESPACE::vector<T>::const_iterator it = v.begin();
 	typename NAMESPACE::vector<T>::const_iterator ite = v.end();
