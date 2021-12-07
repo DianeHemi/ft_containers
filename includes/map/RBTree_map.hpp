@@ -11,22 +11,22 @@
 namespace ft
 {
 	template <class T>
-	struct rbt_node
+	struct rbt_node_m
 	{
 		size_t		color;
 		T			data;
-		rbt_node*	parent;
-		rbt_node*	left;
-		rbt_node*	right;
+		rbt_node_m*	parent;
+		rbt_node_m*	left;
+		rbt_node_m*	right;
 
-		rbt_node() : color(RED), data(T()), parent(NULL), left(NULL), right(NULL) { };
-		rbt_node(T data) : color(RED), data(data), parent(NULL), left(NULL), right(NULL) { };
+		rbt_node_m() : color(RED), data(T()), parent(NULL), left(NULL), right(NULL) { };
+		rbt_node_m(T data) : color(RED), data(data), parent(NULL), left(NULL), right(NULL) { };
 	};
 
 
 	template <class Key, class Mapped, class Compare = ft::less<Key>, 
 			class Alloc = std::allocator<Key> >
-	class RBTree
+	class RBTree_map
 	{
 		/****************************************************************
 								 Definitions
@@ -41,8 +41,8 @@ namespace ft
 
 			typedef typename ft::pair<const Key, Mapped> 	value_type;
 
-			typedef rbt_node<value_type>	node_t;
-			typedef rbt_node<value_type>*	node_ptr;
+			typedef rbt_node_m<value_type>	node_t;
+			typedef rbt_node_m<value_type>*	node_ptr;
 
 			typedef typename Alloc::template rebind<node_t>::other	new_alloc;
 
@@ -66,7 +66,7 @@ namespace ft
 		*****************************************************************/
 		public:
 			//Constructor
-			RBTree( const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type() ) 
+			RBTree_map( const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type() ) 
 				: _cmp(comp), _alloc(alloc), _size(0)
 			{
 				_root = newNode(ft::make_pair(key_type(), mapped_type()));
@@ -75,11 +75,11 @@ namespace ft
 			};
 
 			//Copy constructor
-			RBTree( const RBTree& src )
+			RBTree_map( const RBTree_map& src )
 			{ *this = src; };
 
 			//Overload operator=
-			RBTree & operator=( const RBTree& rhs )
+			RBTree_map & operator=( const RBTree_map& rhs )
 			{
 				if (this != &rhs)
 				{
@@ -95,7 +95,7 @@ namespace ft
 
 
 			//Destructor
-			~RBTree()
+			~RBTree_map()
 			{
 				deleteNode(_nil);
 			};
@@ -544,7 +544,7 @@ namespace ft
 			return _nil;
 		}
 
-		void swap( RBTree& other )
+		void swap( RBTree_map& other )
 		{
 			size_type	sz = this->_size;
 			node_ptr	rt = this->_root;

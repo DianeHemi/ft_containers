@@ -23,11 +23,11 @@ namespace ft
 			typedef Allocator			allocator_type;
 
 			typedef typename ft::pair<const Key, T> value_type;
-			typedef ft::RBTree<key_type, mapped_type, key_compare, allocator_type>	rbt;
+			typedef ft::RBTree_map<key_type, mapped_type, key_compare, allocator_type>	rbt;
 
 		private:
-			typedef ft::rbt_node<value_type>	rbt_node;
-			typedef ft::rbt_node<value_type>*	rbt_node_ptr;
+			typedef ft::rbt_node_m<value_type>	rbt_node;
+			typedef ft::rbt_node_m<value_type>*	rbt_node_ptr;
 
 		public:
 			typedef value_type&         					reference;

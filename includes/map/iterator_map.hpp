@@ -18,8 +18,8 @@ namespace ft
 			typedef typename ft::iterator<ft::bidirectional_iterator_tag, T>::iterator_category	iterator_category;
 			typedef	T&	reference;
 			typedef	T*	pointer;
-			typedef rbt_node<T>		node;
-			typedef rbt_node<T>*	node_ptr;
+			typedef rbt_node_m<T>		node;
+			typedef rbt_node_m<T>*	node_ptr;
 
 			iterator_map( ) : _node(NULL) { };
 			iterator_map( node_ptr src ) : _node(src) { };
@@ -90,8 +90,8 @@ namespace ft
 			typedef typename ft::iterator<ft::bidirectional_iterator_tag, T>::iterator_category	iterator_category;
 			typedef	const T&	reference;
 			typedef	const T*	pointer;
-			typedef rbt_node<T>		node;
-			typedef rbt_node<T>*	node_ptr;
+			typedef rbt_node_m<T>		node;
+			typedef rbt_node_m<T>*	node_ptr;
 
 
 			const_iterator_map( ) : _node(NULL) { };

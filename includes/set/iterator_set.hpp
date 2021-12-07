@@ -41,7 +41,7 @@ namespace ft
 			iterator_set&	operator++() //Successor
 			{
 				if (_node->color != NIL)
-					_node = successor(_node);
+					_node = successor_s(_node);
 				return *this;
 			};
 			iterator_set 	operator++(int)
@@ -59,7 +59,7 @@ namespace ft
 					_node = max(_node);
 				}
 				else
-					_node = predecessor(_node);
+					_node = predecessor_s(_node);
 				return *this;
 			};
 			iterator_set	operator--(int)
@@ -116,7 +116,7 @@ namespace ft
 			const_iterator_set&	operator++() 
 			{
 				if (_node->color != NIL)
-					_node = successor(_node);
+					_node = successor_s(_node);
 				return *this;
 			};
 			const_iterator_set 	operator++(int) 
@@ -131,10 +131,10 @@ namespace ft
 				{
 					while (_node->parent)	//Looking for root
 						_node = _node->parent;
-					_node = max(_node);
+					_node = max_s(_node);
 				}
 				else
-					_node = predecessor(_node);
+					_node = predecessor_s(_node);
 				return *this;
 			};
 			const_iterator_set	operator--(int)
@@ -157,7 +157,7 @@ namespace ft
 							Helpers
 *****************************************************************/
 	template <class T>
-	T min( T node )
+	T min_s( T node )
 	{
 		while (node->left && node->left->color != NIL)
 			node = node->left;
@@ -165,7 +165,7 @@ namespace ft
 	}
 
 	template <class T>
-	T max( T node )
+	T max_s( T node )
 	{
 		while (node->right && node->right->color != NIL)
 			node = node->right;
@@ -173,11 +173,11 @@ namespace ft
 	}
 
 	template <class T>
-	T successor( T node )
+	T successor_s( T node )
 	{
 		if (node->right && node->right->color != NIL)
 		{
-			return (min(node->right));
+			return (min_s(node->right));
 		}
 		T y = node->parent;
 		while (y != NULL && node == y->right)
@@ -195,11 +195,11 @@ namespace ft
 	}
 
 	template <class T>
-	T predecessor ( T node )
+	T predecessor_s( T node )
 	{
 		if (node->left && node->left->color != NIL)
 		{
-			return max(node->left);
+			return max_s(node->left);
 		}
 		T y = node->parent;
 		while (y->color != NIL && node == y->left)

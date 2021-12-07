@@ -1,11 +1,4 @@
-#include <iostream>
-#include <vector>
-#include "../includes/vector/vector.hpp"
-#include <string>
-
-#ifndef NAMESPACE
-# define NAMESPACE ft
-#endif
+#include "tests.hpp"
 
 template<class T>
 void print_vector(const NAMESPACE::vector<T>& v)
@@ -237,32 +230,4 @@ void vector_relational_ope()
     v2.push_back(123);
     print_operator(v1, v2);
     print_operator(v2, v1);
-}
-
-int main(void)
-{
-    /****************************************************************
-							    Vector
-	****************************************************************/
-    std::cout << "\n\nVECTOR" << std::endl;
-
-    std::cout << "\033[1;32m\n--- Modifiers --- \033[0m" << std::endl;
-    vector_modifiers();
-
-    std::cout << "\033[1;32m\n--- Access --- \033[0m" << std::endl;
-    vector_access();
-
-    std::cout << "\033[1;32m\n--- Iterators --- \033[0m" << std::endl;
-    vector_iterator();
-
-    std::cout << "\033[1;32m\n--- Reverse iterators --- \033[0m" << std::endl;
-    vector_reverse_iterator();
-
-    std::cout << "\033[1;32m\n--- Relational operators --- \033[0m" << std::endl;
-    vector_relational_ope();
-
-    /*std::cout << "\033[1;32m--- Stress test --- \033[0m" << std::endl;
-    vector_stresstest();*/
-
-    return 0;
 }

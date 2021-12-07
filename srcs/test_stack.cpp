@@ -1,13 +1,4 @@
-#include <stack>
-#include "../includes/stack/stack.hpp"
-#include <iostream>
-#include <vector>
-#include <list>
-
-#ifndef NAMESPACE
-# define NAMESPACE ft
-#endif
-
+#include "tests.hpp"
 
 void stack_basic_tests()
 {
@@ -36,8 +27,8 @@ void stack_basic_tests()
 	std::cout << "S2 size : " << s2.size() << " | Empty : " << s2.empty() << std::endl;
 
 
-	std::cout << "\nEmpty stack using ft::vector" << std::endl;
-	NAMESPACE::stack<char, ft::vector<char> > s3;
+	std::cout << "\nEmpty stack using vector" << std::endl;
+	NAMESPACE::stack<char, NAMESPACE::vector<char> > s3;
 	std::cout << "S3 size : " << s3.size() << " | Empty : " << s3.empty() << std::endl;
 	std::cout << "Pushing elements in the stack... ";
 	for (int i = 'a'; i != 'f'; i++)
@@ -187,23 +178,4 @@ void stack_list_test()
 	std::cout << "Comparing S1 to S2 and reverse" << std::endl;
 	print_cmp_list(s1, s2);
 	print_cmp_list(s2, s1);
-}
-
-int main(void)
-{
-	/****************************************************************
-							    Stack
-	****************************************************************/
-    std::cout << "STACK" << std::endl;
-
-    std::cout << "\033[1;32m--- Basic --- \033[0m" << std::endl;
-    stack_basic_tests();
-
-    std::cout << "\033[1;32m\n--- Relational operators --- \033[0m" << std::endl;
-    stack_relational_test();
-
-    std::cout << "\033[1;32m\n--- List compatibility --- \033[0m" << std::endl;
-    stack_list_test();
-
-	return 0;
 }
