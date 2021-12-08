@@ -1,7 +1,5 @@
 #!/bin/bash
 
-make
-
 ./test_ft > ft.txt
 ./test_std > std.txt
 
