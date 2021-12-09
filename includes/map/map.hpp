@@ -23,9 +23,9 @@ namespace ft
 			typedef Allocator			allocator_type;
 
 			typedef typename ft::pair<const Key, T> value_type;
-			typedef ft::RBTree_map<key_type, mapped_type, key_compare, allocator_type>	rbt;
 
 		private:
+			typedef ft::RBTree_map<key_type, mapped_type, key_compare, allocator_type>	rbt;
 			typedef ft::rbt_node_m<value_type>	rbt_node;
 			typedef ft::rbt_node_m<value_type>*	rbt_node_ptr;
 
@@ -78,7 +78,13 @@ namespace ft
 		};
 
 		//Copy constructor
-		map( const map& other ) { *this = other; };
+		map( const map& other ) 
+		{ 
+			_alloc = other._alloc;
+			_cmp = other._cmp;
+			_rbt = new rbt(_cmp, _alloc);
+			insert(other.begin(), other.end());
+		};
 
 		//Destructor
 		~map()
@@ -92,6 +98,11 @@ namespace ft
 		{
 			if (this != &other)
 			{
+				if (_rbt)
+				{
+					clear();
+					delete _rbt;
+				}
 				_alloc = other._alloc;
 				_cmp = other._cmp;
 				_rbt = new rbt(_cmp, _alloc);

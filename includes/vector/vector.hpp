@@ -98,14 +98,32 @@ namespace ft
 		  void assign( InputIt first, 
 		  typename ft::enable_if<!is_integral<InputIt>::value, InputIt>::type last )
 		{
-			erase(begin(), end());
-			insert(begin(), first, last);
+			size_t size = 0;
+
+			clear();
+			for (InputIt tmp = first; tmp != last; tmp++)
+				size++;
+
+			reserve(size);
+
+			size = 0;
+			for (InputIt tmp = first; tmp != last; tmp++, size++)
+			{
+				_alloc.construct(&_data[size], *tmp);
+				_size++;
+			}
 		};
 
 		void assign( size_type n, const value_type& val )
 		{
-			erase(begin(), end());
-			insert(begin(), n, val);
+			clear();
+
+			reserve(n);
+			for (size_type i = 0; i < n; i++)
+			{
+				_alloc.construct(&_data[i], val);
+				_size++;
+			}
 		};
 
 		allocator_type	get_allocator() const { return _alloc; };
@@ -164,9 +182,15 @@ namespace ft
 		void		resize( size_type n, value_type val = value_type() )
 		{
 			if (n > _size)
-				insert(end(), n - size(), val);
+			{
+				if ((n + _size) > _capacity)
+					reserve(_size == 0 ? n : _size * 2);
+				insert(end(), n - _size, val);
+			}
 			else if (n < _size)
+			{
 				erase(begin() + n, end());
+			}
 			else
 				return ;
 		};
@@ -176,7 +200,7 @@ namespace ft
 			if (_capacity >= n)
 				return ;
 			if (n > max_size()) 
-				throw std::length_error("vector::_M_fill_insert");
+				throw std::length_error("vector::reserve");
 
 			ft::vector<T> tmp;
 			tmp._data = tmp._alloc.allocate(n);
@@ -192,7 +216,12 @@ namespace ft
 								 Modifiers
 		****************************************************************/
 		void	push_back( const value_type& val )
-		{ insert(end(), val); };
+		{
+			if (_size == _capacity)
+				reserve(_size == 0 ? 1 : _size * 2);
+			_alloc.construct(_data + _size, val);
+			_size++;
+		};
 
 		void	pop_back()
 		{
@@ -205,7 +234,7 @@ namespace ft
 			size_type	offset = pos - _data;
 
 			if (_size == _capacity)
-				reserve(_size == 0 ? 1 : _capacity * 2);
+				reserve(_size == 0 ? 1 : _size * 2);
 
 			for (size_type i = _size ; i > offset; i--)
 			{
@@ -220,9 +249,14 @@ namespace ft
 		void	insert( iterator pos, size_type n, const value_type& val )
 		{
 			ft::vector<T> tmp;
+
 			tmp._data = tmp._alloc.allocate(_capacity);
 			tmp._capacity = _capacity;
 
+			for (size_type z = 0; (_size + n) > tmp._capacity; z++)
+				tmp.reserve(_size <= 1 ? _size + n : (_size + z) * 2);
+				
+			tmp._size = 0;
 			iterator it = begin();
 			for ( ; it != pos; it++)
 				tmp.push_back(*it);
@@ -231,7 +265,6 @@ namespace ft
 			for ( ; it != end(); it++)
 				tmp.push_back(*it);
 			tmp.swap(*this);
-			
 		};
 
 		template< class InputIt >
@@ -239,12 +272,26 @@ namespace ft
 		 typename ft::enable_if<!is_integral<InputIt>::value, InputIt>::type last )
 		{
 			ft::vector<T> tmp;
-			tmp._data = tmp._alloc.allocate(_capacity);
-			tmp._capacity = _capacity;
+			size_type n = 0;
+
+			for (InputIt it = first; it != last; it++)
+				n++;
+
+			if ((_size + n) > _capacity)
+			{	
+				tmp._data = tmp._alloc.allocate(_size + n);
+				tmp._capacity = _size + n;
+			}
+			else
+			{
+				tmp._data = tmp._alloc.allocate(_capacity);
+				tmp._capacity = _capacity;
+			}
+
 			iterator it = begin();
 			for( ; it != pos; it++)
 				tmp.push_back(*it);
-			for(size_type i = 0 ; first != last; first++, i++)
+			for( ; first != last; first++)
 				tmp.push_back(*first);
 			for (; it != end(); it++)
 				tmp.push_back(*it);

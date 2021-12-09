@@ -97,6 +97,44 @@ namespace ft
 			//Destructor
 			~RBTree_map()
 			{
+				if (_size > 0)
+				{
+					node_ptr node = maximum(_root);
+					node_ptr parent;
+					while (node && node != _root && node != _nil)
+					{
+						parent = node->parent;
+						if (parent->left == node)
+							parent->left = NULL;
+						else
+							parent->right = NULL;
+						deleteNode(node);
+						if (parent->left)
+							node = parent->left;
+						else if (parent->right)
+							node = parent->right;
+						else
+							node = parent;
+					}
+					node = minimum(_root);
+					while (node && node != _root && node != _nil)
+					{
+						parent = node->parent;
+						if (parent->left == node)
+							parent->left = NULL;
+						else
+							parent->right = NULL;
+						deleteNode(node);
+						if (parent->left)
+							node = parent->left;
+						else if (parent->right)
+							node = parent->right;
+						else
+							node = parent;
+					}
+					if (_root)
+						deleteNode(_root);
+				}
 				deleteNode(_nil);
 			};
 

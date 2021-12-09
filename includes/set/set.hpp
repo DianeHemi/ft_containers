@@ -29,9 +29,8 @@ namespace ft
 			typedef typename allocator_type::pointer		pointer;
 			typedef typename allocator_type::const_pointer	const_pointer;
 
-			typedef ft::RBTree<value_type, key_compare, allocator_type>	rbt;
-
 		private:
+			typedef ft::RBTree<value_type, key_compare, allocator_type>	rbt;
 			typedef ft::rbt_node<value_type>	rbt_node;
 			typedef ft::rbt_node<value_type>*	rbt_node_ptr;
 
@@ -71,12 +70,22 @@ namespace ft
 
 		//Copy constructor
 		set ( const set& other )
-		{ *this = other; };
+		{
+			_alloc = other._alloc;
+			_cmp = other._cmp;
+			_rbt = new rbt(_cmp, _alloc);
+			insert(other.begin(), other.end());
+		};
 
 		set& operator=( const set& other )
 		{
 			if (this != &other)
 			{
+				if (_rbt)
+				{
+					clear();
+					delete _rbt;
+				}
 				_alloc = other._alloc;
 				_cmp = other._cmp;
 				_rbt = new rbt(_cmp, _alloc);
