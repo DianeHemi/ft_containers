@@ -2,21 +2,20 @@
     # define NAMESPACE ft
 #endif
 
+#include <iostream>
+#include "../includes/vector/vector.hpp"
+#include "../includes/set/set.hpp"
+#include "../includes/map/map.hpp"
+#include <list>
+#include <vector>
+#include "../includes/stack/stack.hpp"
 
-
-    #include <iostream>
-    #include "../includes/vector/vector.hpp"
-    #include "../includes/set/set.hpp"
-    #include "../includes/map/map.hpp"
-    #include <list>
-    #include <vector>
-    #include "../includes/stack/stack.hpp"
-
-        #include <iostream>
-    #include <stack>
-    #include <string>
-    #include <set>
-    #include <map>
+#include <iostream>
+#include <stack>
+#include <string>
+#include <set>
+#include <map>
+#include <cstdlib>
 
 //VECTOR
 template<class T>
@@ -51,7 +50,7 @@ void map_access();
 void map_operations();
 void map_stresstest();
 template<class T, class U>
-void map_print_operator(NAMESPACE::map<T, U> a, NAMESPACE::map<T, U> b);
+void map_print_operator(NAMESPACE::map<T, U> const & a, NAMESPACE::map<T, U> const & b);
 void map_relational_ope();
 
 //SET

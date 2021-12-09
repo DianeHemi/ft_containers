@@ -157,7 +157,10 @@ void set_stresstest()
 {
     NAMESPACE::set<int> s1;
     for(int i = 0; i < 1000000; i++)
+    {
         s1.insert(i);
+        //s1.insert(i * rand());
+    }
     NAMESPACE::set<int>::iterator it, ite;
     it = s1.begin();
     ite = s1.end();

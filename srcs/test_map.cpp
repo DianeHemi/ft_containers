@@ -206,7 +206,10 @@ void map_stresstest()
 {
     NAMESPACE::map<int, std::string> m1;
     for(int i = 0; i < 1000000; i++)
+    {
         m1[i];
+        //m1[i * rand()];
+    } 
     NAMESPACE::map<int, std::string>::iterator it, ite;
     it = m1.begin();
     ite = m1.end();
@@ -216,7 +219,7 @@ void map_stresstest()
 }
 
 template<class T, class U>
-void map_print_operator(NAMESPACE::map<T, U> a, NAMESPACE::map<T, U> b)
+void map_print_operator(NAMESPACE::map<T, U> const & a, NAMESPACE::map<T, U> const & b)
 {
     static int i = 0;
 
