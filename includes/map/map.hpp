@@ -63,7 +63,8 @@ namespace ft
 		explicit map( const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type() )
 			: _alloc(alloc), _cmp(comp)
 		{
-			_rbt = new rbt(_cmp, _alloc);
+			_rbt = _talloc.allocate(1);
+			_talloc.construct(_rbt, rbt(_cmp, _alloc));
 		};
 
 		//Range constructor
@@ -73,7 +74,8 @@ namespace ft
 			const allocator_type& alloc = allocator_type() )
 		: _alloc(alloc), _cmp(comp), _rbt(0)
 		{
-			_rbt = new rbt(_cmp, _alloc);
+			_rbt = _talloc.allocate(1);
+			_talloc.construct(_rbt, rbt(_cmp, _alloc));
 			insert(first, last);
 		};
 
@@ -82,15 +84,17 @@ namespace ft
 		{ 
 			_alloc = other._alloc;
 			_cmp = other._cmp;
-			_rbt = new rbt(_cmp, _alloc);
+			_rbt = _talloc.allocate(1);
+			_talloc.construct(_rbt, rbt(_cmp, _alloc));
 			insert(other.begin(), other.end());
 		};
 
 		//Destructor
 		~map()
 		{
-			clear();
-			delete _rbt;
+			_rbt->clearTree();
+			_talloc.destroy(_rbt);
+			_talloc.deallocate(_rbt, 1);
 		}
 
 		//Overload operator =
@@ -100,12 +104,14 @@ namespace ft
 			{
 				if (_rbt)
 				{
-					clear();
-					delete _rbt;
+					_rbt->clearTree();
+					_talloc.destroy(_rbt);
+					_talloc.deallocate(_rbt, 1);
 				}
 				_alloc = other._alloc;
 				_cmp = other._cmp;
-				_rbt = new rbt(_cmp, _alloc);
+				_rbt = _talloc.allocate(1);
+				_talloc.construct(_rbt, rbt(_cmp, _alloc));
 				insert(other.begin(), other.end());
 			}
 			return *this;
@@ -298,6 +304,7 @@ namespace ft
 								 Private members
 		*****************************************************************/
 		private:
+			std::allocator<rbt>	_talloc;
 			allocator_type  	_alloc;
 			Compare				_cmp;
 			rbt*				_rbt;

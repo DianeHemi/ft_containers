@@ -93,49 +93,10 @@ namespace ft
 				return *this;
 			}
 
-
 			//Destructor
 			~RBTree_map()
 			{
-				if (_size > 0)
-				{
-					node_ptr node = maximum(_root);
-					node_ptr parent;
-					while (node && node != _root && node != _nil)
-					{
-						parent = node->parent;
-						if (parent->left == node)
-							parent->left = NULL;
-						else
-							parent->right = NULL;
-						deleteNode(node);
-						if (parent->left)
-							node = parent->left;
-						else if (parent->right)
-							node = parent->right;
-						else
-							node = parent;
-					}
-					node = minimum(_root);
-					while (node && node != _root && node != _nil)
-					{
-						parent = node->parent;
-						if (parent->left == node)
-							parent->left = NULL;
-						else
-							parent->right = NULL;
-						deleteNode(node);
-						if (parent->left)
-							node = parent->left;
-						else if (parent->right)
-							node = parent->right;
-						else
-							node = parent;
-					}
-					if (_root)
-						deleteNode(_root);
-				}
-				deleteNode(_nil);
+
 			};
 
 
@@ -172,6 +133,49 @@ namespace ft
 			_size--;
 			_alloc_rbt.destroy(node);
 			_alloc_rbt.deallocate(node, 1);
+		}
+
+		void clearTree()
+		{
+			if (_size > 0)
+			{
+				node_ptr node = maximum(_root);
+				node_ptr parent;
+				while (node && node != _root && node != _nil)
+				{
+					parent = node->parent;
+					if (parent->left == node)
+						parent->left = NULL;
+					else
+						parent->right = NULL;
+					deleteNode(node);
+					if (parent->left && parent->left != _nil)
+						node = minimum(parent->left);
+					else if (parent->right && parent->right != _nil)
+						node = maximum(parent->right);
+					else
+						node = parent;
+				}
+				node = minimum(_root);
+				while (node && node != _root && node != _nil)
+				{
+					parent = node->parent;
+					if (parent->left == node)
+						parent->left = NULL;
+					else
+						parent->right = NULL;
+					deleteNode(node);
+					if (parent->left && parent->left != _nil)
+						node = minimum(parent->left);
+					else if (parent->right && parent->right != _nil)
+						node = maximum(parent->right);
+					else
+						node = parent;
+				}
+				if (_root)
+					deleteNode(_root);
+			}
+				deleteNode(_nil);
 		}
 
 
@@ -549,7 +553,7 @@ namespace ft
 		/****************************************************************
 								Member functions
 		*****************************************************************/
-		size_type		count( const key_type& key )
+		size_type		count( const key_type& key ) const
 		{
 			if (searchTree(key, _root) != NULL)
 				return 1;
