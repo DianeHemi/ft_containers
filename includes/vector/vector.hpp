@@ -9,6 +9,12 @@
 # include "../lexicographical_compare.hpp"
 # include "../enable_if.hpp"
 
+/*
+	https://www.cplusplus.com/reference/vector/vector/?kw=vector
+
+	https://www.lirmm.fr/~ducour/Doc-objets/ISO+IEC+14882-1998.pdf
+	P 508 du pdf (482)
+*/
 
 namespace ft
 {
@@ -25,8 +31,8 @@ namespace ft
 
 			typedef typename allocator_type::pointer 			pointer;
 			typedef typename allocator_type::const_pointer		const_pointer;
-			typedef value_type&			reference;
-      		typedef const value_type&	const_reference;
+			typedef typename allocator_type::reference			reference;
+      		typedef typename allocator_type::const_reference	const_reference;
 
 			typedef typename ft::iterator_vector<T>					iterator;
 			typedef typename ft::const_iterator_vector<T>			const_iterator;
@@ -98,35 +104,31 @@ namespace ft
 		  void assign( InputIt first, 
 		  typename ft::enable_if<!is_integral<InputIt>::value, InputIt>::type last )
 		{
-			size_t size = 0;
-
-			clear();
-			for (InputIt tmp = first; tmp != last; tmp++)
-				size++;
-
-			reserve(size);
-
-			size = 0;
-			for (InputIt tmp = first; tmp != last; tmp++, size++)
-			{
-				_alloc.construct(&_data[size], *tmp);
-				_size++;
-			}
+			erase(begin(), end());
+			insert(begin(), first, last);
 		};
 
 		void assign( size_type n, const value_type& val )
 		{
-			clear();
-
-			reserve(n);
-			for (size_type i = 0; i < n; i++)
-			{
-				_alloc.construct(&_data[i], val);
-				_size++;
-			}
+			erase(begin(), end());
+			insert(begin(), n, val);
 		};
 
 		allocator_type	get_allocator() const { return _alloc; };
+
+
+		/****************************************************************
+								 Iterators
+		****************************************************************/
+		iterator				begin() { return iterator(_data); };
+		const_iterator			begin() const { return const_iterator(_data); };
+		iterator				end() { return iterator(_data + _size); };
+		const_iterator			end() const { return const_iterator(_data + _size); };
+		
+		reverse_iterator		rbegin() { return reverse_iterator(_data + _size); };
+		const_reverse_iterator	rbegin() const { return reverse_iterator(_data + _size); };
+		reverse_iterator		rend() { return reverse_iterator(_data); };
+		const_reverse_iterator	rend() const { return reverse_iterator(_data); };
 
 
 		/****************************************************************
@@ -153,23 +155,6 @@ namespace ft
 			return _data[pos];
 		};
 
-		value_type* data() { return _data; };
-		const value_type* data() const { return _data; };
-
-
-		/****************************************************************
-								 Iterators
-		****************************************************************/
-		iterator				begin() { return iterator(_data); };
-		const_iterator			begin() const { return const_iterator(_data); };
-		iterator				end() { return iterator(_data + _size); };
-		const_iterator			end() const { return const_iterator(_data + _size); };
-		
-		reverse_iterator		rbegin() { return reverse_iterator(_data + _size); };
-		const_reverse_iterator	rbegin() const { return reverse_iterator(_data + _size); };
-		reverse_iterator		rend() { return reverse_iterator(_data); };
-		const_reverse_iterator	rend() const { return reverse_iterator(_data); };
-
 
 		/****************************************************************
 								 Capacity
@@ -182,15 +167,9 @@ namespace ft
 		void		resize( size_type n, value_type val = value_type() )
 		{
 			if (n > _size)
-			{
-				if ((n + _size) > _capacity)
-					reserve(_size == 0 ? n : _size * 2);
 				insert(end(), n - _size, val);
-			}
 			else if (n < _size)
-			{
 				erase(begin() + n, end());
-			}
 			else
 				return ;
 		};
@@ -254,7 +233,12 @@ namespace ft
 			tmp._capacity = _capacity;
 
 			for (size_type z = 0; (_size + n) > tmp._capacity; z++)
-				tmp.reserve(_size <= 1 ? _size + n : (_size + z) * 2);
+			{
+				if (_size <= 1)
+					tmp.reserve(_size + n);
+				else
+					tmp.reserve((_size + z) * 2);
+			}
 				
 			tmp._size = 0;
 			iterator it = begin();

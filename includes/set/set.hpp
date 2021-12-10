@@ -5,6 +5,12 @@
 # include "../lexicographical_compare.hpp"
 # include "iterator_set.hpp"
 
+/*
+	https://www.cplusplus.com/reference/set/set/?kw=set
+
+	https://www.lirmm.fr/~ducour/Doc-objets/ISO+IEC+14882-1998.pdf
+	P 515/523 du pdf (489/497)
+*/
 
 namespace ft
 {
@@ -23,8 +29,8 @@ namespace ft
 			typedef std::size_t		size_type;
 			typedef std::ptrdiff_t	difference_type;
 
-			typedef value_type&			reference;
-			typedef const value_type&	const_reference;
+			typedef typename allocator_type::reference			reference;
+			typedef typename allocator_type::const_reference	const_reference;
 
 			typedef typename allocator_type::pointer		pointer;
 			typedef typename allocator_type::const_pointer	const_pointer;
@@ -36,9 +42,9 @@ namespace ft
 
 		public:
 			typedef typename ft::const_iterator_set<value_type>		iterator;
-			typedef typename ft::const_iterator_set<value_type>	const_iterator;
-			typedef typename ft::reverse_iterator<iterator>				reverse_iterator;
-			typedef typename ft::reverse_iterator<const_iterator>		const_reverse_iterator;
+			typedef typename ft::const_iterator_set<value_type>		const_iterator;
+			typedef typename ft::reverse_iterator<iterator>			reverse_iterator;
+			typedef typename ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 			
 		/****************************************************************
@@ -206,7 +212,7 @@ namespace ft
 		/****************************************************************
 								 Operations
 		*****************************************************************/
-		iterator find( const value_type& val )
+		iterator find( const value_type& val ) const
 		{
 			iterator it = begin();
 			iterator ite = end();
@@ -220,45 +226,21 @@ namespace ft
 			return end();
 		};
 
-		const_iterator	find( const value_type& val ) const 
-		{
-			const_iterator it = _rbt->searchTree(val, _rbt->getRoot());
-
-			if (*it)
-				return it;
-			return (_rbt->getNil());
-		};
-
 		size_type count( const value_type& val ) const
 		{ return (_rbt->count(val)); };
 
-		iterator lower_bound( const value_type& val )
+		iterator lower_bound( const value_type& val ) const
 		{ return iterator((_rbt->lower_bound(val))); };
 
-		const_iterator lower_bound( const value_type& val ) const
-		{ return const_iterator((_rbt->lower_bound(val))); };
-
-		iterator upper_bound( const value_type& val )
+		iterator upper_bound( const value_type& val ) const
 		{ return iterator((_rbt->upper_bound(val))); };
 
-		const_iterator upper_bound( const value_type& val ) const
-		{ return const_iterator((_rbt->upper_bound(val))); };
-
-		ft::pair<iterator, iterator> equal_range( const value_type& val )
+		ft::pair<iterator, iterator> equal_range( const value_type& val ) const
 		{
 			ft::pair<iterator, iterator> ret;
 			
 			ret.first = iterator(_rbt->lower_bound(val));
 			ret.second = iterator(_rbt->upper_bound(val));
-			return ret;
-		};
-
-		ft::pair<const_iterator, const_iterator> equal_range( const value_type& val ) const
-		{
-			ft::pair<const_iterator, const_iterator> ret;
-			
-			ret.first = const_iterator(_rbt->lower_bound(val));
-			ret.second = const_iterator(_rbt->upper_bound(val));
 			return ret;
 		};
 

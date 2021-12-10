@@ -5,6 +5,13 @@
 # include "../lexicographical_compare.hpp"
 # include <memory>
 
+/*
+	https://www.cplusplus.com/reference/map/map/?kw=map
+
+	https://www.lirmm.fr/~ducour/Doc-objets/ISO+IEC+14882-1998.pdf
+	P 514/516 du pdf (488/490)
+*/
+
 namespace ft
 {
 	template <class Key, class T, class Compare = ft::less<Key>, 
@@ -30,10 +37,10 @@ namespace ft
 			typedef ft::rbt_node_m<value_type>*	rbt_node_ptr;
 
 		public:
-			typedef value_type&         					reference;
-			typedef const value_type&   					const_reference;
-			typedef typename allocator_type::pointer 		pointer;
-			typedef typename allocator_type::const_pointer	const_pointer;
+			typedef typename allocator_type::reference			reference;
+			typedef typename allocator_type::const_reference	const_reference;
+			typedef typename allocator_type::pointer 			pointer;
+			typedef typename allocator_type::const_pointer		const_pointer;
 			
 
 			typedef typename ft::iterator_map<value_type>			iterator;
@@ -121,37 +128,6 @@ namespace ft
 
 
 		/****************************************************************
-								 Element access
-		*****************************************************************/
-		mapped_type& at( const key_type& key )
-		{
-			rbt_node_ptr node = _rbt->searchTree(key, _rbt->getRoot());
-			if (node == NULL || node == _rbt->getNil())
-				throw std::out_of_range("map::at");
-			else
-				return node->data.second;
-		};
-
-		const mapped_type& at( const key_type& key ) const
-		{
-			rbt_node_ptr node = _rbt->searchTree(key, _rbt->getRoot());
-			if (node == NULL || node == _rbt->getNil())
-				throw std::out_of_range("map::at");
-			else
-				return node->data.second;
-		};
-
-		mapped_type& operator[]( const key_type& key ) 
-		{
-			rbt_node_ptr node = _rbt->searchTree(key, _rbt->getRoot());
-			if (node == NULL || node == _rbt->getNil())
-				return insert(ft::make_pair(key, T())).first->second;
-			else
-				return node->data.second;
-		};
-
-
-		/****************************************************************
 									Iterators
 		****************************************************************/
 		iterator		begin() { return iterator(_rbt->minimum(_rbt->getRoot())); };
@@ -163,6 +139,19 @@ namespace ft
 		const_reverse_iterator	rbegin() const { return const_reverse_iterator(_rbt->getNil()); }; //Ou maximum ?
 		reverse_iterator		rend() { return reverse_iterator(_rbt->minimum(_rbt->getRoot())); };
 		const_reverse_iterator	rend() const { return const_reverse_iterator(_rbt->minimum(_rbt)); };
+
+
+		/****************************************************************
+								 Element access
+		*****************************************************************/
+		mapped_type& operator[]( const key_type& key ) 
+		{
+			rbt_node_ptr node = _rbt->searchTree(key, _rbt->getRoot());
+			if (node == NULL || node == _rbt->getNil())
+				return insert(ft::make_pair(key, T())).first->second;
+			else
+				return node->data.second;
+		};
 
 
 		/****************************************************************
@@ -212,14 +201,6 @@ namespace ft
 				_rbt->_erase(node);
 		};
 
-		void		erase( iterator first, iterator last)
-		{
-			while (first != last)
-			{
-				erase(first++);
-			}
-		};
-
 		size_type	erase( const key_type& key )
 		{
 			size_type tmp = _rbt->getSize();
@@ -227,6 +208,14 @@ namespace ft
 			if (node)
 				_rbt->_erase(node);
 			return tmp - _rbt->getSize();
+		};
+
+		void		erase( iterator first, iterator last)
+		{
+			while (first != last)
+			{
+				erase(first++);
+			}
 		};
 
 		void 	swap( map& other ) { _rbt->swap(*other._rbt); };
@@ -281,7 +270,7 @@ namespace ft
 		const_iterator	upper_bound( const key_type& key ) const 
 		{ return const_iterator((_rbt->upper_bound(key))); };
 
-		ft::pair<iterator, iterator>	equal_range( const key_type& key )	//Range : first greater or equal + 
+		ft::pair<iterator, iterator> equal_range( const key_type& key )	//Range : first greater or equal + 
 		{
 			ft::pair<iterator, iterator> ret;
 			
@@ -290,7 +279,7 @@ namespace ft
 			return ret;
 		};
 
-		ft::pair<const_iterator, const_iterator>	equal_range( const key_type& key ) const 
+		ft::pair<const_iterator, const_iterator> equal_range( const key_type& key ) const 
 		{
 			ft::pair<const_iterator, const_iterator> ret;
 			

@@ -162,6 +162,9 @@ void vector_iterator()
     print_iter_operator(cit, cit);
     print_iter_operator(cit - 2, cit);
     print_iter_operator(cit - 1, cit + 1);
+    std::cout << "\nTesting equality operators between a const and non const iterator" << std::endl;
+    print_iter_operator(it, cit);
+    print_iter_operator(cit, it);
 }
 
 void print_rev_iter_operator(NAMESPACE::vector<int>::const_reverse_iterator a, NAMESPACE::vector<int>::const_reverse_iterator b)

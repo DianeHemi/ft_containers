@@ -165,7 +165,6 @@ void map_access()
     map_print(m1);
 
     std::cout << "\n[18] : " << m1[18] << std::endl;
-    std::cout << "at - 27 : " << m1[27] << std::endl;
 }
 
 void map_operations()

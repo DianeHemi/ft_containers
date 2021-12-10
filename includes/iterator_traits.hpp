@@ -186,9 +186,9 @@ namespace ft
 	template <class Iterator>
   	reverse_iterator<Iterator> operator+ (
            typename reverse_iterator<Iterator>::difference_type n,
-           const reverse_iterator<Iterator>& rev_it)
+           const reverse_iterator<Iterator>& x)
 	{
-		return (reverse_iterator<Iterator>(rev_it.base() - n));
+		return (reverse_iterator<Iterator>(x.base() - n));
 	};
 
 	template <class Iter1, class Iter2>
