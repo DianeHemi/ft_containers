@@ -619,6 +619,45 @@ namespace ft
 			}
 			deleteNode(_nil);
 		}
+
+
+		/****************************************************************
+								Printing
+		*****************************************************************/
+		void printTree()
+		{
+			if (_root)
+				printHelper(_root, "", true);
+		}
+
+		void printHelper( node_ptr root, std::string indent, bool last ) 
+		{
+			if (root != _nil)
+			{
+				std::cout << indent;
+				if (last) 
+				{
+					std::cout << "R----";
+					indent += "   ";
+				} 
+				else 
+				{
+					std::cout << "L----";
+					indent += "|  ";
+				}
+				std::string sColor;
+				if (root->color == RED)
+					sColor = "RED";
+				else if (root->color == BLACK)
+					sColor = "BLACK";
+				else
+					sColor = "NIL";
+				std::cout << root->data << "(" << sColor << ")" << std::endl;
+				printHelper(root->left, indent, false);
+				printHelper(root->right, indent, true);
+			}
+		}
+
 	};
 
 } //ft

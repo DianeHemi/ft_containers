@@ -20,4 +20,10 @@ then
     diff -y ft.txt std.txt
 fi
 
+if [[ $1 == tree ]]
+then
+    clang++ -Wall -Wextra -Werror -std=c++98 srcs/test_tree.cpp -o test_tree && ./test_tree
+    rm -f test_tree
+fi
+
 rm -f ft.txt std.txt
