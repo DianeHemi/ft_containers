@@ -71,7 +71,7 @@ namespace ft
 			const allocator_type& alloc = allocator_type() )
 			: _size(0), _capacity(0), _alloc(alloc), _data(NULL)
 		{
-			difference_type dist = ft::it_distance(first, last);
+			/*difference_type dist = ft::it_distance(first, last);
     		this->_data = this->_alloc.allocate(dist);
 			this->_capacity = dist;
 
@@ -79,7 +79,8 @@ namespace ft
 			{
 				this->_alloc.construct(_data + i, *first);
 				this->_size++;
-			}
+			}*/
+			assign(first, last);
 		}
 
 		//Overload operateur =
@@ -227,88 +228,52 @@ namespace ft
 
 		void	insert( iterator pos, size_type n, const value_type& val )
 		{
-			if (pos == end())
-			{
-				for (size_type z = 0; (_size + n) > _capacity; z++)
-				{
-					if (_size <= 1)
-						reserve(_size + n);
-					else
-						reserve((_size + z) * 2);
-				}
-				while (n > 0)
-				{
-					push_back(val);
-					n--;
-				}
-				return ;
-			}
+			size_type offset = pos - _data;
 
-			ft::vector<T> tmp;
-
-			tmp._data = tmp._alloc.allocate(_capacity);
-			tmp._capacity = _capacity;
-
-			for (size_type z = 0; (_size + n) > tmp._capacity; z++)
+			for (size_type z = 0; (_size + n) > _capacity; z++)
 			{
 				if (_size <= 1)
-					tmp.reserve(_size + n);
+					reserve(_size + n);
 				else
-					tmp.reserve((_size + z) * 2);
+					reserve((_size + z) * 2);
 			}
-				
-			tmp._size = 0;
-			iterator it = begin();
-			for ( ; it != pos; it++)
-				tmp.push_back(*it);
-			for( ; n > 0; n--)
-				tmp.push_back(val);
-			for ( ; it != end(); it++)
-				tmp.push_back(*it);
-			tmp.swap(*this);
+
+			if (n > 0) 
+			{
+				for (size_type i = _size + n - 1; i >= offset + n; i--) 
+				{
+					_alloc.construct(_data + i, _data[i - n]);
+					_alloc.destroy(_data + (i - n));
+				}
+			}
+			for (size_type i = 0; i < n; i++)
+				_alloc.construct(_data + offset + i, val);
+			_size += n;
 		};
 
 		template< class InputIt >
 		 void insert( iterator pos, InputIt first, 
 		 typename ft::enable_if<!is_integral<InputIt>::value, InputIt>::type last )
 		{
-			ft::vector<T> tmp;
 			size_type n = 0;
-
 			for (InputIt it = first; it != last; it++)
 				n++;
 
-			if (pos == end())
-			{
-				if ((_size + n) > _capacity)
-					reserve(_size + n);
-				while (n > 0)
-				{
-					push_back(*first++);
-					n--;
-				}
-				return ;
-			}
-
+			size_type offset = pos - _data;
 			if ((_size + n) > _capacity)
-			{	
-				tmp._data = tmp._alloc.allocate(_size + n);
-				tmp._capacity = _size + n;
-			}
-			else
-			{
-				tmp._data = tmp._alloc.allocate(_capacity);
-				tmp._capacity = _capacity;
-			}
+				reserve(_size + n);
 
-			iterator it = begin();
-			for( ; it != pos; it++)
-				tmp.push_back(*it);
-			for( ; first != last; first++)
-				tmp.push_back(*first);
-			for (; it != end(); it++)
-				tmp.push_back(*it);
-			tmp.swap(*this);
+			if (n > 0) 
+			{
+				for (size_type i = _size + n - 1; i >= offset + n; i--) 
+				{
+					_alloc.construct(_data + i, _data[i - n]);
+					_alloc.destroy(_data + (i - n));
+				}
+			}
+			for (size_type i = 0; i < n; i++)
+				_alloc.construct(_data + offset + i, *first++);
+			_size += n;
 		};
 
 		void		clear()
