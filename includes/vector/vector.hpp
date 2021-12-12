@@ -220,13 +220,30 @@ namespace ft
 				_alloc.construct(_data + i, _data[i - 1]);
 				_alloc.destroy(_data + i - 1);
 			}
-			_data[offset] = val;
+			_alloc.construct(_data + offset, val);
 			_size++;
 			return (begin() + offset);
 		};
 
 		void	insert( iterator pos, size_type n, const value_type& val )
 		{
+			if (pos == end())
+			{
+				for (size_type z = 0; (_size + n) > _capacity; z++)
+				{
+					if (_size <= 1)
+						reserve(_size + n);
+					else
+						reserve((_size + z) * 2);
+				}
+				while (n > 0)
+				{
+					push_back(val);
+					n--;
+				}
+				return ;
+			}
+
 			ft::vector<T> tmp;
 
 			tmp._data = tmp._alloc.allocate(_capacity);
@@ -260,6 +277,18 @@ namespace ft
 
 			for (InputIt it = first; it != last; it++)
 				n++;
+
+			if (pos == end())
+			{
+				if ((_size + n) > _capacity)
+					reserve(_size + n);
+				while (n > 0)
+				{
+					push_back(*first++);
+					n--;
+				}
+				return ;
+			}
 
 			if ((_size + n) > _capacity)
 			{	
